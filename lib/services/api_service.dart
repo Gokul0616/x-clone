@@ -885,4 +885,70 @@ class ApiService {
       return [];
     }
   }
+
+  // Generic HTTP methods for story service to use
+  Future<Map<String, dynamic>> get(String endpoint) async {
+    try {
+      await _loadToken();
+      final response = await http.get(
+        Uri.parse('$baseUrl$endpoint'),
+        headers: _headersWithAuth(),
+      );
+
+      return _handleResponse(response);
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> data) async {
+    try {
+      await _loadToken();
+      final response = await http.post(
+        Uri.parse('$baseUrl$endpoint'),
+        headers: _headersWithAuth(),
+        body: json.encode(data),
+      );
+
+      return _handleResponse(response);
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> delete(String endpoint) async {
+    try {
+      await _loadToken();
+      final response = await http.delete(
+        Uri.parse('$baseUrl$endpoint'),
+        headers: _headersWithAuth(),
+      );
+
+      return _handleResponse(response);
+    } catch (e) {
+      throw Exception('Network error: $e');
+    }
+  }
+
+  Map<String, dynamic> _handleResponse(http.Response response) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      try {
+        return json.decode(response.body);
+      } catch (e) {
+        return {'status': 'success', 'data': null};
+      }
+    } else {
+      try {
+        final data = json.decode(response.body);
+        throw Exception(data['message'] ?? 'Request failed with status ${response.statusCode}');
+      } catch (e) {
+        throw Exception('Request failed with status ${response.statusCode}');
+      }
+    }
+  }
+
+  Future<Map<String, String>> getHeaders() async {
+    await _loadToken();
+    return _headersWithAuth();
+  }
 }
