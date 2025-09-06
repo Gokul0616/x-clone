@@ -4,6 +4,8 @@ import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/tweet_provider.dart';
 import 'providers/user_provider.dart';
+import 'providers/marketplace_provider.dart';
+import 'providers/bookmarks_provider.dart';
 import 'screens/auth/auth_wrapper.dart';
 import 'screens/home/main_screen.dart';
 import 'utils/themes.dart';
@@ -24,6 +26,8 @@ class PulseApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => TweetProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => MarketplaceProvider()),
+        ChangeNotifierProvider(create: (_) => BookmarksProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
