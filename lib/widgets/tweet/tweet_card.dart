@@ -16,12 +16,14 @@ class TweetCard extends StatelessWidget {
   final TweetModel tweet;
   final bool showThread;
   final bool isDetail;
+  final bool showActionButtons;
 
   const TweetCard({
     super.key,
     required this.tweet,
     this.showThread = false,
     this.isDetail = false,
+    this.showActionButtons = true,
   });
 
   @override
