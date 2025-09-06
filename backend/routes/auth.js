@@ -16,7 +16,7 @@ const generateToken = (userId) => {
 router.post('/register', async (req, res) => {
   try {
     const { email, password, username, displayName } = req.body;
-
+console.log(req.body);
     // Validation
     if (!email || !password || !username || !displayName) {
       return res.status(400).json({

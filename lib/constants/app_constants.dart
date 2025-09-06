@@ -7,7 +7,7 @@ class AppConstants {
   // App Information
   static const String appName = 'Pulse';
   static const String appVersion = '1.0.0';
-  
+  static const bool isWeb = identical(0, 0.0); // True for web, false for mobile
   // API Endpoints
   static const String loginEndpoint = '/auth/login';
   static const String registerEndpoint = '/auth/register';
