@@ -6,6 +6,7 @@ import '../../widgets/story/stories_bar.dart';
 import '../../widgets/common/custom_reload_animation.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
+import 'fullscreen_feed_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
