@@ -41,7 +41,10 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
         builder: (context, tweetProvider, child) {
           if (tweetProvider.isLoading && tweetProvider.tweets.isEmpty) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CustomReloadAnimation(
+                size: 60,
+                isAnimating: true,
+              ),
             );
           }
 
