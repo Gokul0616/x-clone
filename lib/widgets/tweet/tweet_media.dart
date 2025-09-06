@@ -23,7 +23,7 @@ class TweetMedia extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        child: _buildMediaGrid(),
+        child: _buildMediaGrid(context),
       ),
     );
   }
@@ -42,34 +42,36 @@ class TweetMedia extends StatelessWidget {
     }
   }
 
-  Widget _buildMediaGrid() {
+  Widget _buildMediaGrid(BuildContext context) {
     switch (imageUrls.length) {
       case 1:
-        return _buildSingleImage();
+        return _buildSingleImage(context);
       case 2:
-        return _buildTwoImages();
+        return _buildTwoImages(context);
       case 3:
-        return _buildThreeImages();
+        return _buildThreeImages(context);
       case 4:
-        return _buildFourImages();
+        return _buildFourImages(context);
       default:
-        return _buildSingleImage();
+        return _buildSingleImage(context);
     }
   }
 
-  Widget _buildSingleImage() {
+  Widget _buildSingleImage(BuildContext context) {
     return _buildImageContainer(
+      context,
       imageUrls[0],
       width: double.infinity,
       height: double.infinity,
     );
   }
 
-  Widget _buildTwoImages() {
+  Widget _buildTwoImages(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: _buildImageContainer(
+            context,
             imageUrls[0],
             height: double.infinity,
           ),
@@ -77,6 +79,7 @@ class TweetMedia extends StatelessWidget {
         const SizedBox(width: 2),
         Expanded(
           child: _buildImageContainer(
+            context,
             imageUrls[1],
             height: double.infinity,
           ),
@@ -85,11 +88,12 @@ class TweetMedia extends StatelessWidget {
     );
   }
 
-  Widget _buildThreeImages() {
+  Widget _buildThreeImages(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: _buildImageContainer(
+            context,
             imageUrls[0],
             height: double.infinity,
           ),
@@ -100,6 +104,7 @@ class TweetMedia extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildImageContainer(
+                  context,
                   imageUrls[1],
                   width: double.infinity,
                 ),
@@ -107,6 +112,7 @@ class TweetMedia extends StatelessWidget {
               const SizedBox(height: 2),
               Expanded(
                 child: _buildImageContainer(
+                  context,
                   imageUrls[2],
                   width: double.infinity,
                 ),
@@ -118,7 +124,7 @@ class TweetMedia extends StatelessWidget {
     );
   }
 
-  Widget _buildFourImages() {
+  Widget _buildFourImages(BuildContext context) {
     return Column(
       children: [
         Expanded(
@@ -126,6 +132,7 @@ class TweetMedia extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildImageContainer(
+                  context,
                   imageUrls[0],
                   height: double.infinity,
                 ),
@@ -133,6 +140,7 @@ class TweetMedia extends StatelessWidget {
               const SizedBox(width: 2),
               Expanded(
                 child: _buildImageContainer(
+                  context,
                   imageUrls[1],
                   height: double.infinity,
                 ),
@@ -146,6 +154,7 @@ class TweetMedia extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildImageContainer(
+                  context,
                   imageUrls[2],
                   height: double.infinity,
                 ),
@@ -153,6 +162,7 @@ class TweetMedia extends StatelessWidget {
               const SizedBox(width: 2),
               Expanded(
                 child: _buildImageContainer(
+                  context,
                   imageUrls[3],
                   height: double.infinity,
                 ),
@@ -165,6 +175,7 @@ class TweetMedia extends StatelessWidget {
   }
 
   Widget _buildImageContainer(
+    BuildContext context,
     String imageUrl, {
     double? width,
     double? height,
@@ -175,7 +186,7 @@ class TweetMedia extends StatelessWidget {
           PageRouteBuilder(
             pageBuilder: (context, animation, _) => FadeTransition(
               opacity: animation,
-              child: _buildFullscreenImageViewer(imageUrl),
+              child: _buildFullscreenImageViewer(context, imageUrl),
             ),
             transitionDuration: const Duration(milliseconds: 300),
             reverseTransitionDuration: const Duration(milliseconds: 300),
@@ -210,7 +221,7 @@ class TweetMedia extends StatelessWidget {
     );
   }
 
-  Widget _buildFullscreenImageViewer(String imageUrl) {
+  Widget _buildFullscreenImageViewer(BuildContext context, String imageUrl) {
     return Scaffold(
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,

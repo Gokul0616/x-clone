@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'dart:convert';
 
 class CustomReloadAnimation extends StatefulWidget {
   final double size;
@@ -114,8 +115,8 @@ class _CustomReloadAnimationState extends State<CustomReloadAnimation>
         width: widget.size,
         height: widget.size,
         child: widget.isAnimating
-            ? Lottie.fromString(
-                _lottieJson,
+            ? Lottie.memory(
+                utf8.encode(_lottieJson),
                 controller: _controller,
                 width: widget.size,
                 height: widget.size,

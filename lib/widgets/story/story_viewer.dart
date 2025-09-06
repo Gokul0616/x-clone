@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_player/video_player.dart';
 import '../../models/story_model.dart';
-import '../../models/user_model.dart';
 import '../../constants/app_colors.dart';
 import 'story_progress_indicator.dart';
 import 'story_reactions.dart';
@@ -37,8 +36,6 @@ class _StoryViewerState extends State<StoryViewer>
   int _currentIndex = 0;
   bool _isPaused = false;
   bool _showReactions = false;
-  String? _selectedReaction;
-  
   static const Duration _storyDuration = Duration(seconds: 5);
 
   @override
@@ -96,7 +93,7 @@ class _StoryViewerState extends State<StoryViewer>
         
         // Use video duration for progress
         final videoDuration = _videoController!.value.duration;
-        _progressController.duration = videoDuration.isZero 
+        _progressController.duration = videoDuration.inMilliseconds == 0 
             ? _storyDuration 
             : videoDuration;
         
@@ -189,9 +186,6 @@ class _StoryViewerState extends State<StoryViewer>
   }
 
   void _reactToStory(String emoji) {
-    setState(() {
-      _selectedReaction = emoji;
-    });
     
     final story = widget.stories[_currentIndex];
     widget.onReaction?.call(story.id, emoji);

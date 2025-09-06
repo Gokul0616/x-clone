@@ -52,7 +52,6 @@ class StoryRing extends StatelessWidget {
                         Colors.grey.shade400,
                       ],
                     ),
-              padding: const EdgeInsets.all(3),
             ),
             child: Container(
               decoration: BoxDecoration(
