@@ -580,8 +580,31 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   }
 
   Widget _buildLikesTab() {
-    // In a real app, this would show tweets liked by the user
-    return _buildEmptyState('No likes yet', 'Liked tweets will appear here.');
+    return Consumer<TweetProvider>(
+      builder: (context, tweetProvider, child) {
+        // Get liked tweets by this user
+        final likedTweets = tweetProvider.tweets
+            .where((tweet) => tweet.likedBy.contains(widget.userId))
+            .toList();
+
+        if (likedTweets.isEmpty) {
+          return _buildEmptyState('No likes yet', 'Liked tweets will appear here.');
+        }
+
+        return ListView.builder(
+          itemCount: likedTweets.length,
+          itemBuilder: (context, index) {
+            final tweet = likedTweets[index];
+            return Column(
+              children: [
+                TweetCard(tweet: tweet),
+                if (index < likedTweets.length - 1) const Divider(height: 1),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   Widget _buildEmptyState(String title, String subtitle) {
