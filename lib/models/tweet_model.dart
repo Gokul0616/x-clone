@@ -1,4 +1,7 @@
+
+import 'user_model.dart';
 class TweetModel {
+
   final String id;
   final String userId;
   final String content;
@@ -213,4 +216,3 @@ class TweetModel {
 }
 
 // Import for UserModel
-import 'user_model.dart';

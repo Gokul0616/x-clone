@@ -1,3 +1,4 @@
+
 name: pulse
 description: "A Twitter clone built with Flutter - Pulse social media app"
 publish_to: 'none'
@@ -33,7 +34,7 @@ flutter:
     - assets/images/
     - assets/icons/
   fonts:
-    - family: TwitterChirp
+    - family: Chirp
       fonts:
         - asset: assets/fonts/TwitterChirp-Regular.ttf
         - asset: assets/fonts/TwitterChirp-Bold.ttf

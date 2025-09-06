@@ -9,7 +9,7 @@ import '../../constants/app_constants.dart';
 import 'conversation_screen.dart';
 
 class MessagesScreen extends StatefulWidget {
-  const MessagesScreen({super.key};
+  const MessagesScreen({super.key});
 
   @override
   State<MessagesScreen> createState() => _MessagesScreenState();
