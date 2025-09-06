@@ -261,11 +261,10 @@ class UserProvider with ChangeNotifier {
 
   // Get unread messages count
   int get unreadMessagesCount {
-    const currentUserId = 'user_1'; // This should come from AuthProvider
-    int count = 0;
+    var count = 0;
     
     for (final conversation in _conversations) {
-      count += conversation.unreadCounts[currentUserId] ?? 0;
+      count += conversation.unreadCount;
     }
     
     return count;

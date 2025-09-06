@@ -125,7 +125,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
           return _buildEmptyState(
             'No bookmarked products yet',
             'Products you bookmark will appear here.',
-            Icons.shopping_bag_outline,
+            Icons.shopping_bag_outlined,
           );
         }
 

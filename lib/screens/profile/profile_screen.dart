@@ -43,7 +43,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Future<void> _loadUser() async {
     final userProvider = context.read<UserProvider>();
     final user = await userProvider.getUserById(widget.userId);
-    
     setState(() {
       _user = user;
       _isLoading = false;
@@ -86,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              expandedHeight: 320,
+              expandedHeight: 410,
               pinned: true,
               stretch: true,
               leading: IconButton(
@@ -94,10 +93,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                 onPressed: () => Navigator.pop(context),
               ),
               flexibleSpace: FlexibleSpaceBar(
-                stretchModes: const [
-                  StretchMode.zoomBackground,
-                  StretchMode.blurBackground,
-                ],
+                stretchModes: const [StretchMode.zoomBackground],
                 background: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -109,6 +105,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                             ? DecorationImage(
                                 image: NetworkImage(_user!.bannerImageUrl!),
                                 fit: BoxFit.cover,
+                                onError: (exception, stackTrace) {
+                                  // Handle image loading error
+                                  print('Error loading banner image: $exception');
+                                },
                               )
                             : null,
                         gradient: _user!.bannerImageUrl == null
@@ -123,7 +123,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                             : null,
                       ),
                     ),
-                    
                     // Profile content positioned overlay
                     Positioned(
                       top: 120,
@@ -196,8 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                 ),
                               ],
                             ),
-                            
-                            // User info (with proper spacing and no expansion)
+                            // User info
                             Transform.translate(
                               offset: const Offset(0, -30),
                               child: Column(
@@ -226,9 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                       ],
                                     ],
                                   ),
-                                  
                                   const SizedBox(height: 4),
-                                  
                                   // Username
                                   Text(
                                     '@${_user!.username}',
@@ -238,9 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                           : AppColors.textSecondaryLight,
                                     ),
                                   ),
-                                  
                                   const SizedBox(height: 8),
-                                  
                                   // Bio
                                   if (_user!.bio != null && _user!.bio!.isNotEmpty) ...[
                                     Text(
@@ -251,7 +245,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                     ),
                                     const SizedBox(height: 8),
                                   ],
-                                  
                                   // Location and website
                                   Wrap(
                                     spacing: 16,
@@ -327,9 +320,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                       ),
                                     ],
                                   ),
-                                  
                                   const SizedBox(height: 12),
-                                  
                                   // Follow stats
                                   Row(
                                     children: [
@@ -400,6 +391,31 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                   ],
                 ),
               ),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(48),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: theme.brightness == Brightness.dark
+                            ? AppColors.borderDark
+                            : AppColors.borderLight,
+                      ),
+                    ),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    isScrollable: false, // Changed to false for equal spacing
+                    labelPadding: const EdgeInsets.symmetric(horizontal: 0), // Remove extra padding
+                    tabs: const [
+                      Tab(text: AppStrings.tweets),
+                      Tab(text: AppStrings.tweetsAndReplies),
+                      Tab(text: AppStrings.media),
+                      Tab(text: AppStrings.likes),
+                    ],
+                  ),
+                ),
+              ),
               actions: [
                 PopupMenuButton(
                   itemBuilder: (context) => [
@@ -457,43 +473,13 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
             ),
           ];
         },
-        body: Column(
+        body: TabBarView(
+          controller: _tabController,
           children: [
-            // Tab bar
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: theme.brightness == Brightness.dark
-                        ? AppColors.borderDark
-                        : AppColors.borderLight,
-                  ),
-                ),
-              ),
-              child: TabBar(
-                controller: _tabController,
-                isScrollable: true,
-                tabs: const [
-                  Tab(text: AppStrings.tweets),
-                  Tab(text: AppStrings.tweetsAndReplies),
-                  Tab(text: AppStrings.media),
-                  Tab(text: AppStrings.likes),
-                ],
-              ),
-            ),
-            
-            // Tab content
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildTweetsTab(),
-                  _buildTweetsAndRepliesTab(),
-                  _buildMediaTab(),
-                  _buildLikesTab(),
-                ],
-              ),
-            ),
+            _buildTweetsTab(),
+            _buildTweetsAndRepliesTab(),
+            _buildMediaTab(),
+            _buildLikesTab(),
           ],
         ),
       ),
@@ -582,7 +568,6 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Widget _buildLikesTab() {
     return Consumer<TweetProvider>(
       builder: (context, tweetProvider, child) {
-        // Get liked tweets by this user
         final likedTweets = tweetProvider.tweets
             .where((tweet) => tweet.likedBy.contains(widget.userId))
             .toList();
@@ -609,7 +594,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
 
   Widget _buildEmptyState(String title, String subtitle) {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

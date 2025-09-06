@@ -279,35 +279,31 @@ class MockApiService {
       MessageModel(
         id: 'message_1',
         senderId: 'user_2',
-        receiverId: 'user_1',
         conversationId: 'conv_1',
         content: 'Hey! Loved your latest Flutter app. Any tips for beginners?',
         createdAt: DateTime.now().subtract(const Duration(hours: 1)),
         isRead: false,
         sender: _mockUsers[1],
-        receiver: _mockUsers[0],
       ),
       MessageModel(
         id: 'message_2',
         senderId: 'user_1',
-        receiverId: 'user_2',
         conversationId: 'conv_1',
         content: 'Thanks! I\'d recommend starting with the official documentation and building small projects first.',
         createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
         isRead: true,
         sender: _mockUsers[0],
-        receiver: _mockUsers[1],
       ),
     ];
 
     _mockConversations = [
       ConversationModel(
         id: 'conv_1',
-        participantIds: ['user_1', 'user_2'],
+        participants: ['user_1', 'user_2'],
         lastMessage: _mockMessages[1],
-        updatedAt: DateTime.now().subtract(const Duration(minutes: 30)),
-        unreadCounts: {'user_1': 0, 'user_2': 1},
-        participants: [_mockUsers[0], _mockUsers[1]],
+        lastActivity: DateTime.now().subtract(const Duration(minutes: 30)),
+        participantUsers: [_mockUsers[0], _mockUsers[1]],
+        unreadCount: 1,
       ),
     ];
 
@@ -584,12 +580,10 @@ class MockApiService {
     final newMessage = MessageModel(
       id: 'message_${_mockMessages.length + 1}',
       senderId: currentUserId,
-      receiverId: receiverId,
       conversationId: 'conv_1', // Simplified for mock
       content: content,
       createdAt: DateTime.now(),
       sender: _mockUsers.firstWhere((user) => user.id == currentUserId),
-      receiver: _mockUsers.firstWhere((user) => user.id == receiverId),
     );
     
     _mockMessages.add(newMessage);

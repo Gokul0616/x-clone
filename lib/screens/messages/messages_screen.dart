@@ -185,11 +185,11 @@ class ConversationTile extends StatelessWidget {
     const currentUserId = 'user_1'; // This should come from AuthProvider
     
     // Get the other participant (not current user)
-    final otherParticipant = conversation.participants
+    final otherParticipant = conversation.participantUsers
         .where((user) => user.id != currentUserId)
         .firstOrNull;
         
-    final unreadCount = conversation.unreadCounts[currentUserId] ?? 0;
+    final unreadCount = conversation.unreadCount;
     final hasUnread = unreadCount > 0;
 
     return InkWell(
@@ -290,7 +290,7 @@ class ConversationTile extends StatelessWidget {
               children: [
                 // Timestamp
                 Text(
-                  timeago.format(conversation.updatedAt, allowFromNow: true),
+                  timeago.format(conversation.lastActivity, allowFromNow: true),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: hasUnread
                         ? AppColors.primaryBlue

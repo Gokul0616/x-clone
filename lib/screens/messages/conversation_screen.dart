@@ -69,7 +69,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     const currentUserId = 'user_1'; // This should come from AuthProvider
     
     // Get the other participant
-    final otherParticipant = widget.conversation.participants
+    final otherParticipant = widget.conversation.participantUsers
         .where((user) => user.id != currentUserId)
         .firstOrNull;
         
@@ -101,7 +101,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     const currentUserId = 'user_1'; // This should come from AuthProvider
     
     // Get the other participant
-    final otherParticipant = widget.conversation.participants
+    final otherParticipant = widget.conversation.participantUsers
         .where((user) => user.id != currentUserId)
         .firstOrNull;
 
