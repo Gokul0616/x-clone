@@ -8,6 +8,7 @@ class TweetList extends StatefulWidget {
   final VoidCallback? onLoadMore;
   final bool hasMoreTweets;
   final bool isLoadingMore;
+  final bool showActionButtons;
 
   const TweetList({
     super.key,
@@ -15,6 +16,7 @@ class TweetList extends StatefulWidget {
     this.onLoadMore,
     this.hasMoreTweets = false,
     this.isLoadingMore = false,
+    this.showActionButtons = true,
   });
 
   @override
