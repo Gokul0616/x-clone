@@ -127,7 +127,24 @@ mongoose.connect(process.env.MONGO_URL, {
 })
 .catch((error) => {
   console.error('MongoDB connection error:', error);
-  process.exit(1);
+  console.log('⚠️  Continuing without database connection - API will use fallback mode');
+});
+
+// Handle MongoDB connection events
+mongoose.connection.on('error', (error) => {
+  console.error('MongoDB connection error:', error);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.log('MongoDB disconnected');
+});
+
+// Graceful shutdown handler
+process.on('SIGINT', () => {
+  mongoose.connection.close(() => {
+    console.log('MongoDB connection closed through app termination');
+    process.exit(0);
+  });
 });
 
 // Socket.IO connection handling
