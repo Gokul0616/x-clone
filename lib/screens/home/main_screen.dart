@@ -11,6 +11,7 @@ import '../search/search_screen.dart';
 import '../notifications/notifications_screen.dart';
 import '../messages/messages_screen.dart';
 import '../communities/communities_screen.dart';
+import '../marketplace/marketplace_screen.dart';
 import '../profile/profile_screen.dart';
 import '../settings/settings_screen.dart';
 import '../../widgets/common/custom_drawer.dart';
@@ -30,6 +31,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const SearchScreen(),
+    const MarketplaceScreen(), // Added marketplace
     const NotificationsScreen(),
     const MessagesScreen(),
   ];
@@ -37,6 +39,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<String> _appBarTitles = [
     AppStrings.home,
     AppStrings.search,
+    'Marketplace', // Added marketplace title
     AppStrings.notifications,
     AppStrings.messages,
   ];
@@ -68,7 +71,18 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(_appBarTitles[_selectedIndex]),
+        title: Row(
+          children: [
+            // App logo
+            Image.asset(
+              'assets/images/logo.png',
+              height: 28,
+              width: 28,
+            ),
+            const SizedBox(width: 8),
+            Text(_appBarTitles[_selectedIndex]),
+          ],
+        ),
         leading: IconButton(
           icon: CircleAvatar(
             radius: 16,
@@ -123,6 +137,11 @@ class _MainScreenState extends State<MainScreen> {
             icon: Icon(Icons.search_outlined),
             activeIcon: Icon(Icons.search),
             label: AppStrings.search,
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.storefront_outlined),
+            activeIcon: Icon(Icons.storefront),
+            label: 'Marketplace',
           ),
           BottomNavigationBarItem(
             icon: Stack(
