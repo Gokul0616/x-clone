@@ -32,11 +32,45 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
     await context.read<TweetProvider>().refreshTweets();
   }
 
+  void _openFullscreenFeed() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const FullscreenFeedScreen(),
+        fullscreenDialog: true,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          AppStrings.appName,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.fullscreen),
+            onPressed: _openFullscreenFeed,
+            tooltip: 'Fullscreen Feed',
+          ),
+          IconButton(
+            icon: CustomReloadAnimation(
+              size: 24,
+              isAnimating: context.watch<TweetProvider>().isLoading,
+              onTap: _handleRefresh,
+            ),
+            onPressed: _handleRefresh,
+            tooltip: 'Refresh',
+          ),
+        ],
+      ),
       body: Consumer<TweetProvider>(
         builder: (context, tweetProvider, child) {
           if (tweetProvider.isLoading && tweetProvider.tweets.isEmpty) {
