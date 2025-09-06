@@ -2,58 +2,50 @@ import 'user_model.dart';
 
 class MessageModel {
   final String id;
+  final String conversationId;
   final String senderId;
-  final String receiverId;
-  final String? conversationId;
   final String content;
-  final String type; // text, image, gif
-  final String? imageUrl;
+  final List<String> imageUrls;
+  final List<String> videoUrls;
   final DateTime createdAt;
   final bool isRead;
-  final bool isDeleted;
-  final String? replyToMessageId;
+  final String messageType; // text, image, video, audio, file
   final UserModel? sender;
-  final UserModel? receiver;
+  final String? replyToMessageId;
   final MessageModel? replyToMessage;
   
   MessageModel({
     required this.id,
+    required this.conversationId,
     required this.senderId,
-    required this.receiverId,
-    this.conversationId,
     required this.content,
-    this.type = 'text',
-    this.imageUrl,
+    this.imageUrls = const [],
+    this.videoUrls = const [],
     required this.createdAt,
     this.isRead = false,
-    this.isDeleted = false,
-    this.replyToMessageId,
+    this.messageType = 'text',
     this.sender,
-    this.receiver,
+    this.replyToMessageId,
     this.replyToMessage,
   });
   
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
       id: json['id'] ?? '',
+      conversationId: json['conversationId'] ?? '',
       senderId: json['senderId'] ?? '',
-      receiverId: json['receiverId'] ?? '',
-      conversationId: json['conversationId'],
       content: json['content'] ?? '',
-      type: json['type'] ?? 'text',
-      imageUrl: json['imageUrl'],
+      imageUrls: List<String>.from(json['imageUrls'] ?? []),
+      videoUrls: List<String>.from(json['videoUrls'] ?? []),
       createdAt: json['createdAt'] != null 
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
       isRead: json['isRead'] ?? false,
-      isDeleted: json['isDeleted'] ?? false,
-      replyToMessageId: json['replyToMessageId'],
+      messageType: json['messageType'] ?? 'text',
       sender: json['sender'] != null 
           ? UserModel.fromJson(json['sender'])
           : null,
-      receiver: json['receiver'] != null 
-          ? UserModel.fromJson(json['receiver'])
-          : null,
+      replyToMessageId: json['replyToMessageId'],
       replyToMessage: json['replyToMessage'] != null 
           ? MessageModel.fromJson(json['replyToMessage'])
           : null,
@@ -63,52 +55,46 @@ class MessageModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'senderId': senderId,
-      'receiverId': receiverId,
       'conversationId': conversationId,
+      'senderId': senderId,
       'content': content,
-      'type': type,
-      'imageUrl': imageUrl,
+      'imageUrls': imageUrls,
+      'videoUrls': videoUrls,
       'createdAt': createdAt.toIso8601String(),
       'isRead': isRead,
-      'isDeleted': isDeleted,
-      'replyToMessageId': replyToMessageId,
+      'messageType': messageType,
       'sender': sender?.toJson(),
-      'receiver': receiver?.toJson(),
+      'replyToMessageId': replyToMessageId,
       'replyToMessage': replyToMessage?.toJson(),
     };
   }
   
   MessageModel copyWith({
     String? id,
-    String? senderId,
-    String? receiverId,
     String? conversationId,
+    String? senderId,
     String? content,
-    String? type,
-    String? imageUrl,
+    List<String>? imageUrls,
+    List<String>? videoUrls,
     DateTime? createdAt,
     bool? isRead,
-    bool? isDeleted,
-    String? replyToMessageId,
+    String? messageType,
     UserModel? sender,
-    UserModel? receiver,
+    String? replyToMessageId,
     MessageModel? replyToMessage,
   }) {
     return MessageModel(
       id: id ?? this.id,
-      senderId: senderId ?? this.senderId,
-      receiverId: receiverId ?? this.receiverId,
       conversationId: conversationId ?? this.conversationId,
+      senderId: senderId ?? this.senderId,
       content: content ?? this.content,
-      type: type ?? this.type,
-      imageUrl: imageUrl ?? this.imageUrl,
+      imageUrls: imageUrls ?? this.imageUrls,
+      videoUrls: videoUrls ?? this.videoUrls,
       createdAt: createdAt ?? this.createdAt,
       isRead: isRead ?? this.isRead,
-      isDeleted: isDeleted ?? this.isDeleted,
-      replyToMessageId: replyToMessageId ?? this.replyToMessageId,
+      messageType: messageType ?? this.messageType,
       sender: sender ?? this.sender,
-      receiver: receiver ?? this.receiver,
+      replyToMessageId: replyToMessageId ?? this.replyToMessageId,
       replyToMessage: replyToMessage ?? this.replyToMessage,
     );
   }
@@ -116,48 +102,64 @@ class MessageModel {
 
 class ConversationModel {
   final String id;
-  final List<String> participantIds;
+  final List<String> participants;
+  final String? lastMessageId;
   final MessageModel? lastMessage;
-  final DateTime updatedAt;
-  final Map<String, int> unreadCounts;
-  final List<UserModel> participants;
+  final DateTime lastActivity;
+  final List<UserModel> participantUsers;
+  final int unreadCount;
+  final bool isGroup;
+  final String? groupName;
+  final String? groupImageUrl;
   
   ConversationModel({
     required this.id,
-    required this.participantIds,
+    required this.participants,
+    this.lastMessageId,
     this.lastMessage,
-    required this.updatedAt,
-    this.unreadCounts = const {},
-    this.participants = const [],
+    required this.lastActivity,
+    this.participantUsers = const [],
+    this.unreadCount = 0,
+    this.isGroup = false,
+    this.groupName,
+    this.groupImageUrl,
   });
   
   factory ConversationModel.fromJson(Map<String, dynamic> json) {
     return ConversationModel(
       id: json['id'] ?? '',
-      participantIds: List<String>.from(json['participantIds'] ?? []),
+      participants: List<String>.from(json['participants'] ?? []),
+      lastMessageId: json['lastMessageId'],
       lastMessage: json['lastMessage'] != null 
           ? MessageModel.fromJson(json['lastMessage'])
           : null,
-      updatedAt: json['updatedAt'] != null 
-          ? DateTime.parse(json['updatedAt'])
+      lastActivity: json['lastActivity'] != null 
+          ? DateTime.parse(json['lastActivity'])
           : DateTime.now(),
-      unreadCounts: Map<String, int>.from(json['unreadCounts'] ?? {}),
-      participants: json['participants'] != null 
-          ? (json['participants'] as List)
+      participantUsers: json['participantUsers'] != null 
+          ? (json['participantUsers'] as List)
               .map((user) => UserModel.fromJson(user))
               .toList()
           : [],
+      unreadCount: json['unreadCount'] ?? 0,
+      isGroup: json['isGroup'] ?? false,
+      groupName: json['groupName'],
+      groupImageUrl: json['groupImageUrl'],
     );
   }
   
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'participantIds': participantIds,
+      'participants': participants,
+      'lastMessageId': lastMessageId,
       'lastMessage': lastMessage?.toJson(),
-      'updatedAt': updatedAt.toIso8601String(),
-      'unreadCounts': unreadCounts,
-      'participants': participants.map((user) => user.toJson()).toList(),
+      'lastActivity': lastActivity.toIso8601String(),
+      'participantUsers': participantUsers.map((user) => user.toJson()).toList(),
+      'unreadCount': unreadCount,
+      'isGroup': isGroup,
+      'groupName': groupName,
+      'groupImageUrl': groupImageUrl,
     };
   }
 }
