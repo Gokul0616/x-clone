@@ -7,6 +7,7 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../screens/communities/communities_screen.dart';
+import '../../screens/bookmarks/bookmarks_screen.dart';
 import '../../screens/settings/settings_screen.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -41,22 +42,34 @@ class CustomDrawer extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Profile Image
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage: user?.profileImageUrl != null
-                        ? NetworkImage(user!.profileImageUrl!)
-                        : null,
-                    child: user?.profileImageUrl == null
-                        ? Text(
-                            user?.displayName.substring(0, 1).toUpperCase() ?? 'U',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          )
-                        : null,
+                  // App Logo and Profile Image Row
+                  Row(
+                    children: [
+                      // App Logo
+                      Image.asset(
+                        'assets/images/logo.png',
+                        height: 24,
+                        width: 24,
+                      ),
+                      const Spacer(),
+                      // Profile Image
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: user?.profileImageUrl != null
+                            ? NetworkImage(user!.profileImageUrl!)
+                            : null,
+                        child: user?.profileImageUrl == null
+                            ? Text(
+                                user?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : null,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 12),
                   
@@ -122,8 +135,11 @@ class CustomDrawer extends StatelessWidget {
                   title: AppStrings.bookmarks,
                   onTap: () {
                     Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Bookmarks feature coming soon!')),
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BookmarksScreen(),
+                      ),
                     );
                   },
                 ),
