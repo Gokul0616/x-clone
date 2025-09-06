@@ -86,14 +86,24 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              expandedHeight: 280,
+              expandedHeight: 320,
               pinned: true,
+              stretch: true,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              ),
               flexibleSpace: FlexibleSpaceBar(
-                background: Column(
+                stretchModes: const [
+                  StretchMode.zoomBackground,
+                  StretchMode.blurBackground,
+                ],
+                background: Stack(
+                  fit: StackFit.expand,
                   children: [
                     // Banner
                     Container(
-                      height: 150,
+                      height: 200,
                       decoration: BoxDecoration(
                         image: _user!.bannerImageUrl != null
                             ? DecorationImage(
@@ -103,6 +113,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                             : null,
                         gradient: _user!.bannerImageUrl == null
                             ? LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
                                 colors: [
                                   AppColors.primaryBlue,
                                   AppColors.primaryBlueDark,
@@ -112,23 +124,35 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                       ),
                     ),
                     
-                    // Profile info
-                    Expanded(
-                      child: Padding(
+                    // Profile content positioned overlay
+                    Positioned(
+                      top: 120,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
                         padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                        decoration: BoxDecoration(
+                          color: theme.scaffoldBackgroundColor,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                        ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Profile picture and action button
+                            // Profile picture and action button row
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Transform.translate(
-                                  offset: const Offset(0, -40),
+                                  offset: const Offset(0, -50),
                                   child: CircleAvatar(
-                                    radius: 40,
+                                    radius: 42,
                                     backgroundColor: theme.scaffoldBackgroundColor,
                                     child: CircleAvatar(
-                                      radius: 36,
+                                      radius: 38,
                                       backgroundImage: _user!.profileImageUrl != null
                                           ? NetworkImage(_user!.profileImageUrl!)
                                           : null,
@@ -145,36 +169,40 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                   ),
                                 ),
                                 const Spacer(),
-                                if (isOwnProfile)
-                                  OutlinedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => EditProfileScreen(user: _user!),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: isOwnProfile
+                                      ? OutlinedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => EditProfileScreen(user: _user!),
+                                              ),
+                                            );
+                                          },
+                                          child: Text(AppStrings.editProfile),
+                                        )
+                                      : OutlinedButton(
+                                          onPressed: () {
+                                            userProvider.followUser(widget.userId);
+                                          },
+                                          style: OutlinedButton.styleFrom(
+                                            backgroundColor: isFollowing ? AppColors.primaryBlue : null,
+                                            foregroundColor: isFollowing ? Colors.white : AppColors.primaryBlue,
+                                          ),
+                                          child: Text(isFollowing ? AppStrings.unfollow : AppStrings.follow),
                                         ),
-                                      );
-                                    },
-                                    child: Text(AppStrings.editProfile),
-                                  )
-                                else
-                                  OutlinedButton(
-                                    onPressed: () {
-                                      userProvider.followUser(widget.userId);
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      backgroundColor: isFollowing ? AppColors.primaryBlue : null,
-                                      foregroundColor: isFollowing ? Colors.white : AppColors.primaryBlue,
-                                    ),
-                                    child: Text(isFollowing ? AppStrings.unfollow : AppStrings.follow),
-                                  ),
+                                ),
                               ],
                             ),
                             
-                            // User info
-                            Expanded(
+                            // User info (with proper spacing and no expansion)
+                            Transform.translate(
+                              offset: const Offset(0, -30),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   // Name and verification
                                   Row(
@@ -199,6 +227,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                     ],
                                   ),
                                   
+                                  const SizedBox(height: 4),
+                                  
                                   // Username
                                   Text(
                                     '@${_user!.username}',
@@ -212,17 +242,20 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                   const SizedBox(height: 8),
                                   
                                   // Bio
-                                  if (_user!.bio != null && _user!.bio!.isNotEmpty)
+                                  if (_user!.bio != null && _user!.bio!.isNotEmpty) ...[
                                     Text(
                                       _user!.bio!,
                                       style: theme.textTheme.bodyMedium,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  
-                                  const SizedBox(height: 8),
+                                    const SizedBox(height: 8),
+                                  ],
                                   
                                   // Location and website
                                   Wrap(
                                     spacing: 16,
+                                    runSpacing: 4,
                                     children: [
                                       if (_user!.location != null && _user!.location!.isNotEmpty)
                                         Row(
@@ -236,12 +269,15 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                                   : AppColors.textSecondaryLight,
                                             ),
                                             const SizedBox(width: 4),
-                                            Text(
-                                              _user!.location!,
-                                              style: theme.textTheme.bodySmall?.copyWith(
-                                                color: theme.brightness == Brightness.dark
-                                                    ? AppColors.textSecondaryDark
-                                                    : AppColors.textSecondaryLight,
+                                            Flexible(
+                                              child: Text(
+                                                _user!.location!,
+                                                style: theme.textTheme.bodySmall?.copyWith(
+                                                  color: theme.brightness == Brightness.dark
+                                                      ? AppColors.textSecondaryDark
+                                                      : AppColors.textSecondaryLight,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                           ],
@@ -256,37 +292,38 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                               color: AppColors.primaryBlue,
                                             ),
                                             const SizedBox(width: 4),
-                                            Text(
-                                              _user!.website!,
-                                              style: theme.textTheme.bodySmall?.copyWith(
-                                                color: AppColors.primaryBlue,
+                                            Flexible(
+                                              child: Text(
+                                                _user!.website!,
+                                                style: theme.textTheme.bodySmall?.copyWith(
+                                                  color: AppColors.primaryBlue,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                           ],
                                         ),
-                                    ],
-                                  ),
-                                  
-                                  const SizedBox(height: 8),
-                                  
-                                  // Join date
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today_outlined,
-                                        size: 16,
-                                        color: theme.brightness == Brightness.dark
-                                            ? AppColors.textSecondaryDark
-                                            : AppColors.textSecondaryLight,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        '${AppStrings.joined} ${_user!.joinedDate.month}/${_user!.joinedDate.year}',
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: theme.brightness == Brightness.dark
-                                              ? AppColors.textSecondaryDark
-                                              : AppColors.textSecondaryLight,
-                                        ),
+                                      // Join date
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.calendar_today_outlined,
+                                            size: 16,
+                                            color: theme.brightness == Brightness.dark
+                                                ? AppColors.textSecondaryDark
+                                                : AppColors.textSecondaryLight,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '${AppStrings.joined} ${_user!.joinedDate.month}/${_user!.joinedDate.year}',
+                                            style: theme.textTheme.bodySmall?.copyWith(
+                                              color: theme.brightness == Brightness.dark
+                                                  ? AppColors.textSecondaryDark
+                                                  : AppColors.textSecondaryLight,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
