@@ -1,6 +1,6 @@
 class AppConstants {
   // API Configuration
-  static const bool useMockApi = true; // Set to false for production API
+  static const bool useMockApi = false; // Set to false for production API
   static const String baseUrl = useMockApi ? 'mock_api' : 'http://localhost:3000';
   static const String apiVersion = '/api/v1';
   
