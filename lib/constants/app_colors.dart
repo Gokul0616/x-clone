@@ -45,4 +45,26 @@ class AppColors {
   static const Color verified = Color(0xFF1D9BF0);
   static const Color premium = Color(0xFFFFD700);
   static const Color transparent = Colors.transparent;
+
+  // Story Colors
+  static const Color storyRing1 = Color(0xFFFF6B6B);
+  static const Color storyRing2 = Color(0xFFFFE66D);
+  static const Color storyRing3 = Color(0xFF4ECDC4);
+  static const Color storyRing4 = Color(0xFF45B7D1);
+  static const Color storyRing5 = Color(0xFF96CEB4);
+  static const Color storyRing6 = Color(0xFFFDD835);
+
+  // Enhanced Theme Colors
+  static const Color accentEmerald = Color(0xFF10B981);
+  static const Color accentViolet = Color(0xFF8B5CF6);
+  static const Color accentRose = Color(0xFFF43F5E);
+  static const Color accentAmber = Color(0xFFF59E0B);
+  static const Color accentCyan = Color(0xFF06B6D4);
+  static const Color accentPink = Color(0xFFEC4899);
+
+  // Professional UI Colors
+  static const Color cardElevated = Color(0xFFFBFCFD);
+  static const Color cardElevatedDark = Color(0xFF1A1D21);
+  static const Color subtleBorder = Color(0xFFE5E7EB);
+  static const Color subtleBorderDark = Color(0xFF374151);
 }
