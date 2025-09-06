@@ -69,7 +69,7 @@ class _TweetListState extends State<TweetList> {
         
         return Column(
           children: [
-            TweetCard(tweet: tweet),
+            TweetCard(tweet: tweet, showActionButtons: widget.showActionButtons),
             if (index < widget.tweets.length - 1)
               Divider(
                 height: 1,
