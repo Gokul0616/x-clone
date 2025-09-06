@@ -22,6 +22,28 @@ class AppThemes {
     ],
   );
 
+  static const LinearGradient storyGradient = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [
+      Color(0xFFFF6B6B),
+      Color(0xFFFFE66D),
+      Color(0xFF4ECDC4),
+      Color(0xFF45B7D1),
+      Color(0xFF96CEB4),
+      Color(0xFFFDD835),
+    ],
+  );
+
+  static const LinearGradient premiumGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFFFFD700),
+      Color(0xFFFFB347),
+    ],
+  );
+
   // Professional card shadows
   static List<BoxShadow> get cardShadow => [
     BoxShadow(
@@ -46,6 +68,31 @@ class AppThemes {
       spreadRadius: 0,
     ),
   ];
+
+  static List<BoxShadow> get elevatedShadow => [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.15),
+      offset: const Offset(0, 8),
+      blurRadius: 32,
+      spreadRadius: 0,
+    ),
+    BoxShadow(
+      color: Colors.black.withOpacity(0.1),
+      offset: const Offset(0, 4),
+      blurRadius: 16,
+      spreadRadius: 0,
+    ),
+  ];
+
+  // Modern color schemes
+  static const Map<String, Color> accentColors = {
+    'emerald': Color(0xFF10B981),
+    'violet': Color(0xFF8B5CF6),
+    'rose': Color(0xFFF43F5E),
+    'amber': Color(0xFFF59E0B),
+    'cyan': Color(0xFF06B6D4),
+    'pink': Color(0xFFEC4899),
+  };
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
