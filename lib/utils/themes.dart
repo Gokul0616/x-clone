@@ -3,6 +3,49 @@ import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
 
 class AppThemes {
+  // Professional gradient themes
+  static const LinearGradient primaryGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF1DA1F2),
+      Color(0xFF0D7DD8),
+    ],
+  );
+
+  static const LinearGradient darkGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      Color(0xFF000000),
+      Color(0xFF1C1F23),
+    ],
+  );
+
+  // Professional card shadows
+  static List<BoxShadow> get cardShadow => [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.08),
+      offset: const Offset(0, 2),
+      blurRadius: 8,
+      spreadRadius: 0,
+    ),
+    BoxShadow(
+      color: Colors.black.withOpacity(0.04),
+      offset: const Offset(0, 1),
+      blurRadius: 3,
+      spreadRadius: 0,
+    ),
+  ];
+
+  static List<BoxShadow> get darkCardShadow => [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.3),
+      offset: const Offset(0, 4),
+      blurRadius: 12,
+      spreadRadius: 0,
+    ),
+  ];
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
