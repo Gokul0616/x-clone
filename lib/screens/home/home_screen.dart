@@ -107,11 +107,30 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
 
           return RefreshIndicator(
             onRefresh: _handleRefresh,
-            child: TweetList(
-              tweets: tweetProvider.tweets,
-              onLoadMore: tweetProvider.loadMoreTweets,
-              hasMoreTweets: tweetProvider.hasMoreTweets,
-              isLoadingMore: tweetProvider.isLoadingMore,
+            child: CustomScrollView(
+              slivers: [
+                // Stories section
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      const StoriesBar(),
+                      Container(
+                        height: 8,
+                        color: Theme.of(context).dividerColor.withOpacity(0.3),
+                      ),
+                    ],
+                  ),
+                ),
+                // Tweets section
+                SliverToBoxAdapter(
+                  child: TweetList(
+                    tweets: tweetProvider.tweets,
+                    onLoadMore: tweetProvider.loadMoreTweets,
+                    hasMoreTweets: tweetProvider.hasMoreTweets,
+                    isLoadingMore: tweetProvider.isLoadingMore,
+                  ),
+                ),
+              ],
             ),
           );
         },
