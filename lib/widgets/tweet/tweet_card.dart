@@ -114,13 +114,14 @@ class TweetCard extends StatelessWidget {
                       const SizedBox(height: 12),
                       
                       // Tweet actions
-                      TweetActions(
-                        tweet: tweet,
-                        onReply: () => _handleReply(context),
-                        onRetweet: () => _handleRetweet(context),
-                        onLike: () => _handleLike(context),
-                        onShare: () => _handleShare(context),
-                      ),
+                      if (showActionButtons)
+                        TweetActions(
+                          tweet: tweet,
+                          onReply: () => _handleReply(context),
+                          onRetweet: () => _handleRetweet(context),
+                          onLike: () => _handleLike(context),
+                          onShare: () => _handleShare(context),
+                        ),
                     ],
                   ),
                 ),
