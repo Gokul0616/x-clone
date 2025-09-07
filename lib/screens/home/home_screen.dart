@@ -56,14 +56,10 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.fullscreen),
-            onPressed: _openFullscreenFeed,
-            tooltip: 'Fullscreen Feed',
-          ),
+        
           IconButton(
             icon: CustomReloadAnimation(
-              size: 24,
+              size: 30,
               isAnimating: context.watch<TweetProvider>().isLoading,
               onTap: _handleRefresh,
             ),

@@ -37,18 +37,18 @@ console.log(req.body);
       });
     }
 
-    // Create new user
+    // Create new user with generated id
     const user = new User({
       email,
       password,
       username,
-      displayName
+      displayName,
     });
 
     await user.save();
 
     // Generate token
-    const token = generateToken(user.id);
+    const token = generateToken(user?.id);
 
     // Return user data without password
     const userResponse = user.toObject();
