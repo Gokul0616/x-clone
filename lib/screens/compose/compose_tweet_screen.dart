@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,7 +25,7 @@ class ComposeTweetScreen extends StatefulWidget {
 
 class _ComposeTweetScreenState extends State<ComposeTweetScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<String> _selectedImages = [];
+  final List<XFile> _selectedImages = [];
   bool _isPosting = false;
 
   @override
@@ -74,7 +75,7 @@ class _ComposeTweetScreenState extends State<ComposeTweetScreen> {
     
     final success = await tweetProvider.createTweet(
       _controller.text.trim(),
-      imageUrls: _selectedImages,
+      images: _selectedImages,
       replyToTweetId: widget.replyToTweet?.id,
       quotedTweetId: widget.quoteTweet?.id,
     );
@@ -120,7 +121,7 @@ class _ComposeTweetScreenState extends State<ComposeTweetScreen> {
     
     if (image != null) {
       setState(() {
-        _selectedImages.add(image.path);
+        _selectedImages.add(image);
       });
     }
   }
@@ -309,7 +310,7 @@ class _ComposeTweetScreenState extends State<ComposeTweetScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
-                image: AssetImage(_selectedImages[index]), // In real app, use proper image loading
+                image: FileImage(File(_selectedImages[index].path)),
                 fit: BoxFit.cover,
               ),
             ),

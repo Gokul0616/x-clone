@@ -2,19 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../providers/user_provider.dart';
-import '../../providers/auth_provider.dart';
-import '../../models/message_model.dart';
+import '../../models/message_model.dart' as messages;
 import '../../constants/app_strings.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
 
 class ConversationScreen extends StatefulWidget {
-  final ConversationModel conversation;
+  final messages.ConversationModel conversation;
 
-  const ConversationScreen({
-    super.key,
-    required this.conversation,
-  });
+  const ConversationScreen({super.key, required this.conversation});
 
   @override
   State<ConversationScreen> createState() => _ConversationScreenState();
@@ -23,7 +19,7 @@ class ConversationScreen extends StatefulWidget {
 class _ConversationScreenState extends State<ConversationScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  List<MessageModel> _messages = [];
+  List<messages.MessageModel> _messages = [];
   bool _isLoading = true;
   bool _isSending = false;
 
@@ -42,13 +38,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Future<void> _loadMessages() async {
     final userProvider = context.read<UserProvider>();
-    final messages = await userProvider.getMessagesForConversation(widget.conversation.id);
-    
+    final messages = await userProvider.getMessagesForConversation(
+      widget.conversation.id,
+    );
+
     setState(() {
       _messages = messages;
       _isLoading = false;
     });
-    
+
     // Scroll to bottom
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -65,18 +63,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
       _isSending = true;
     });
 
-    final currentUser = context.read<AuthProvider>().currentUser;
     const currentUserId = 'user_1'; // This should come from AuthProvider
-    
+
     // Get the other participant
     final otherParticipant = widget.conversation.participantUsers
         .where((user) => user.id != currentUserId)
         .firstOrNull;
-        
+
     if (otherParticipant != null) {
       final userProvider = context.read<UserProvider>();
       final success = await userProvider.sendMessage(otherParticipant.id, text);
-      
+
       if (success) {
         _messageController.clear();
         await _loadMessages(); // Reload messages
@@ -99,7 +96,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     const currentUserId = 'user_1'; // This should come from AuthProvider
-    
+
     // Get the other participant
     final otherParticipant = widget.conversation.participantUsers
         .where((user) => user.id != currentUserId)
@@ -116,7 +113,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   : null,
               child: otherParticipant?.profileImageUrl == null
                   ? Text(
-                      otherParticipant?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                      otherParticipant?.displayName
+                              .substring(0, 1)
+                              .toUpperCase() ??
+                          'U',
                       style: const TextStyle(fontSize: 12),
                     )
                   : null,
@@ -164,26 +164,32 @@ class _ConversationScreenState extends State<ConversationScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _messages.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.all(AppConstants.paddingMedium),
-                        itemCount: _messages.length,
-                        itemBuilder: (context, index) {
-                          final message = _messages[index];
-                          final isFromCurrentUser = message.senderId == currentUserId;
-                          final showTimestamp = index == 0 ||
-                              _messages[index - 1].createdAt.difference(message.createdAt).inMinutes.abs() > 5;
-                          
-                          return MessageBubble(
-                            message: message,
-                            isFromCurrentUser: isFromCurrentUser,
-                            showTimestamp: showTimestamp,
-                          );
-                        },
-                      ),
+                ? _buildEmptyState()
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      final message = _messages[index];
+                      final isFromCurrentUser =
+                          message.senderId == currentUserId;
+                      final showTimestamp =
+                          index == 0 ||
+                          _messages[index - 1].createdAt
+                                  .difference(message.createdAt)
+                                  .inMinutes
+                                  .abs() >
+                              5;
+
+                      return MessageBubble(
+                        message: message,
+                        isFromCurrentUser: isFromCurrentUser,
+                        showTimestamp: showTimestamp,
+                      );
+                    },
+                  ),
           ),
-          
+
           // Message input
           _buildMessageInput(),
         ],
@@ -193,7 +199,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Widget _buildEmptyState() {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -206,10 +212,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 : AppColors.textSecondaryLight,
           ),
           const SizedBox(height: 16),
-          Text(
-            'Start a conversation',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text('Start a conversation', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             'Send a message to get started.',
@@ -226,7 +229,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Widget _buildMessageInput() {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(AppConstants.paddingMedium),
       decoration: BoxDecoration(
@@ -293,7 +296,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 }
 
 class MessageBubble extends StatelessWidget {
-  final MessageModel message;
+  final messages.MessageModel message;
   final bool isFromCurrentUser;
   final bool showTimestamp;
 
@@ -307,7 +310,7 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: isFromCurrentUser
           ? CrossAxisAlignment.end
@@ -327,7 +330,7 @@ class MessageBubble extends StatelessWidget {
               ),
             ),
           ),
-        
+
         Container(
           margin: const EdgeInsets.only(bottom: 4),
           child: Row(
@@ -344,14 +347,17 @@ class MessageBubble extends StatelessWidget {
                       : null,
                   child: message.sender?.profileImageUrl == null
                       ? Text(
-                          message.sender?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                          message.sender?.displayName
+                                  .substring(0, 1)
+                                  .toUpperCase() ??
+                              'U',
                           style: const TextStyle(fontSize: 10),
                         )
                       : null,
                 ),
                 const SizedBox(width: 8),
               ],
-              
+
               Flexible(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -362,8 +368,8 @@ class MessageBubble extends StatelessWidget {
                     color: isFromCurrentUser
                         ? AppColors.primaryBlue
                         : (theme.brightness == Brightness.dark
-                            ? AppColors.surfaceDark
-                            : AppColors.surfaceLight),
+                              ? AppColors.surfaceDark
+                              : AppColors.surfaceLight),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
@@ -372,13 +378,13 @@ class MessageBubble extends StatelessWidget {
                       color: isFromCurrentUser
                           ? Colors.white
                           : (theme.brightness == Brightness.dark
-                              ? AppColors.textPrimaryDark
-                              : AppColors.textPrimaryLight),
+                                ? AppColors.textPrimaryDark
+                                : AppColors.textPrimaryLight),
                     ),
                   ),
                 ),
               ),
-              
+
               if (isFromCurrentUser) ...[
                 const SizedBox(width: 8),
                 CircleAvatar(
@@ -388,7 +394,10 @@ class MessageBubble extends StatelessWidget {
                       : null,
                   child: message.sender?.profileImageUrl == null
                       ? Text(
-                          message.sender?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                          message.sender?.displayName
+                                  .substring(0, 1)
+                                  .toUpperCase() ??
+                              'U',
                           style: const TextStyle(fontSize: 10),
                         )
                       : null,

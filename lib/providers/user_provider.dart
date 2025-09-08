@@ -1,14 +1,17 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import '../models/user_model.dart';
 import '../models/community_model.dart';
-import '../models/message_model.dart';
+import '../models/message_model.dart' as messages;
 import '../models/notification_model.dart';
 import '../services/api_service.dart';
+import 'auth_provider.dart';
 
 class UserProvider with ChangeNotifier {
   final List<UserModel> _users = [];
   List<CommunityModel> _communities = [];
-  List<ConversationModel> _conversations = [];
+  List<messages.ConversationModel> _conversations = [];
   List<NotificationModel> _notifications = [];
 
   bool _isLoading = false;
@@ -16,7 +19,7 @@ class UserProvider with ChangeNotifier {
 
   List<UserModel> get users => _users;
   List<CommunityModel> get communities => _communities;
-  List<ConversationModel> get conversations => _conversations;
+  List<messages.ConversationModel> get conversations => _conversations;
   List<NotificationModel> get notifications => _notifications;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -30,12 +33,14 @@ class UserProvider with ChangeNotifier {
       final existingUser = _users
           .where((user) => user.id == userId)
           .firstOrNull;
+      print(existingUser ?? 'User not found from user provider1');
       if (existingUser != null) {
         return existingUser;
       }
 
       // Fetch from API
       final user = await _apiService.getUserById(userId);
+      print(user ?? 'User not found from user provider2');
       if (user != null) {
         _users.add(user);
         notifyListeners();
@@ -64,7 +69,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> followUser(String userId) async {
+  Future<bool> followUser(String userId, BuildContext context) async {
     try {
       final success = await _apiService.followUser(userId);
 
@@ -73,13 +78,14 @@ class UserProvider with ChangeNotifier {
         final userIndex = _users.indexWhere((user) => user.id == userId);
         if (userIndex != -1) {
           final user = _users[userIndex];
-          const currentUserId = 'user_1'; // This should come from AuthProvider
+          final currentUser = context.read<AuthProvider>().currentUser;
+          if (currentUser == null) return false;
 
           final followers = List<String>.from(user.followers);
-          if (followers.contains(currentUserId)) {
-            followers.remove(currentUserId);
+          if (followers.contains(currentUser.id)) {
+            followers.remove(currentUser.id);
           } else {
-            followers.add(currentUserId);
+            followers.add(currentUser.id);
           }
 
           _users[userIndex] = user.copyWith(
@@ -88,8 +94,8 @@ class UserProvider with ChangeNotifier {
           );
 
           notifyListeners();
+          return true;
         }
-        return true;
       }
       return false;
     } catch (e) {
@@ -131,30 +137,35 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> joinCommunity(String communityId) async {
+  Future<bool> joinCommunity(String communityId, BuildContext context) async {
     try {
-      // In a real app, this would make an API call
-      final communityIndex = _communities.indexWhere(
-        (c) => c.id == communityId,
-      );
-      if (communityIndex != -1) {
-        final community = _communities[communityIndex];
-        const currentUserId = 'user_1'; // This should come from AuthProvider
+      final currentUser = context.read<AuthProvider>().currentUser;
+      if (currentUser == null) return false;
 
-        final members = List<String>.from(community.members);
-        if (members.contains(currentUserId)) {
-          members.remove(currentUserId);
-        } else {
-          members.add(currentUserId);
-        }
+      final success = await _apiService.joinCommunity(communityId);
 
-        _communities[communityIndex] = community.copyWith(
-          members: members,
-          membersCount: members.length,
+      if (success) {
+        final communityIndex = _communities.indexWhere(
+          (c) => c.id == communityId,
         );
+        if (communityIndex != -1) {
+          final community = _communities[communityIndex];
+          final members = List<String>.from(community.members);
 
-        notifyListeners();
-        return true;
+          if (members.contains(currentUser.id)) {
+            members.remove(currentUser.id);
+          } else {
+            members.add(currentUser.id);
+          }
+
+          _communities[communityIndex] = community.copyWith(
+            members: members,
+            membersCount: members.length,
+          );
+
+          notifyListeners();
+          return true;
+        }
       }
       return false;
     } catch (e) {
@@ -193,7 +204,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<List<MessageModel>> getMessagesForConversation(
+  Future<List<messages.MessageModel>> getMessagesForConversation(
     String conversationId,
   ) async {
     try {
@@ -281,7 +292,7 @@ class UserProvider with ChangeNotifier {
     var count = 0;
 
     for (final conversation in _conversations) {
-      count += conversation.unreadCount;
+      count += conversation.unreadCount.toInt();
     }
 
     return count;
@@ -309,18 +320,27 @@ class UserProvider with ChangeNotifier {
   }
 
   // Check if current user is member of community
-  bool isMemberOfCommunity(String communityId) {
-    const currentUserId = 'user_1'; // This should come from AuthProvider
+  bool isMemberOfCommunity(String communityId, BuildContext context) {
+    final currentUser = context.read<AuthProvider>().currentUser;
+    if (currentUser == null) return false;
+
     final community = _communities
         .where((c) => c.id == communityId)
         .firstOrNull;
-    return community?.members.contains(currentUserId) ?? false;
+    return community?.members.contains(currentUser.id) ?? false;
   }
 
   // Check if current user is following another user
-  bool isFollowingUser(String userId) {
-    const currentUserId = 'user_1'; // This should come from AuthProvider
-    final user = _users.where((u) => u.id == currentUserId).firstOrNull;
-    return user?.following.contains(userId) ?? false;
+  bool isFollowingUser(String userId, BuildContext context) {
+    // Get current user from AuthProvider
+    final currentUser = context.read<AuthProvider>().currentUser;
+    if (currentUser == null) return false;
+
+    // Get user from the _users list
+    final user = _users.where((u) => u.id == userId).firstOrNull;
+    if (user == null) return false;
+
+    // Check if current user's ID is in the user's followers list
+    return user.followers.contains(currentUser.id);
   }
 }

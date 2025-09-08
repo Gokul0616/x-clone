@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import '../constants/app_constants.dart';
@@ -29,18 +30,43 @@ class UploadService {
     try {
       final uri = Uri.parse('$baseUrl${AppConstants.apiVersion}/upload/images');
       final request = http.MultipartRequest('POST', uri);
-      
+
       // Add headers
       request.headers.addAll(_headers);
 
       // Add image files
       for (final imageFile in imageFiles) {
+        // Debug print for file details
+        print('Processing file: ${imageFile.path}');
+        print('File name: ${imageFile.name}');
+
+        // For local file paths (especially from mobile), convert to MultipartFile using the file
+        final extension = imageFile.name.split('.').last.toLowerCase();
+        final mimeType = switch (extension) {
+          'jpg' || 'jpeg' => 'image/jpeg',
+          'png' => 'image/png',
+          'gif' => 'image/gif',
+          'webp' => 'image/webp',
+          _ => 'image/jpeg', // default to jpeg
+        };
+
         final file = await http.MultipartFile.fromPath(
-          'images',
+          'images', // Backend expects this field name
           imageFile.path,
-          filename: imageFile.name,
+          filename:
+              '${DateTime.now().millisecondsSinceEpoch}_${imageFile.name}',
+          contentType: MediaType.parse(mimeType),
+        );
+        print(
+          'Created MultipartFile: ${file.filename}, length: ${file.length}, contentType: ${file.contentType}',
         );
         request.files.add(file);
+      }
+
+      // Print request details for debugging
+      print('Uploading images:');
+      for (var file in request.files) {
+        print('File: ${file.filename}, Length: ${file.length}');
       }
 
       final streamedResponse = await request.send();
@@ -66,7 +92,7 @@ class UploadService {
     try {
       final uri = Uri.parse('$baseUrl${AppConstants.apiVersion}/upload/videos');
       final request = http.MultipartRequest('POST', uri);
-      
+
       // Add headers
       request.headers.addAll(_headers);
 
@@ -98,13 +124,15 @@ class UploadService {
 
   // Upload profile or banner image
   Future<String?> uploadProfileImage(
-    XFile imageFile, 
+    XFile imageFile,
     String type, // 'profile' or 'banner'
   ) async {
     try {
-      final uri = Uri.parse('$baseUrl${AppConstants.apiVersion}/upload/profile');
+      final uri = Uri.parse(
+        '$baseUrl${AppConstants.apiVersion}/upload/profile',
+      );
       final request = http.MultipartRequest('POST', uri);
-      
+
       // Add headers
       request.headers.addAll(_headers);
 
@@ -142,13 +170,15 @@ class UploadService {
   }) async {
     try {
       final ImagePicker picker = ImagePicker();
-      
+
       if (source == ImageSource.camera) {
         final XFile? image = await picker.pickImage(source: source);
         return image != null ? [image] : null;
       } else {
         final List<XFile> images = await picker.pickMultiImage();
-        return images.length > maxImages ? images.take(maxImages).toList() : images;
+        return images.length > maxImages
+            ? images.take(maxImages).toList()
+            : images;
       }
     } catch (e) {
       print('Error picking images: $e');
@@ -163,7 +193,7 @@ class UploadService {
   }) async {
     try {
       final ImagePicker picker = ImagePicker();
-      
+
       if (source == ImageSource.camera) {
         final XFile? video = await picker.pickVideo(source: source);
         return video != null ? [video] : null;
@@ -173,7 +203,7 @@ class UploadService {
           type: FileType.video,
           allowMultiple: true,
         );
-        
+
         if (result != null && result.files.isNotEmpty) {
           final videos = result.files
               .where((file) => file.path != null)
@@ -221,17 +251,17 @@ class UploadService {
       // Extract filename and type from URL
       final uri = Uri.parse(fileUrl);
       final pathSegments = uri.pathSegments;
-      
+
       if (pathSegments.length < 3) return false;
-      
-      final type = pathSegments[pathSegments.length - 2]; // 'images' or 'videos'
+
+      final type =
+          pathSegments[pathSegments.length - 2]; // 'images' or 'videos'
       final filename = pathSegments.last;
-      
-      final deleteUri = Uri.parse('$baseUrl${AppConstants.apiVersion}/upload/$type/$filename');
-      final response = await http.delete(
-        deleteUri,
-        headers: _headers,
+
+      final deleteUri = Uri.parse(
+        '$baseUrl${AppConstants.apiVersion}/upload/$type/$filename',
       );
+      final response = await http.delete(deleteUri, headers: _headers);
 
       return response.statusCode == 200;
     } catch (e) {

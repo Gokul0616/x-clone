@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'dart:io';
 import '../../providers/story_provider.dart';
 import '../../models/story_model.dart';
 import '../../constants/app_colors.dart';

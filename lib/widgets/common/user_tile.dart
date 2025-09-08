@@ -11,11 +11,7 @@ class UserTile extends StatelessWidget {
   final UserModel user;
   final bool showFollowButton;
 
-  const UserTile({
-    super.key,
-    required this.user,
-    this.showFollowButton = true,
-  });
+  const UserTile({super.key, required this.user, this.showFollowButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +19,7 @@ class UserTile extends StatelessWidget {
     final currentUser = context.watch<AuthProvider>().currentUser;
     final userProvider = context.watch<UserProvider>();
     final isCurrentUser = currentUser?.id == user.id;
-    final isFollowing = userProvider.isFollowingUser(user.id);
+    final isFollowing = userProvider.isFollowingUser(user.id, context);
 
     return InkWell(
       onTap: () {
@@ -55,7 +51,7 @@ class UserTile extends StatelessWidget {
                   : null,
             ),
             const SizedBox(width: 12),
-            
+
             // User info
             Expanded(
               child: Column(
@@ -111,21 +107,24 @@ class UserTile extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Follow button
             if (showFollowButton && !isCurrentUser) ...[
               const SizedBox(width: 8),
               OutlinedButton(
                 onPressed: () {
-                  userProvider.followUser(user.id);
+                  userProvider.followUser(user.id, context);
                 },
                 style: OutlinedButton.styleFrom(
                   backgroundColor: isFollowing ? AppColors.primaryBlue : null,
-                  foregroundColor: isFollowing ? Colors.white : AppColors.primaryBlue,
-                  side: BorderSide(
-                    color: AppColors.primaryBlue,
+                  foregroundColor: isFollowing
+                      ? Colors.white
+                      : AppColors.primaryBlue,
+                  side: BorderSide(color: AppColors.primaryBlue),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   minimumSize: const Size(80, 32),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),

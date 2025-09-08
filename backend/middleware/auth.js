@@ -4,7 +4,6 @@ const User = require('../models/User');
 const auth = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    console.log(token, "token");
     if (!token) {
       return res.status(401).json({
         status: 'error',
@@ -21,7 +20,6 @@ const auth = async (req, res, next) => {
         message: 'Invalid token. User not found.'
       });
     }
-    console.log(user, "user");
     req.user = user;
     next();
   } catch (error) {

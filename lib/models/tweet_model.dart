@@ -65,7 +65,7 @@ class TweetModel {
 
   factory TweetModel.fromJson(Map<String, dynamic> json) {
     return TweetModel(
-      id: json['id'] ?? '',
+      id: json['id'] ?? json['_id'] ?? '',
       userId: json['userId'] is String
           ? json['userId']
           : json['userId']?['_id'] ?? '', // Extract _id from populated userId

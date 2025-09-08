@@ -15,14 +15,15 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
     super.initState();
-    
+
     // Load tweets when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<TweetProvider>().loadTweets();
@@ -45,18 +46,14 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           AppStrings.appName,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         actions: [
-        
           IconButton(
             icon: CustomReloadAnimation(
               size: 30,
@@ -72,10 +69,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
         builder: (context, tweetProvider, child) {
           if (tweetProvider.isLoading && tweetProvider.tweets.isEmpty) {
             return const Center(
-              child: CustomReloadAnimation(
-                size: 60,
-                isAnimating: true,
-              ),
+              child: CustomReloadAnimation(size: 60, isAnimating: true),
             );
           }
 
@@ -143,20 +137,8 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
             onRefresh: _handleRefresh,
             child: CustomScrollView(
               slivers: [
-                // Stories section
-                SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      const StoriesBar(),
-                      Container(
-                        height: 8,
-                        color: Theme.of(context).dividerColor.withOpacity(0.3),
-                      ),
-                    ],
-                  ),
-                ),
                 // Tweets section
-                SliverToBoxAdapter(
+                SliverFillRemaining(
                   child: TweetList(
                     tweets: tweetProvider.tweets,
                     onLoadMore: tweetProvider.loadMoreTweets,

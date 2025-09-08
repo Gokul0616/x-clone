@@ -569,6 +569,33 @@ class MockApiService {
     return List<CommunityModel>.from(_mockCommunities);
   }
 
+  Future<bool> joinCommunity(String communityId) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    final communityIndex = _mockCommunities.indexWhere(
+      (community) => community.id == communityId,
+    );
+
+    if (communityIndex != -1) {
+      final community = _mockCommunities[communityIndex];
+      final members = List<String>.from(community.members);
+
+      if (members.contains(currentUserId)) {
+        members.remove(currentUserId);
+      } else {
+        members.add(currentUserId);
+      }
+
+      _mockCommunities[communityIndex] = community.copyWith(
+        members: members,
+        membersCount: members.length,
+      );
+
+      return true;
+    }
+    return false;
+  }
+
   Future<CommunityModel?> createCommunity(
     String name,
     String description,

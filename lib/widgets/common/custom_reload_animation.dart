@@ -27,14 +27,19 @@ class _CustomReloadAnimationState extends State<CustomReloadAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(
+        milliseconds: 1000,
+      ), // Add duration for animation
+    );
   }
 
   @override
   void didUpdateWidget(CustomReloadAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isAnimating && !oldWidget.isAnimating) {
-      _controller.repeat();
+      _controller.repeat(period: const Duration(milliseconds: 1000));
     } else if (!widget.isAnimating && oldWidget.isAnimating) {
       _controller.stop();
     }
@@ -175,7 +180,7 @@ class _SimpleReloadAnimationState extends State<SimpleReloadAnimation>
     );
 
     if (widget.isAnimating) {
-      _controller.repeat();
+      _controller.repeat(period: const Duration(milliseconds: 1000));
     }
   }
 
@@ -183,7 +188,7 @@ class _SimpleReloadAnimationState extends State<SimpleReloadAnimation>
   void didUpdateWidget(SimpleReloadAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isAnimating && !oldWidget.isAnimating) {
-      _controller.repeat();
+      _controller.repeat(period: const Duration(milliseconds: 1000));
     } else if (!widget.isAnimating && oldWidget.isAnimating) {
       _controller.stop();
     }

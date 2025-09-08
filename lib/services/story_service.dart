@@ -11,12 +11,12 @@ class StoryService {
   Future<List<StoryModel>> getFollowingStories() async {
     try {
       final response = await _apiService.get('/stories/following');
-      
+
       if (response['status'] == 'success') {
         final List<dynamic> storiesJson = response['data'] ?? [];
         return storiesJson.map((json) => StoryModel.fromJson(json)).toList();
       }
-      
+
       throw Exception(response['message'] ?? 'Failed to load stories');
     } catch (e) {
       print('Error loading stories: $e');
@@ -29,12 +29,12 @@ class StoryService {
   Future<List<StoryModel>> getUserStories(String userId) async {
     try {
       final response = await _apiService.get('/stories/user/$userId');
-      
+
       if (response['status'] == 'success') {
         final List<dynamic> storiesJson = response['data'] ?? [];
         return storiesJson.map((json) => StoryModel.fromJson(json)).toList();
       }
-      
+
       throw Exception(response['message'] ?? 'Failed to load user stories');
     } catch (e) {
       print('Error loading user stories: $e');
@@ -79,15 +79,15 @@ class StoryService {
       }
 
       final response = await _apiService.post('/stories', storyData);
-      
+
       if (response['status'] == 'success') {
         return StoryModel.fromJson(response['data']);
       }
-      
+
       throw Exception(response['message'] ?? 'Failed to upload story');
     } catch (e) {
       print('Error uploading story: $e');
-      
+
       // Return dummy story for development
       return StoryModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -115,7 +115,9 @@ class StoryService {
       final file = File(filePath);
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('${_apiService.baseUrl}/upload/story-media'),
+        Uri.parse(
+          '${_apiService.baseUrl}${_apiService.apiVersion}/upload/story-media',
+        ),
       );
 
       // Add headers
@@ -123,20 +125,18 @@ class StoryService {
       request.headers.addAll(headers);
 
       // Add file
-      request.files.add(
-        await http.MultipartFile.fromPath('media', filePath),
-      );
+      request.files.add(await http.MultipartFile.fromPath('media', filePath));
 
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-      
+
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body);
         if (responseData['status'] == 'success') {
           return responseData['data']['url'];
         }
       }
-      
+
       return null;
     } catch (e) {
       print('Error uploading media: $e');
@@ -177,12 +177,14 @@ class StoryService {
   Future<List<StoryHighlight>> getUserHighlights(String userId) async {
     try {
       final response = await _apiService.get('/stories/highlights/$userId');
-      
+
       if (response['status'] == 'success') {
         final List<dynamic> highlightsJson = response['data'] ?? [];
-        return highlightsJson.map((json) => StoryHighlight.fromJson(json)).toList();
+        return highlightsJson
+            .map((json) => StoryHighlight.fromJson(json))
+            .toList();
       }
-      
+
       return [];
     } catch (e) {
       print('Error loading highlights: $e');
@@ -202,11 +204,11 @@ class StoryService {
         'storyIds': storyIds,
         'coverImageUrl': coverImageUrl,
       });
-      
+
       if (response['status'] == 'success') {
         return StoryHighlight.fromJson(response['data']);
       }
-      
+
       return null;
     } catch (e) {
       print('Error creating highlight: $e');
@@ -218,11 +220,11 @@ class StoryService {
   Future<Map<String, dynamic>> getStoryAnalytics(String storyId) async {
     try {
       final response = await _apiService.get('/stories/$storyId/analytics');
-      
+
       if (response['status'] == 'success') {
         return response['data'];
       }
-      
+
       return {};
     } catch (e) {
       print('Error loading story analytics: $e');
@@ -259,7 +261,8 @@ class StoryService {
         id: '3',
         userId: 'user3',
         type: StoryType.video,
-        mediaUrl: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+        mediaUrl:
+            'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
         createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
         expiresAt: DateTime.now().add(const Duration(hours: 23, minutes: 30)),
         viewedBy: [],

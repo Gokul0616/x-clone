@@ -13,16 +13,14 @@ import 'edit_profile_screen.dart';
 class ProfileScreen extends StatefulWidget {
   final String userId;
 
-  const ProfileScreen({
-    super.key,
-    required this.userId,
-  });
+  const ProfileScreen({super.key, required this.userId});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateMixin {
+class _ProfileScreenState extends State<ProfileScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   UserModel? _user;
   bool _isLoading = true;
@@ -41,7 +39,26 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   }
 
   Future<void> _loadUser() async {
+    if (widget.userId.isEmpty) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
     final userProvider = context.read<UserProvider>();
+    final authProvider = context.read<AuthProvider>();
+
+    // If it's the current user's profile, use the current user data
+    if (widget.userId == authProvider.currentUser?.id) {
+      setState(() {
+        _user = authProvider.currentUser;
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Otherwise load from the API
     final user = await userProvider.getUserById(widget.userId);
     setState(() {
       _user = user;
@@ -55,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
     final currentUser = context.watch<AuthProvider>().currentUser;
     final userProvider = context.watch<UserProvider>();
     final isOwnProfile = currentUser?.id == widget.userId;
-    final isFollowing = userProvider.isFollowingUser(widget.userId);
+    final isFollowing = userProvider.isFollowingUser(widget.userId, context);
 
     if (_isLoading) {
       return Scaffold(
@@ -107,7 +124,9 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                 fit: BoxFit.cover,
                                 onError: (exception, stackTrace) {
                                   // Handle image loading error
-                                  print('Error loading banner image: $exception');
+                                  print(
+                                    'Error loading banner image: $exception',
+                                  );
                                 },
                               )
                             : null,
@@ -130,7 +149,9 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                       right: 0,
                       bottom: 0,
                       child: Container(
-                        padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                        padding: const EdgeInsets.all(
+                          AppConstants.paddingMedium,
+                        ),
                         decoration: BoxDecoration(
                           color: theme.scaffoldBackgroundColor,
                           borderRadius: const BorderRadius.only(
@@ -149,15 +170,21 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                   offset: const Offset(0, -50),
                                   child: CircleAvatar(
                                     radius: 42,
-                                    backgroundColor: theme.scaffoldBackgroundColor,
+                                    backgroundColor:
+                                        theme.scaffoldBackgroundColor,
                                     child: CircleAvatar(
                                       radius: 38,
-                                      backgroundImage: _user!.profileImageUrl != null
-                                          ? NetworkImage(_user!.profileImageUrl!)
+                                      backgroundImage:
+                                          _user!.profileImageUrl != null
+                                          ? NetworkImage(
+                                              _user!.profileImageUrl!,
+                                            )
                                           : null,
                                       child: _user!.profileImageUrl == null
                                           ? Text(
-                                              _user!.displayName.substring(0, 1).toUpperCase(),
+                                              _user!.displayName
+                                                  .substring(0, 1)
+                                                  .toUpperCase(),
                                               style: const TextStyle(
                                                 fontSize: 28,
                                                 fontWeight: FontWeight.bold,
@@ -176,7 +203,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => EditProfileScreen(user: _user!),
+                                                builder: (context) =>
+                                                    EditProfileScreen(
+                                                      user: _user!,
+                                                    ),
                                               ),
                                             );
                                           },
@@ -184,13 +214,24 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                         )
                                       : OutlinedButton(
                                           onPressed: () {
-                                            userProvider.followUser(widget.userId);
+                                            userProvider.followUser(
+                                              widget.userId,
+                                              context,
+                                            );
                                           },
                                           style: OutlinedButton.styleFrom(
-                                            backgroundColor: isFollowing ? AppColors.primaryBlue : null,
-                                            foregroundColor: isFollowing ? Colors.white : AppColors.primaryBlue,
+                                            backgroundColor: isFollowing
+                                                ? AppColors.primaryBlue
+                                                : null,
+                                            foregroundColor: isFollowing
+                                                ? Colors.white
+                                                : AppColors.primaryBlue,
                                           ),
-                                          child: Text(isFollowing ? AppStrings.unfollow : AppStrings.follow),
+                                          child: Text(
+                                            isFollowing
+                                                ? AppStrings.unfollow
+                                                : AppStrings.follow,
+                                          ),
                                         ),
                                 ),
                               ],
@@ -208,9 +249,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                       Flexible(
                                         child: Text(
                                           _user!.displayName,
-                                          style: theme.textTheme.headlineSmall?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                          style: theme.textTheme.headlineSmall
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
@@ -236,7 +278,8 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                   ),
                                   const SizedBox(height: 8),
                                   // Bio
-                                  if (_user!.bio != null && _user!.bio!.isNotEmpty) ...[
+                                  if (_user!.bio != null &&
+                                      _user!.bio!.isNotEmpty) ...[
                                     Text(
                                       _user!.bio!,
                                       style: theme.textTheme.bodyMedium,
@@ -250,32 +293,42 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                     spacing: 16,
                                     runSpacing: 4,
                                     children: [
-                                      if (_user!.location != null && _user!.location!.isNotEmpty)
+                                      if (_user!.location != null &&
+                                          _user!.location!.isNotEmpty)
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(
                                               Icons.location_on_outlined,
                                               size: 16,
-                                              color: theme.brightness == Brightness.dark
+                                              color:
+                                                  theme.brightness ==
+                                                      Brightness.dark
                                                   ? AppColors.textSecondaryDark
-                                                  : AppColors.textSecondaryLight,
+                                                  : AppColors
+                                                        .textSecondaryLight,
                                             ),
                                             const SizedBox(width: 4),
                                             Flexible(
                                               child: Text(
                                                 _user!.location!,
-                                                style: theme.textTheme.bodySmall?.copyWith(
-                                                  color: theme.brightness == Brightness.dark
-                                                      ? AppColors.textSecondaryDark
-                                                      : AppColors.textSecondaryLight,
-                                                ),
+                                                style: theme.textTheme.bodySmall
+                                                    ?.copyWith(
+                                                      color:
+                                                          theme.brightness ==
+                                                              Brightness.dark
+                                                          ? AppColors
+                                                                .textSecondaryDark
+                                                          : AppColors
+                                                                .textSecondaryLight,
+                                                    ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                           ],
                                         ),
-                                      if (_user!.website != null && _user!.website!.isNotEmpty)
+                                      if (_user!.website != null &&
+                                          _user!.website!.isNotEmpty)
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
@@ -288,9 +341,11 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                             Flexible(
                                               child: Text(
                                                 _user!.website!,
-                                                style: theme.textTheme.bodySmall?.copyWith(
-                                                  color: AppColors.primaryBlue,
-                                                ),
+                                                style: theme.textTheme.bodySmall
+                                                    ?.copyWith(
+                                                      color:
+                                                          AppColors.primaryBlue,
+                                                    ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -303,18 +358,25 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                           Icon(
                                             Icons.calendar_today_outlined,
                                             size: 16,
-                                            color: theme.brightness == Brightness.dark
+                                            color:
+                                                theme.brightness ==
+                                                    Brightness.dark
                                                 ? AppColors.textSecondaryDark
                                                 : AppColors.textSecondaryLight,
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
                                             '${AppStrings.joined} ${_user!.joinedDate.month}/${_user!.joinedDate.year}',
-                                            style: theme.textTheme.bodySmall?.copyWith(
-                                              color: theme.brightness == Brightness.dark
-                                                  ? AppColors.textSecondaryDark
-                                                  : AppColors.textSecondaryLight,
-                                            ),
+                                            style: theme.textTheme.bodySmall
+                                                ?.copyWith(
+                                                  color:
+                                                      theme.brightness ==
+                                                          Brightness.dark
+                                                      ? AppColors
+                                                            .textSecondaryDark
+                                                      : AppColors
+                                                            .textSecondaryLight,
+                                                ),
                                           ),
                                         ],
                                       ),
@@ -326,26 +388,42 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                     children: [
                                       GestureDetector(
                                         onTap: () {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text('Following list coming soon!')),
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Following list coming soon!',
+                                              ),
+                                            ),
                                           );
                                         },
                                         child: RichText(
                                           text: TextSpan(
                                             children: [
                                               TextSpan(
-                                                text: '${_user!.followingCount} ',
-                                                style: theme.textTheme.titleSmall?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                                text:
+                                                    '${_user!.followingCount} ',
+                                                style: theme
+                                                    .textTheme
+                                                    .titleSmall
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                               ),
                                               TextSpan(
                                                 text: AppStrings.following,
-                                                style: theme.textTheme.bodySmall?.copyWith(
-                                                  color: theme.brightness == Brightness.dark
-                                                      ? AppColors.textSecondaryDark
-                                                      : AppColors.textSecondaryLight,
-                                                ),
+                                                style: theme.textTheme.bodySmall
+                                                    ?.copyWith(
+                                                      color:
+                                                          theme.brightness ==
+                                                              Brightness.dark
+                                                          ? AppColors
+                                                                .textSecondaryDark
+                                                          : AppColors
+                                                                .textSecondaryLight,
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -354,26 +432,42 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                                       const SizedBox(width: 20),
                                       GestureDetector(
                                         onTap: () {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text('Followers list coming soon!')),
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Followers list coming soon!',
+                                              ),
+                                            ),
                                           );
                                         },
                                         child: RichText(
                                           text: TextSpan(
                                             children: [
                                               TextSpan(
-                                                text: '${_user!.followersCount} ',
-                                                style: theme.textTheme.titleSmall?.copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                                text:
+                                                    '${_user!.followersCount} ',
+                                                style: theme
+                                                    .textTheme
+                                                    .titleSmall
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
                                               ),
                                               TextSpan(
                                                 text: AppStrings.followers,
-                                                style: theme.textTheme.bodySmall?.copyWith(
-                                                  color: theme.brightness == Brightness.dark
-                                                      ? AppColors.textSecondaryDark
-                                                      : AppColors.textSecondaryLight,
-                                                ),
+                                                style: theme.textTheme.bodySmall
+                                                    ?.copyWith(
+                                                      color:
+                                                          theme.brightness ==
+                                                              Brightness.dark
+                                                          ? AppColors
+                                                                .textSecondaryDark
+                                                          : AppColors
+                                                                .textSecondaryLight,
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -406,7 +500,9 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                   child: TabBar(
                     controller: _tabController,
                     isScrollable: false, // Changed to false for equal spacing
-                    labelPadding: const EdgeInsets.symmetric(horizontal: 0), // Remove extra padding
+                    labelPadding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                    ), // Remove extra padding
                     tabs: const [
                       Tab(text: AppStrings.tweets),
                       Tab(text: AppStrings.tweetsAndReplies),
@@ -434,9 +530,15 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                         value: 'block',
                         child: Row(
                           children: [
-                            Icon(Icons.block_outlined, color: AppColors.errorColor),
+                            Icon(
+                              Icons.block_outlined,
+                              color: AppColors.errorColor,
+                            ),
                             SizedBox(width: 8),
-                            Text('Block', style: TextStyle(color: AppColors.errorColor)),
+                            Text(
+                              'Block',
+                              style: TextStyle(color: AppColors.errorColor),
+                            ),
                           ],
                         ),
                       ),
@@ -444,9 +546,15 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                         value: 'report',
                         child: Row(
                           children: [
-                            Icon(Icons.report_outlined, color: AppColors.errorColor),
+                            Icon(
+                              Icons.report_outlined,
+                              color: AppColors.errorColor,
+                            ),
                             SizedBox(width: 8),
-                            Text('Report', style: TextStyle(color: AppColors.errorColor)),
+                            Text(
+                              'Report',
+                              style: TextStyle(color: AppColors.errorColor),
+                            ),
                           ],
                         ),
                       ),
@@ -489,12 +597,16 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Widget _buildTweetsTab() {
     return Consumer<TweetProvider>(
       builder: (context, tweetProvider, child) {
-        final userTweets = tweetProvider.getTweetsByUser(widget.userId)
+        final userTweets = tweetProvider
+            .getTweetsByUser(widget.userId)
             .where((tweet) => tweet.replyToTweetId == null)
             .toList();
 
         if (userTweets.isEmpty) {
-          return _buildEmptyState('No tweets yet', 'Tweets will appear here when posted.');
+          return _buildEmptyState(
+            'No tweets yet',
+            'Tweets will appear here when posted.',
+          );
         }
 
         return ListView.builder(
@@ -519,7 +631,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
         final userTweets = tweetProvider.getTweetsByUser(widget.userId);
 
         if (userTweets.isEmpty) {
-          return _buildEmptyState('No tweets yet', 'Tweets and replies will appear here.');
+          return _buildEmptyState(
+            'No tweets yet',
+            'Tweets and replies will appear here.',
+          );
         }
 
         return ListView.builder(
@@ -541,12 +656,16 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
   Widget _buildMediaTab() {
     return Consumer<TweetProvider>(
       builder: (context, tweetProvider, child) {
-        final userTweets = tweetProvider.getTweetsByUser(widget.userId)
+        final userTweets = tweetProvider
+            .getTweetsByUser(widget.userId)
             .where((tweet) => tweet.imageUrls.isNotEmpty)
             .toList();
 
         if (userTweets.isEmpty) {
-          return _buildEmptyState('No media yet', 'Photos and videos will appear here.');
+          return _buildEmptyState(
+            'No media yet',
+            'Photos and videos will appear here.',
+          );
         }
 
         return ListView.builder(
@@ -573,7 +692,10 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
             .toList();
 
         if (likedTweets.isEmpty) {
-          return _buildEmptyState('No likes yet', 'Liked tweets will appear here.');
+          return _buildEmptyState(
+            'No likes yet',
+            'Liked tweets will appear here.',
+          );
         }
 
         return ListView.builder(
@@ -607,10 +729,7 @@ class _ProfileScreenState extends State<ProfileScreen> with TickerProviderStateM
                 : AppColors.textSecondaryLight,
           ),
           const SizedBox(height: 16),
-          Text(
-            title,
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text(title, style: theme.textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             subtitle,

@@ -19,7 +19,6 @@ class CustomDrawer extends StatelessWidget {
     final authProvider = context.watch<AuthProvider>();
     final themeProvider = context.watch<ThemeProvider>();
     final user = authProvider.currentUser;
-
     return Drawer(
       child: Column(
         children: [
@@ -31,10 +30,7 @@ class CustomDrawer extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primaryBlue,
-                  AppColors.primaryBlueDark,
-                ],
+                colors: [AppColors.primaryBlue, AppColors.primaryBlueDark],
               ),
             ),
             child: SafeArea(
@@ -60,7 +56,10 @@ class CustomDrawer extends StatelessWidget {
                             : null,
                         child: user?.profileImageUrl == null
                             ? Text(
-                                user?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                                user?.displayName
+                                        .substring(0, 1)
+                                        .toUpperCase() ??
+                                    'U',
                                 style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -72,7 +71,7 @@ class CustomDrawer extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  
+
                   // User Info
                   Text(
                     user?.displayName ?? 'User',
@@ -84,13 +83,10 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   Text(
                     '@${user?.username ?? 'username'}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                    ),
+                    style: const TextStyle(fontSize: 14, color: Colors.white70),
                   ),
                   const SizedBox(height: 12),
-                  
+
                   // Follow Stats
                   Row(
                     children: [
@@ -109,7 +105,7 @@ class CustomDrawer extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Menu Items
           Expanded(
             child: ListView(
@@ -120,11 +116,19 @@ class CustomDrawer extends StatelessWidget {
                   icon: Icons.person_outline,
                   title: AppStrings.profile,
                   onTap: () {
+                    if (user?.id == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please login to view your profile'),
+                        ),
+                      );
+                      return;
+                    }
                     Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProfileScreen(userId: user?.id ?? ''),
+                        builder: (context) => ProfileScreen(userId: user!.id),
                       ),
                     );
                   },
@@ -174,11 +178,11 @@ class CustomDrawer extends StatelessWidget {
                 ),
                 _buildDrawerItem(
                   context,
-                  icon: themeProvider.isDarkMode 
-                      ? Icons.light_mode_outlined 
+                  icon: themeProvider.isDarkMode
+                      ? Icons.light_mode_outlined
                       : Icons.dark_mode_outlined,
-                  title: themeProvider.isDarkMode 
-                      ? AppStrings.lightMode 
+                  title: themeProvider.isDarkMode
+                      ? AppStrings.lightMode
                       : AppStrings.darkMode,
                   onTap: () {
                     themeProvider.toggleTheme();
@@ -197,7 +201,7 @@ class CustomDrawer extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // App Version
           Padding(
             padding: const EdgeInsets.all(AppConstants.paddingMedium),
@@ -229,10 +233,7 @@ class CustomDrawer extends StatelessWidget {
         ),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Colors.white70,
-          ),
+          style: const TextStyle(fontSize: 12, color: Colors.white70),
         ),
       ],
     );
@@ -246,20 +247,24 @@ class CustomDrawer extends StatelessWidget {
     Color? textColor,
   }) {
     final theme = Theme.of(context);
-    
+
     return ListTile(
       leading: Icon(
         icon,
-        color: textColor ?? (theme.brightness == Brightness.dark
-            ? AppColors.textPrimaryDark
-            : AppColors.textPrimaryLight),
+        color:
+            textColor ??
+            (theme.brightness == Brightness.dark
+                ? AppColors.textPrimaryDark
+                : AppColors.textPrimaryLight),
       ),
       title: Text(
         title,
         style: TextStyle(
-          color: textColor ?? (theme.brightness == Brightness.dark
-              ? AppColors.textPrimaryDark
-              : AppColors.textPrimaryLight),
+          color:
+              textColor ??
+              (theme.brightness == Brightness.dark
+                  ? AppColors.textPrimaryDark
+                  : AppColors.textPrimaryLight),
         ),
       ),
       onTap: onTap,

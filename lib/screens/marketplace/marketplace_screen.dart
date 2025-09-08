@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/marketplace_provider.dart';
-import '../../constants/app_strings.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
 import '../../widgets/marketplace/product_card.dart';

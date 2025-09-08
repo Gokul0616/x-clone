@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../providers/user_provider.dart';
-import '../../models/message_model.dart';
+import '../../models/message_model.dart' as messages;
 import '../../constants/app_strings.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
+import '../../widgets/story/stories_bar.dart';
 import 'conversation_screen.dart';
 
 class MessagesScreen extends StatefulWidget {
@@ -15,7 +16,8 @@ class MessagesScreen extends StatefulWidget {
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
 
-class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAliveClientMixin {
+class _MessagesScreenState extends State<MessagesScreen>
+    with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
@@ -34,7 +36,7 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    
+
     return Scaffold(
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
@@ -42,7 +44,8 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (userProvider.error != null && userProvider.conversations.isEmpty) {
+          if (userProvider.error != null &&
+              userProvider.conversations.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -82,26 +85,48 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
 
           return RefreshIndicator(
             onRefresh: _handleRefresh,
-            child: ListView.builder(
-              itemCount: userProvider.conversations.length,
-              itemBuilder: (context, index) {
-                final conversation = userProvider.conversations[index];
-                return Column(
-                  children: [
-                    ConversationTile(
-                      conversation: conversation,
-                      onTap: () => _openConversation(conversation),
-                    ),
-                    if (index < userProvider.conversations.length - 1)
-                      Divider(
-                        height: 1,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? AppColors.borderDark
-                            : AppColors.borderLight,
+            child: Column(
+              children: [
+                // Stories section at the top
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Column(
+                    children: [
+                      const StoriesBar(),
+                      Container(
+                        height: 8,
+                        color: Theme.of(context).dividerColor.withOpacity(0.3),
                       ),
-                  ],
-                );
-              },
+                    ],
+                  ),
+                ),
+                // Conversations list
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: userProvider.conversations.length,
+                    itemBuilder: (context, index) {
+                      final conversation = userProvider.conversations[index];
+                      return Column(
+                        children: [
+                          ConversationTile(
+                            conversation: conversation,
+                            onTap: () => _openConversation(conversation),
+                          ),
+                          if (index < userProvider.conversations.length - 1)
+                            Divider(
+                              height: 1,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? AppColors.borderDark
+                                  : AppColors.borderLight,
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           );
         },
@@ -116,7 +141,7 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
 
   Widget _buildEmptyState() {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -129,10 +154,7 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
                 : AppColors.textSecondaryLight,
           ),
           const SizedBox(height: 16),
-          Text(
-            'No messages yet',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text('No messages yet', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             'When you send or receive messages, they\'ll show up here.',
@@ -153,7 +175,7 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
     );
   }
 
-  void _openConversation(ConversationModel conversation) {
+  void _openConversation(messages.ConversationModel conversation) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -170,25 +192,21 @@ class _MessagesScreenState extends State<MessagesScreen> with AutomaticKeepAlive
 }
 
 class ConversationTile extends StatelessWidget {
-  final ConversationModel conversation;
+  final messages.ConversationModel conversation;
   final VoidCallback? onTap;
 
-  const ConversationTile({
-    super.key,
-    required this.conversation,
-    this.onTap,
-  });
+  const ConversationTile({super.key, required this.conversation, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     const currentUserId = 'user_1'; // This should come from AuthProvider
-    
+
     // Get the other participant (not current user)
     final otherParticipant = conversation.participantUsers
         .where((user) => user.id != currentUserId)
         .firstOrNull;
-        
+
     final unreadCount = conversation.unreadCount;
     final hasUnread = unreadCount > 0;
 
@@ -199,8 +217,8 @@ class ConversationTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: hasUnread
               ? (theme.brightness == Brightness.dark
-                  ? AppColors.primaryBlue.withOpacity(0.05)
-                  : AppColors.primaryBlue.withOpacity(0.03))
+                    ? AppColors.primaryBlue.withOpacity(0.05)
+                    : AppColors.primaryBlue.withOpacity(0.03))
               : null,
         ),
         child: Row(
@@ -213,7 +231,10 @@ class ConversationTile extends StatelessWidget {
                   : null,
               child: otherParticipant?.profileImageUrl == null
                   ? Text(
-                      otherParticipant?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                      otherParticipant?.displayName
+                              .substring(0, 1)
+                              .toUpperCase() ??
+                          'U',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -222,7 +243,7 @@ class ConversationTile extends StatelessWidget {
                   : null,
             ),
             const SizedBox(width: 12),
-            
+
             // Conversation info
             Expanded(
               child: Column(
@@ -235,7 +256,9 @@ class ConversationTile extends StatelessWidget {
                         child: Text(
                           otherParticipant?.displayName ?? 'Unknown User',
                           style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: hasUnread ? FontWeight.bold : FontWeight.w600,
+                            fontWeight: hasUnread
+                                ? FontWeight.bold
+                                : FontWeight.w600,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -248,9 +271,9 @@ class ConversationTile extends StatelessWidget {
                         ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 2),
-                  
+
                   // Username
                   Text(
                     '@${otherParticipant?.username ?? 'unknown'}',
@@ -260,9 +283,9 @@ class ConversationTile extends StatelessWidget {
                           : AppColors.textSecondaryLight,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 4),
-                  
+
                   // Last message
                   if (conversation.lastMessage != null)
                     Text(
@@ -270,12 +293,14 @@ class ConversationTile extends StatelessWidget {
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: hasUnread
                             ? (theme.brightness == Brightness.dark
-                                ? AppColors.textPrimaryDark
-                                : AppColors.textPrimaryLight)
+                                  ? AppColors.textPrimaryDark
+                                  : AppColors.textPrimaryLight)
                             : (theme.brightness == Brightness.dark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondaryLight),
-                        fontWeight: hasUnread ? FontWeight.w600 : FontWeight.normal,
+                                  ? AppColors.textSecondaryDark
+                                  : AppColors.textSecondaryLight),
+                        fontWeight: hasUnread
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -283,7 +308,7 @@ class ConversationTile extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Right side - timestamp and unread indicator
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -295,18 +320,21 @@ class ConversationTile extends StatelessWidget {
                     color: hasUnread
                         ? AppColors.primaryBlue
                         : (theme.brightness == Brightness.dark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight),
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight),
                     fontWeight: hasUnread ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
-                
+
                 const SizedBox(height: 4),
-                
+
                 // Unread count
                 if (hasUnread)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primaryBlue,
                       borderRadius: BorderRadius.circular(10),

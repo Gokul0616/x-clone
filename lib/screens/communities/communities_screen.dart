@@ -15,7 +15,8 @@ class CommunitiesScreen extends StatefulWidget {
   State<CommunitiesScreen> createState() => _CommunitiesScreenState();
 }
 
-class _CommunitiesScreenState extends State<CommunitiesScreen> with TickerProviderStateMixin {
+class _CommunitiesScreenState extends State<CommunitiesScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   List<CommunityModel> _filteredCommunities = [];
@@ -24,7 +25,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> with TickerProvid
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().loadCommunities();
     });
@@ -47,7 +48,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> with TickerProvid
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.communities),
@@ -106,15 +107,12 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> with TickerProvid
               },
             ),
           ),
-          
+
           // Tab content
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
-                _buildDiscoverTab(),
-                _buildMyCommunitiesTab(),
-              ],
+              children: [_buildDiscoverTab(), _buildMyCommunitiesTab()],
             ),
           ),
         ],
@@ -200,7 +198,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> with TickerProvid
     return Consumer<UserProvider>(
       builder: (context, userProvider, child) {
         const currentUserId = 'user_1'; // This should come from AuthProvider
-        
+
         final myCommunities = userProvider.communities
             .where((community) => community.members.contains(currentUserId))
             .toList();
@@ -273,7 +271,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> with TickerProvid
 
   Widget _buildEmptyState() {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -286,10 +284,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> with TickerProvid
                 : AppColors.textSecondaryLight,
           ),
           const SizedBox(height: 16),
-          Text(
-            'No communities found',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text('No communities found', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             'Be the first to create a community!',
@@ -364,7 +359,7 @@ class CommunityTile extends StatelessWidget {
                   : null,
             ),
             const SizedBox(width: 12),
-            
+
             // Community info
             Expanded(
               child: Column(
@@ -419,26 +414,33 @@ class CommunityTile extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Join/Leave button
             if (showJoinButton) ...[
               const SizedBox(width: 8),
               OutlinedButton(
                 onPressed: () {
-                  userProvider.joinCommunity(community.id);
+                  userProvider.joinCommunity(community.id, context);
                 },
                 style: OutlinedButton.styleFrom(
                   backgroundColor: isMember ? AppColors.primaryBlue : null,
-                  foregroundColor: isMember ? Colors.white : AppColors.primaryBlue,
+                  foregroundColor: isMember
+                      ? Colors.white
+                      : AppColors.primaryBlue,
                   side: BorderSide(color: AppColors.primaryBlue),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
                   minimumSize: const Size(80, 32),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
                 child: Text(
-                  isMember ? AppStrings.leaveCommunity : AppStrings.joinCommunity,
+                  isMember
+                      ? AppStrings.leaveCommunity
+                      : AppStrings.joinCommunity,
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,

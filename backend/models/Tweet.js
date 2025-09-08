@@ -308,14 +308,20 @@
 const mongoose = require('mongoose');
 
 const tweetSchema = new mongoose.Schema({
-  id: {
+  _id: {
+    type: String,
+    required: true,
+    unique: true,
+    default: () => `tweet_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  },
+  tweetId: {
     type: String,
     required: true,
     unique: true,
     default: () => `tweet_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   },
   userId: {
-    type: mongoose.Schema.Types.ObjectId, // Changed to ObjectId
+    type: mongoose.Schema.Types.ObjectId,
     required: [true, 'User ID is required'],
     ref: 'User'
   },
@@ -329,7 +335,8 @@ const tweetSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: function (v) {
-        return /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(v);
+        // Allow http/https URLs, uploads directory paths, and mobile file paths
+        return /^(https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$|\/uploads\/images\/[^\/]+$|\/data\/user\/|\/storage\/|file:\/\/)/i.test(v);
       },
       message: 'Invalid image URL format'
     }
@@ -393,7 +400,7 @@ const tweetSchema = new mongoose.Schema({
     ref: 'Tweet'
   },
   retweetedByUserId: {
-    type: mongoose.Schema.Types.ObjectId, // Changed to ObjectId
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
   isQuoteTweet: {
@@ -473,6 +480,11 @@ tweetSchema.index({ quotedTweetId: 1 });
 
 // Pre-save middleware
 tweetSchema.pre('save', function (next) {
+  // Ensure _id is set and follows our string format
+  if (!this._id) {
+    this._id = `tweet_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
   if (this.isModified('content')) {
     const hashtagRegex = /#[a-zA-Z0-9_]+/g;
     this.hashtags = [...new Set((this.content.match(hashtagRegex) || []).map(tag => tag.slice(1).toLowerCase()))];
@@ -551,16 +563,33 @@ tweetSchema.statics.getTrendingHashtags = async function (limit = 10, timeframe 
 tweetSchema.statics.getTimelineFeed = function (userId, followingUsers, page = 1, limit = 20) {
   const skip = (page - 1) * limit;
 
+  // Convert userId to ObjectId if it's not a string ID
+  const userIdToQuery = userId.toString().startsWith('tweet_') ? userId : mongoose.Types.ObjectId(userId);
+
+  // Convert following IDs to ObjectIds if they're not string IDs
+  const followingUserIds = followingUsers.map(id =>
+    id.toString().startsWith('tweet_') ? id : mongoose.Types.ObjectId(id)
+  );
+
   return this.find({
     $or: [
-      { userId: { $in: [userId, ...followingUsers] } },
+      { userId: { $in: [userIdToQuery, ...followingUserIds] } },
       { mentions: userId }
     ],
     isDeleted: { $ne: true }
   })
-    .populate('userId', 'id username displayName profileImageUrl isVerified')
-    .populate('retweetedByUserId', 'id username displayName profileImageUrl isVerified')
-    .populate('replyToUserId', 'id username displayName profileImageUrl isVerified')
+    .populate({
+      path: 'userId',
+      select: '_id username displayName profileImageUrl isVerified'
+    })
+    .populate({
+      path: 'retweetedByUserId',
+      select: '_id username displayName profileImageUrl isVerified'
+    })
+    .populate({
+      path: 'replyToUserId',
+      select: '_id username displayName profileImageUrl isVerified'
+    })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
@@ -570,28 +599,28 @@ tweetSchema.statics.getTimelineFeed = function (userId, followingUsers, page = 1
 tweetSchema.virtual('user', {
   ref: 'User',
   localField: 'userId',
-  foreignField: '_id', // Reference _id
+  foreignField: '_id',
   justOne: true
 });
 
 tweetSchema.virtual('originalTweet', {
   ref: 'Tweet',
   localField: 'originalTweetId',
-  foreignField: 'id',
+  foreignField: '_id',
   justOne: true
 });
 
 tweetSchema.virtual('quotedTweet', {
   ref: 'Tweet',
   localField: 'quotedTweetId',
-  foreignField: 'id',
+  foreignField: '_id',
   justOne: true
 });
 
 tweetSchema.virtual('replyToTweet', {
   ref: 'Tweet',
   localField: 'replyToTweetId',
-  foreignField: 'id',
+  foreignField: '_id',
   justOne: true
 });
 

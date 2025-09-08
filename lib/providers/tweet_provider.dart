@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import '../models/tweet_model.dart';
 import '../services/api_service.dart';
 
@@ -80,7 +81,7 @@ class TweetProvider with ChangeNotifier {
   // Create new tweet
   Future<bool> createTweet(
     String content, {
-    List<String>? imageUrls,
+    List<XFile>? images,
     String? replyToTweetId,
     String? quotedTweetId,
   }) async {
@@ -89,7 +90,7 @@ class TweetProvider with ChangeNotifier {
     try {
       final newTweet = await _apiService.createTweet(
         content,
-        imageUrls: imageUrls,
+        images: images,
         replyToTweetId: replyToTweetId,
         quotedTweetId: quotedTweetId,
       );

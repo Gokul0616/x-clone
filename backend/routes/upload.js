@@ -29,19 +29,52 @@ const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   // Check file type
+  console.log('Processing file:', {
+    fieldname: file.fieldname,
+    originalname: file.originalname,
+    mimetype: file.mimetype,
+    encoding: file.encoding
+  });
+
+  // Helper function to detect image type from file extension
+  const getImageMimeType = (filename) => {
+    const ext = filename.toLowerCase().split('.').pop();
+    const mimeTypes = {
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'gif': 'image/gif',
+      'webp': 'image/webp'
+    };
+    return mimeTypes[ext];
+  };
+
   if (file.fieldname === 'images') {
-    if (file.mimetype.startsWith('image/')) {
+    // Check both mimetype and file extension
+    const isImageMimetype = file.mimetype.startsWith('image/');
+    const expectedMimetype = getImageMimeType(file.originalname);
+
+    if (isImageMimetype || expectedMimetype) {
+      // If mimetype is octet-stream but filename suggests an image, override mimetype
+      if (file.mimetype === 'application/octet-stream' && expectedMimetype) {
+        file.mimetype = expectedMimetype;
+      }
+      console.log('Accepting image file:', file.originalname, 'with mimetype:', file.mimetype);
       cb(null, true);
     } else {
+      console.log('Rejecting file:', file.originalname, '- not a valid image file');
       cb(new Error('Only image files are allowed for images field'), false);
     }
   } else if (file.fieldname === 'videos') {
     if (file.mimetype.startsWith('video/')) {
+      console.log('Accepting video file:', file.originalname);
       cb(null, true);
     } else {
+      console.log('Rejecting file:', file.originalname, '- not a valid video file');
       cb(new Error('Only video files are allowed for videos field'), false);
     }
   } else {
+    console.log('Rejecting file:', file.originalname, '- invalid field name:', file.fieldname);
     cb(new Error('Invalid field name'), false);
   }
 };
@@ -94,14 +127,14 @@ router.post('/images', auth, upload.array('images', 4), async (req, res) => {
 
   } catch (error) {
     console.error('Image upload error:', error);
-    
+
     if (error.message.includes('Only image files')) {
       return res.status(400).json({
         status: 'error',
         message: 'Only image files are allowed'
       });
     }
-    
+
     if (error.message.includes('File too large')) {
       return res.status(400).json({
         status: 'error',
@@ -150,14 +183,14 @@ router.post('/videos', auth, upload.array('videos', 2), async (req, res) => {
 
   } catch (error) {
     console.error('Video upload error:', error);
-    
+
     if (error.message.includes('Only video files')) {
       return res.status(400).json({
         status: 'error',
         message: 'Only video files are allowed'
       });
     }
-    
+
     if (error.message.includes('File too large')) {
       return res.status(400).json({
         status: 'error',
@@ -183,7 +216,7 @@ router.post('/profile', auth, upload.single('image'), async (req, res) => {
     }
 
     const { type } = req.body; // 'profile' or 'banner'
-    
+
     if (!type || !['profile', 'banner'].includes(type)) {
       return res.status(400).json({
         status: 'error',
@@ -197,7 +230,7 @@ router.post('/profile', auth, upload.single('image'), async (req, res) => {
 
     // Process image based on type
     let sharpInstance = sharp(req.file.buffer);
-    
+
     if (type === 'profile') {
       // Square profile image
       sharpInstance = sharpInstance
@@ -240,7 +273,7 @@ router.post('/profile', auth, upload.single('image'), async (req, res) => {
 router.delete('/:type/:filename', auth, async (req, res) => {
   try {
     const { type, filename } = req.params;
-    
+
     if (!['images', 'videos'].includes(type)) {
       return res.status(400).json({
         status: 'error',
@@ -282,7 +315,7 @@ router.delete('/:type/:filename', auth, async (req, res) => {
 router.get('/info/:type/:filename', async (req, res) => {
   try {
     const { type, filename } = req.params;
-    
+
     if (!['images', 'videos'].includes(type)) {
       return res.status(400).json({
         status: 'error',

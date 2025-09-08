@@ -9,16 +9,14 @@ import '../../constants/app_constants.dart';
 class CommunityDetailScreen extends StatefulWidget {
   final CommunityModel community;
 
-  const CommunityDetailScreen({
-    super.key,
-    required this.community,
-  });
+  const CommunityDetailScreen({super.key, required this.community});
 
   @override
   State<CommunityDetailScreen> createState() => _CommunityDetailScreenState();
 }
 
-class _CommunityDetailScreenState extends State<CommunityDetailScreen> with TickerProviderStateMixin {
+class _CommunityDetailScreenState extends State<CommunityDetailScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -53,7 +51,9 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                   decoration: BoxDecoration(
                     image: widget.community.bannerImageUrl != null
                         ? DecorationImage(
-                            image: NetworkImage(widget.community.bannerImageUrl!),
+                            image: NetworkImage(
+                              widget.community.bannerImageUrl!,
+                            ),
                             fit: BoxFit.cover,
                           )
                         : null,
@@ -89,12 +89,17 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                             children: [
                               CircleAvatar(
                                 radius: 30,
-                                backgroundImage: widget.community.profileImageUrl != null
-                                    ? NetworkImage(widget.community.profileImageUrl!)
+                                backgroundImage:
+                                    widget.community.profileImageUrl != null
+                                    ? NetworkImage(
+                                        widget.community.profileImageUrl!,
+                                      )
                                     : null,
                                 child: widget.community.profileImageUrl == null
                                     ? Text(
-                                        widget.community.name.substring(0, 1).toUpperCase(),
+                                        widget.community.name
+                                            .substring(0, 1)
+                                            .toUpperCase(),
                                         style: const TextStyle(
                                           fontSize: 24,
                                           fontWeight: FontWeight.bold,
@@ -196,9 +201,15 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                         value: 'report',
                         child: Row(
                           children: [
-                            Icon(Icons.report_outlined, color: AppColors.errorColor),
+                            Icon(
+                              Icons.report_outlined,
+                              color: AppColors.errorColor,
+                            ),
                             SizedBox(width: 8),
-                            Text('Report', style: TextStyle(color: AppColors.errorColor)),
+                            Text(
+                              'Report',
+                              style: TextStyle(color: AppColors.errorColor),
+                            ),
                           ],
                         ),
                       ),
@@ -207,22 +218,34 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                     switch (value) {
                       case 'share':
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Share feature coming soon!')),
+                          const SnackBar(
+                            content: Text('Share feature coming soon!'),
+                          ),
                         );
                         break;
                       case 'edit':
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Edit community feature coming soon!')),
+                          const SnackBar(
+                            content: Text(
+                              'Edit community feature coming soon!',
+                            ),
+                          ),
                         );
                         break;
                       case 'manage':
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Manage community feature coming soon!')),
+                          const SnackBar(
+                            content: Text(
+                              'Manage community feature coming soon!',
+                            ),
+                          ),
                         );
                         break;
                       case 'report':
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Report feature coming soon!')),
+                          const SnackBar(
+                            content: Text('Report feature coming soon!'),
+                          ),
                         );
                         break;
                     }
@@ -252,14 +275,18 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                         label: Text(widget.community.category),
                         backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
                         labelStyle: TextStyle(color: AppColors.primaryBlue),
-                        side: BorderSide(color: AppColors.primaryBlue.withOpacity(0.3)),
+                        side: BorderSide(
+                          color: AppColors.primaryBlue.withOpacity(0.3),
+                        ),
                       ),
-                      ...widget.community.tags.map((tag) => Chip(
-                        label: Text('#$tag'),
-                        backgroundColor: theme.brightness == Brightness.dark
-                            ? AppColors.surfaceDark
-                            : AppColors.surfaceLight,
-                      )),
+                      ...widget.community.tags.map(
+                        (tag) => Chip(
+                          label: Text('#$tag'),
+                          backgroundColor: theme.brightness == Brightness.dark
+                              ? AppColors.surfaceDark
+                              : AppColors.surfaceLight,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -267,14 +294,21 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        userProvider.joinCommunity(widget.community.id);
+                        userProvider.joinCommunity(
+                          widget.community.id,
+                          context,
+                        );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isMember ? AppColors.primaryBlue : AppColors.primaryBlue,
+                        backgroundColor: isMember
+                            ? AppColors.primaryBlue
+                            : AppColors.primaryBlue,
                         foregroundColor: Colors.white,
                       ),
                       child: Text(
-                        isMember ? AppStrings.leaveCommunity : AppStrings.joinCommunity,
+                        isMember
+                            ? AppStrings.leaveCommunity
+                            : AppStrings.joinCommunity,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -282,7 +316,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                 ],
               ),
             ),
-            
+
             // Tab bar
             Container(
               decoration: BoxDecoration(
@@ -303,7 +337,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                 ],
               ),
             ),
-            
+
             // Tab content
             Expanded(
               child: TabBarView(
@@ -347,7 +381,11 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                   ? NetworkImage(widget.community.creator!.profileImageUrl!)
                   : null,
               child: widget.community.creator!.profileImageUrl == null
-                  ? Text(widget.community.creator!.displayName.substring(0, 1).toUpperCase())
+                  ? Text(
+                      widget.community.creator!.displayName
+                          .substring(0, 1)
+                          .toUpperCase(),
+                    )
                   : null,
             ),
             title: Text(widget.community.creator!.displayName),
@@ -360,13 +398,11 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
           ),
           const Divider(),
         ],
-        
+
         // Mock members (in real app, load from API)
         ...List.generate(5, (index) {
           return ListTile(
-            leading: CircleAvatar(
-              child: Text('U${index + 1}'),
-            ),
+            leading: CircleAvatar(child: Text('U${index + 1}')),
             title: Text('User ${index + 1}'),
             subtitle: Text('@user${index + 1}'),
             trailing: widget.community.moderators.contains('user_${index + 1}')
@@ -384,7 +420,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
 
   Widget _buildAboutTab() {
     final theme = Theme.of(context);
-    
+
     return ListView(
       padding: const EdgeInsets.all(AppConstants.paddingMedium),
       children: [
@@ -401,17 +437,32 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
                   ),
                 ),
                 const SizedBox(height: 12),
-                _buildInfoRow(Icons.category_outlined, 'Category', widget.community.category),
-                _buildInfoRow(Icons.people_outlined, 'Members', '${widget.community.membersCount}'),
-                _buildInfoRow(Icons.calendar_today_outlined, 'Created', 
-                    '${widget.community.createdAt.day}/${widget.community.createdAt.month}/${widget.community.createdAt.year}'),
+                _buildInfoRow(
+                  Icons.category_outlined,
+                  'Category',
+                  widget.community.category,
+                ),
+                _buildInfoRow(
+                  Icons.people_outlined,
+                  'Members',
+                  '${widget.community.membersCount}',
+                ),
+                _buildInfoRow(
+                  Icons.calendar_today_outlined,
+                  'Created',
+                  '${widget.community.createdAt.day}/${widget.community.createdAt.month}/${widget.community.createdAt.year}',
+                ),
                 if (widget.community.isPrivate)
-                  _buildInfoRow(Icons.lock_outlined, 'Privacy', 'Private Community'),
+                  _buildInfoRow(
+                    Icons.lock_outlined,
+                    'Privacy',
+                    'Private Community',
+                  ),
               ],
             ),
           ),
         ),
-        
+
         if (widget.community.rules.isNotEmpty) ...[
           const SizedBox(height: 16),
           Card(
@@ -460,7 +511,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -479,12 +530,7 @@ class _CommunityDetailScreenState extends State<CommunityDetailScreen> with Tick
               fontWeight: FontWeight.w600,
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ),
+          Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
         ],
       ),
     );

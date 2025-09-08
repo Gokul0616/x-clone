@@ -414,9 +414,9 @@
 // }
 
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
 import '../constants/app_constants.dart';
 import '../models/user_model.dart';
 import '../models/tweet_model.dart';
@@ -424,6 +424,7 @@ import '../models/community_model.dart';
 import '../models/message_model.dart';
 import '../models/notification_model.dart';
 import 'mock_api_service.dart';
+import 'upload_service.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -431,6 +432,7 @@ class ApiService {
   ApiService._internal();
 
   final String baseUrl = AppConstants.baseUrl;
+  final String apiVersion = AppConstants.apiVersion;
   final MockApiService _mockService = MockApiService();
   String? _token; // Store token in memory
 
@@ -553,12 +555,14 @@ class ApiService {
         ),
         headers: _headersWithAuth(),
       );
-
+      print(response.body);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return (data['tweets'] as List)
-            .map((tweet) => TweetModel.fromJson(tweet))
-            .toList();
+        if (data['status'] == 'success' && data['tweets'] != null) {
+          return (data['tweets'] as List)
+              .map((tweet) => TweetModel.fromJson(tweet))
+              .toList();
+        }
       }
       return [];
     } catch (e) {
@@ -569,14 +573,14 @@ class ApiService {
 
   Future<TweetModel?> createTweet(
     String content, {
-    List<String>? imageUrls,
+    List<XFile>? images,
     String? replyToTweetId,
     String? quotedTweetId,
   }) async {
     if (AppConstants.useMockApi) {
       return await _mockService.createTweet(
         content,
-        imageUrls: imageUrls,
+        imageUrls: [],
         replyToTweetId: replyToTweetId,
         quotedTweetId: quotedTweetId,
       );
@@ -584,6 +588,16 @@ class ApiService {
 
     try {
       await _loadToken(); // Load token before API call
+
+      // First upload the images if any
+      List<String>? imageUrls;
+      if (images != null && images.isNotEmpty) {
+        final uploadService = UploadService();
+        uploadService.setAuthToken(_token ?? '');
+        imageUrls = await uploadService.uploadImages(images);
+      }
+
+      // Then create the tweet with the uploaded image URLs
       final response = await http.post(
         Uri.parse(
           '$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}',
@@ -776,6 +790,27 @@ class ApiService {
     } catch (e) {
       print('Get communities error: $e');
       return [];
+    }
+  }
+
+  Future<bool> joinCommunity(String communityId) async {
+    if (AppConstants.useMockApi) {
+      return await _mockService.joinCommunity(communityId);
+    }
+
+    try {
+      await _loadToken(); // Load token before API call
+      final response = await http.post(
+        Uri.parse(
+          '$baseUrl$apiVersion${AppConstants.communitiesEndpoint}/$communityId/join',
+        ),
+        headers: _headersWithAuth(),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Join community error: $e');
+      return false;
     }
   }
 

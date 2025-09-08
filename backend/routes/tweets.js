@@ -84,6 +84,8 @@ router.get('/timeline', optionalAuth, async (req, res) => {
     let query = { isDeleted: { $ne: true } };
     let recommendedTweets = [];
 
+    console.log('Getting timeline for user:', req.user ? req.user._id : 'anonymous');
+
 
     if (req.user && req.user._id) {
       // Find the authenticated user
@@ -97,8 +99,9 @@ router.get('/timeline', optionalAuth, async (req, res) => {
 
 
       // Debug: Test query for user's own tweets
+      // Add user's own tweets
       const ownTweets = await Tweet.find({
-        userId: new mongoose.Types.ObjectId(req.user._id), // Fix ObjectId
+        userId: req.user._id, // User ID is already an ObjectId
         isDeleted: { $ne: true }
       })
         .populate('userId', '_id username displayName profileImageUrl isVerified')
@@ -146,13 +149,11 @@ router.get('/timeline', optionalAuth, async (req, res) => {
 
       // Build personalized query
       const orConditions = [
-        { userId: new mongoose.Types.ObjectId(req.user._id) }, // User's own tweets
+        { userId: req.user._id }, // User's own tweets
       ];
       if (followingUsers.length > 0) {
         orConditions.push({
-          userId: {
-            $in: followingUsers.map(id => new mongoose.Types.ObjectId(id)) // Fix ObjectId
-          }
+          userId: { $in: followingUsers }
         });
       }
       if (user.username) {
