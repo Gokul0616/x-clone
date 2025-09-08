@@ -9,10 +9,7 @@ import '../../widgets/media/fullscreen_image_viewer.dart';
 class ProductDetailScreen extends StatefulWidget {
   final ProductModel product;
 
-  const ProductDetailScreen({
-    super.key,
-    required this.product,
-  });
+  const ProductDetailScreen({super.key, required this.product});
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -31,7 +28,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.product.title),
@@ -59,7 +56,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image carousel
-            Container(
+            SizedBox(
               height: 300,
               child: widget.product.imageUrls.isNotEmpty
                   ? Stack(
@@ -81,7 +78,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                     builder: (context) => FullscreenImageViewer(
                                       imageUrls: widget.product.imageUrls,
                                       initialIndex: index,
-                                      heroTag: 'product_detail_${widget.product.id}',
+                                      heroTag:
+                                          'product_detail_${widget.product.id}',
                                     ),
                                   ),
                                 );
@@ -97,20 +95,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       child: CircularProgressIndicator(),
                                     ),
                                   ),
-                                  errorWidget: (context, url, error) => Container(
-                                    color: Colors.grey[300],
-                                    child: const Icon(
-                                      Icons.shopping_bag_outlined,
-                                      size: 64,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Container(
+                                        color: Colors.grey[300],
+                                        child: const Icon(
+                                          Icons.shopping_bag_outlined,
+                                          size: 64,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
                                 ),
                               ),
                             );
                           },
                         ),
-                        
+
                         // Image indicators
                         if (widget.product.imageUrls.length > 1)
                           Positioned(
@@ -122,7 +121,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               children: List.generate(
                                 widget.product.imageUrls.length,
                                 (index) => Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
                                   width: 8,
                                   height: 8,
                                   decoration: BoxDecoration(
@@ -148,7 +149,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ),
             ),
-            
+
             // Product details
             Padding(
               padding: const EdgeInsets.all(AppConstants.paddingMedium),
@@ -167,7 +168,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: _getConditionColor(widget.product.condition),
                           borderRadius: BorderRadius.circular(12),
@@ -183,9 +187,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Price
                   Text(
                     '\$${widget.product.price.toStringAsFixed(2)}',
@@ -194,9 +198,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Description
                   Text(
                     'Description',
@@ -209,9 +213,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     widget.product.description,
                     style: theme.textTheme.bodyMedium,
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Details
                   Container(
                     padding: const EdgeInsets.all(AppConstants.paddingMedium),
@@ -223,18 +227,38 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     child: Column(
                       children: [
-                        _buildDetailRow(context, 'Category', widget.product.category),
-                        _buildDetailRow(context, 'Condition', widget.product.condition),
-                        _buildDetailRow(context, 'Location', widget.product.location),
-                        _buildDetailRow(context, 'Posted', timeago.format(widget.product.createdAt)),
+                        _buildDetailRow(
+                          context,
+                          'Category',
+                          widget.product.category,
+                        ),
+                        _buildDetailRow(
+                          context,
+                          'Condition',
+                          widget.product.condition,
+                        ),
+                        _buildDetailRow(
+                          context,
+                          'Location',
+                          widget.product.location,
+                        ),
+                        _buildDetailRow(
+                          context,
+                          'Posted',
+                          timeago.format(widget.product.createdAt),
+                        ),
                         if (widget.product.views > 0)
-                          _buildDetailRow(context, 'Views', widget.product.views.toString()),
+                          _buildDetailRow(
+                            context,
+                            'Views',
+                            widget.product.views.toString(),
+                          ),
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Seller info
                   if (widget.product.seller != null) ...[
                     Text(
@@ -256,13 +280,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         children: [
                           CircleAvatar(
                             radius: 25,
-                            backgroundImage: widget.product.seller!.profileImageUrl != null
-                                ? NetworkImage(widget.product.seller!.profileImageUrl!)
+                            backgroundImage:
+                                widget.product.seller!.profileImageUrl != null
+                                ? NetworkImage(
+                                    widget.product.seller!.profileImageUrl!,
+                                  )
                                 : null,
-                            child: widget.product.seller!.profileImageUrl == null
+                            child:
+                                widget.product.seller!.profileImageUrl == null
                                 ? Text(
-                                    widget.product.seller!.displayName.substring(0, 1).toUpperCase(),
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    widget.product.seller!.displayName
+                                        .substring(0, 1)
+                                        .toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   )
                                 : null,
                           ),
@@ -291,7 +324,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           OutlinedButton(
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Profile view coming soon!')),
+                                const SnackBar(
+                                  content: Text('Profile view coming soon!'),
+                                ),
                               );
                             },
                             child: const Text('View Profile'),
@@ -300,9 +335,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ),
                   ],
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Tags
                   if (widget.product.tags.isNotEmpty) ...[
                     Text(
@@ -317,7 +352,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       runSpacing: 8,
                       children: widget.product.tags.map((tag) {
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primaryBlue.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
@@ -357,7 +395,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: OutlinedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Message seller feature coming soon!')),
+                    const SnackBar(
+                      content: Text('Message seller feature coming soon!'),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.message_outlined),
@@ -372,7 +412,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               child: ElevatedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Buy now feature coming soon!')),
+                    const SnackBar(
+                      content: Text('Buy now feature coming soon!'),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.shopping_cart),
@@ -392,7 +434,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   Widget _buildDetailRow(BuildContext context, String label, String value) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

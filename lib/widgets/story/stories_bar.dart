@@ -8,7 +8,7 @@ import '../story/story_ring.dart';
 import '../story/story_viewer.dart';
 
 class StoriesBar extends StatefulWidget {
-  const StoriesBar({Key? key}) : super(key: key);
+  const StoriesBar({super.key});
 
   @override
   State<StoriesBar> createState() => _StoriesBarState();
@@ -35,7 +35,7 @@ class _StoriesBarState extends State<StoriesBar> {
   void _openStoryViewer(String userId, int userIndex) {
     final storyProvider = context.read<StoryProvider>();
     final userStories = storyProvider.getStoriesForUser(userId);
-    
+
     if (userStories.isNotEmpty) {
       Navigator.of(context).push(
         PageRouteBuilder(
@@ -63,14 +63,16 @@ class _StoriesBarState extends State<StoriesBar> {
     return Consumer2<StoryProvider, AuthProvider>(
       builder: (context, storyProvider, authProvider, child) {
         final currentUser = authProvider.currentUser;
-        
+
         return Container(
           height: 100,
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: storyProvider.usersWithStories.length + 1, // +1 for "Your story"
+            itemCount:
+                storyProvider.usersWithStories.length +
+                1, // +1 for "Your story"
             itemBuilder: (context, index) {
               if (index == 0) {
                 // Your story / Add story
@@ -120,7 +122,7 @@ class _StoriesBarState extends State<StoriesBar> {
 
 // Shimmer loading for stories bar
 class StoriesBarShimmer extends StatefulWidget {
-  const StoriesBarShimmer({Key? key}) : super(key: key);
+  const StoriesBarShimmer({super.key});
 
   @override
   State<StoriesBarShimmer> createState() => _StoriesBarShimmerState();
@@ -139,13 +141,9 @@ class _StoriesBarShimmerState extends State<StoriesBarShimmer>
       vsync: this,
     )..repeat();
 
-    _animation = Tween<double>(
-      begin: -1.0,
-      end: 2.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override

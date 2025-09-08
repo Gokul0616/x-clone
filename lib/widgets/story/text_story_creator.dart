@@ -5,7 +5,7 @@ import '../../models/story_model.dart';
 import '../../constants/app_colors.dart';
 
 class TextStoryCreator extends StatefulWidget {
-  const TextStoryCreator({Key? key}) : super(key: key);
+  const TextStoryCreator({super.key});
 
   @override
   State<TextStoryCreator> createState() => _TextStoryCreatorState();
@@ -17,7 +17,7 @@ class _TextStoryCreatorState extends State<TextStoryCreator> {
   Color _textColor = Colors.white;
   double _fontSize = 24.0;
   String _fontFamily = 'Chirp';
-  
+
   final List<Color> _backgroundColors = [
     AppColors.primaryBlue,
     const Color(0xFFE91E63),
@@ -60,20 +60,20 @@ class _TextStoryCreatorState extends State<TextStoryCreator> {
     }
 
     final storyProvider = Provider.of<StoryProvider>(context, listen: false);
-    
+
     // Show loading dialog
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(color: Colors.white),
-      ),
+      builder: (context) =>
+          const Center(child: CircularProgressIndicator(color: Colors.white)),
     );
 
     final success = await storyProvider.uploadStory(
       type: StoryType.text,
       textContent: _textController.text.trim(),
-      backgroundColor: '#${_backgroundColor.value.toRadixString(16).substring(2)}',
+      backgroundColor:
+          '#${_backgroundColor.value.toRadixString(16).substring(2)}',
       textColor: '#${_textColor.value.toRadixString(16).substring(2)}',
       fontSize: _fontSize,
       fontFamily: _fontFamily,
@@ -188,7 +188,7 @@ class _TextStoryCreatorState extends State<TextStoryCreator> {
                     itemBuilder: (context, index) {
                       final color = _backgroundColors[index];
                       final isSelected = color == _backgroundColor;
-                      
+
                       return GestureDetector(
                         onTap: () => setState(() => _backgroundColor = color),
                         child: Container(
@@ -237,7 +237,8 @@ class _TextStoryCreatorState extends State<TextStoryCreator> {
                           Row(
                             children: [
                               GestureDetector(
-                                onTap: () => setState(() => _textColor = Colors.white),
+                                onTap: () =>
+                                    setState(() => _textColor = Colors.white),
                                 child: Container(
                                   width: 30,
                                   height: 30,
@@ -245,14 +246,18 @@ class _TextStoryCreatorState extends State<TextStoryCreator> {
                                     color: Colors.white,
                                     shape: BoxShape.circle,
                                     border: _textColor == Colors.white
-                                        ? Border.all(color: AppColors.primaryBlue, width: 2)
+                                        ? Border.all(
+                                            color: AppColors.primaryBlue,
+                                            width: 2,
+                                          )
                                         : null,
                                   ),
                                 ),
                               ),
                               const SizedBox(width: 8),
                               GestureDetector(
-                                onTap: () => setState(() => _textColor = Colors.black),
+                                onTap: () =>
+                                    setState(() => _textColor = Colors.black),
                                 child: Container(
                                   width: 30,
                                   height: 30,
@@ -260,8 +265,14 @@ class _TextStoryCreatorState extends State<TextStoryCreator> {
                                     color: Colors.black,
                                     shape: BoxShape.circle,
                                     border: _textColor == Colors.black
-                                        ? Border.all(color: Colors.white, width: 2)
-                                        : Border.all(color: Colors.white54, width: 1),
+                                        ? Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          )
+                                        : Border.all(
+                                            color: Colors.white54,
+                                            width: 1,
+                                          ),
                                   ),
                                 ),
                               ),
@@ -292,7 +303,8 @@ class _TextStoryCreatorState extends State<TextStoryCreator> {
                             divisions: 16,
                             activeColor: Colors.white,
                             inactiveColor: Colors.white.withOpacity(0.3),
-                            onChanged: (value) => setState(() => _fontSize = value),
+                            onChanged: (value) =>
+                                setState(() => _fontSize = value),
                           ),
                         ],
                       ),
@@ -322,14 +334,19 @@ class _TextStoryCreatorState extends State<TextStoryCreator> {
                     itemBuilder: (context, index) {
                       final font = _fontFamilies[index];
                       final isSelected = font == _fontFamily;
-                      
+
                       return GestureDetector(
                         onTap: () => setState(() => _fontFamily = font),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           margin: const EdgeInsets.only(right: 8),
                           decoration: BoxDecoration(
-                            color: isSelected ? Colors.white : Colors.white.withOpacity(0.2),
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(

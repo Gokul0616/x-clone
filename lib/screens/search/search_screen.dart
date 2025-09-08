@@ -6,7 +6,6 @@ import '../../models/tweet_model.dart';
 import '../../models/user_model.dart';
 import '../../widgets/tweet/tweet_card.dart';
 import '../../widgets/common/user_tile.dart';
-import '../../constants/app_strings.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
 
@@ -17,13 +16,14 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+class _SearchScreenState extends State<SearchScreen>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
 
   final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
-  
+
   List<TweetModel> _searchResults = [];
   List<UserModel> _userResults = [];
   bool _isSearching = false;
@@ -62,7 +62,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
 
     // Search tweets
     final tweets = tweetProvider.searchTweets(query);
-    
+
     // Search users
     final users = await userProvider.searchUsers(query);
 
@@ -78,7 +78,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
     super.build(context);
     final theme = Theme.of(context);
     final tweetProvider = context.watch<TweetProvider>();
-    
+
     return Scaffold(
       body: Column(
         children: [
@@ -119,7 +119,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
               },
             ),
           ),
-          
+
           // Search content
           Expanded(
             child: _currentQuery.isEmpty
@@ -135,7 +135,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
     final theme = Theme.of(context);
     final tweetProvider = context.watch<TweetProvider>();
     final trending = tweetProvider.getTrendingHashtags();
-    
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,17 +151,21 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                 ),
               ),
             ),
-            ...trending.take(10).map((hashtag) => ListTile(
-              leading: const Icon(Icons.tag),
-              title: Text('#$hashtag'),
-              subtitle: const Text('Trending'),
-              onTap: () {
-                _searchController.text = '#$hashtag';
-                _performSearch('#$hashtag');
-              },
-            )),
+            ...trending
+                .take(10)
+                .map(
+                  (hashtag) => ListTile(
+                    leading: const Icon(Icons.tag),
+                    title: Text('#$hashtag'),
+                    subtitle: const Text('Trending'),
+                    onTap: () {
+                      _searchController.text = '#$hashtag';
+                      _performSearch('#$hashtag');
+                    },
+                  ),
+                ),
           ],
-          
+
           // Recent searches (mock data)
           if (trending.isEmpty) _buildEmptyState(),
         ],
@@ -200,7 +204,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
             ],
           ),
         ),
-        
+
         // Tab content
         Expanded(
           child: TabBarView(
@@ -218,36 +222,36 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
 
   Widget _buildAllResults() {
     final allResults = <Widget>[];
-    
+
     // Add users first (limited to 3)
     for (int i = 0; i < _userResults.length && i < 3; i++) {
       allResults.add(UserTile(user: _userResults[i]));
     }
-    
+
     // Add tweets
     for (final tweet in _searchResults) {
-      allResults.add(Column(
-        children: [
-          TweetCard(tweet: tweet),
-          const Divider(height: 1),
-        ],
-      ));
+      allResults.add(
+        Column(
+          children: [
+            TweetCard(tweet: tweet),
+            const Divider(height: 1),
+          ],
+        ),
+      );
     }
-    
+
     if (allResults.isEmpty) {
       return _buildNoResultsState();
     }
-    
-    return ListView(
-      children: allResults,
-    );
+
+    return ListView(children: allResults);
   }
 
   Widget _buildTweetResults() {
     if (_searchResults.isEmpty) {
       return _buildNoResultsState(type: 'tweets');
     }
-    
+
     return ListView.builder(
       itemCount: _searchResults.length,
       itemBuilder: (context, index) {
@@ -266,7 +270,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
     if (_userResults.isEmpty) {
       return _buildNoResultsState(type: 'people');
     }
-    
+
     return ListView.builder(
       itemCount: _userResults.length,
       itemBuilder: (context, index) {
@@ -278,7 +282,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
 
   Widget _buildEmptyState() {
     final theme = Theme.of(context);
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -313,7 +317,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
   Widget _buildNoResultsState({String? type}) {
     final theme = Theme.of(context);
     final searchType = type ?? 'results';
-    
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -326,10 +330,7 @@ class _SearchScreenState extends State<SearchScreen> with AutomaticKeepAliveClie
                 : AppColors.textSecondaryLight,
           ),
           const SizedBox(height: 16),
-          Text(
-            'No $searchType found',
-            style: theme.textTheme.headlineSmall,
-          ),
+          Text('No $searchType found', style: theme.textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             'Try searching for something else.',

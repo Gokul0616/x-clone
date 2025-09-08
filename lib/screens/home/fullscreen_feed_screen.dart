@@ -7,7 +7,7 @@ import '../../widgets/common/custom_reload_animation.dart';
 import '../../constants/app_colors.dart';
 
 class FullscreenFeedScreen extends StatefulWidget {
-  const FullscreenFeedScreen({Key? key}) : super(key: key);
+  const FullscreenFeedScreen({super.key});
 
   @override
   State<FullscreenFeedScreen> createState() => _FullscreenFeedScreenState();
@@ -19,39 +19,32 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
+
   bool _showControls = true;
   bool _isImmersiveMode = false;
 
   @override
   void initState() {
     super.initState();
-    
+
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: const Offset(0, -1),
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeInOut,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: Offset.zero, end: const Offset(0, -1)).animate(
+          CurvedAnimation(parent: _slideController, curve: Curves.easeInOut),
+        );
 
     // Auto-hide controls after 3 seconds
     _startAutoHideTimer();
@@ -117,14 +110,12 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
               builder: (context, tweetProvider, child) {
                 if (tweetProvider.isLoading && tweetProvider.tweets.isEmpty) {
                   return const Center(
-                    child: CustomReloadAnimation(
-                      size: 60,
-                      isAnimating: true,
-                    ),
+                    child: CustomReloadAnimation(size: 60, isAnimating: true),
                   );
                 }
 
-                if (tweetProvider.error != null && tweetProvider.tweets.isEmpty) {
+                if (tweetProvider.error != null &&
+                    tweetProvider.tweets.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -165,7 +156,8 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
                     onLoadMore: tweetProvider.loadMoreTweets,
                     hasMoreTweets: tweetProvider.hasMoreTweets,
                     isLoadingMore: tweetProvider.isLoadingMore,
-                    showActionButtons: false, // Hide action buttons for distraction-free reading
+                    showActionButtons:
+                        false, // Hide action buttons for distraction-free reading
                   ),
                 );
               },
@@ -188,8 +180,12 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
                         end: Alignment.bottomCenter,
                         colors: [
                           Theme.of(context).scaffoldBackgroundColor,
-                          Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
-                          Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
+                          Theme.of(
+                            context,
+                          ).scaffoldBackgroundColor.withOpacity(0.9),
+                          Theme.of(
+                            context,
+                          ).scaffoldBackgroundColor.withOpacity(0.0),
                         ],
                       ),
                     ),
@@ -199,24 +195,29 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
                           IconButton(
                             icon: const Icon(Icons.arrow_back),
                             onPressed: () {
-                              SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+                              SystemChrome.setEnabledSystemUIMode(
+                                SystemUiMode.edgeToEdge,
+                              );
                               Navigator.of(context).pop();
                             },
                           ),
                           Expanded(
                             child: Text(
                               'Fullscreen Feed',
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
                           ),
                           IconButton(
                             icon: Icon(
-                              _isImmersiveMode ? Icons.fullscreen_exit : Icons.fullscreen,
+                              _isImmersiveMode
+                                  ? Icons.fullscreen_exit
+                                  : Icons.fullscreen,
                             ),
                             onPressed: _toggleImmersiveMode,
-                            tooltip: _isImmersiveMode ? 'Exit immersive mode' : 'Enter immersive mode',
+                            tooltip: _isImmersiveMode
+                                ? 'Exit immersive mode'
+                                : 'Enter immersive mode',
                           ),
                           IconButton(
                             icon: const Icon(Icons.settings),
@@ -252,8 +253,12 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
                           end: Alignment.topCenter,
                           colors: [
                             Theme.of(context).scaffoldBackgroundColor,
-                            Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
-                            Theme.of(context).scaffoldBackgroundColor.withOpacity(0.0),
+                            Theme.of(
+                              context,
+                            ).scaffoldBackgroundColor.withOpacity(0.9),
+                            Theme.of(
+                              context,
+                            ).scaffoldBackgroundColor.withOpacity(0.0),
                           ],
                         ),
                       ),
@@ -289,7 +294,11 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
     );
   }
 
-  Widget _buildControlButton(IconData icon, String label, VoidCallback onPressed) {
+  Widget _buildControlButton(
+    IconData icon,
+    String label,
+    VoidCallback onPressed,
+  ) {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -299,10 +308,7 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
           children: [
             Icon(icon, size: 24),
             const SizedBox(height: 4),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
+            Text(label, style: Theme.of(context).textTheme.bodySmall),
           ],
         ),
       ),
@@ -335,7 +341,7 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            
+
             Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -348,17 +354,27 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   ListTile(
-                    leading: Icon(_isImmersiveMode ? Icons.fullscreen_exit : Icons.fullscreen),
-                    title: Text(_isImmersiveMode ? 'Exit Immersive Mode' : 'Enter Immersive Mode'),
-                    subtitle: const Text('Hide system UI for distraction-free reading'),
+                    leading: Icon(
+                      _isImmersiveMode
+                          ? Icons.fullscreen_exit
+                          : Icons.fullscreen,
+                    ),
+                    title: Text(
+                      _isImmersiveMode
+                          ? 'Exit Immersive Mode'
+                          : 'Enter Immersive Mode',
+                    ),
+                    subtitle: const Text(
+                      'Hide system UI for distraction-free reading',
+                    ),
                     onTap: () {
                       _toggleImmersiveMode();
                       Navigator.pop(context);
                     },
                   ),
-                  
+
                   ListTile(
                     leading: const Icon(Icons.refresh),
                     title: const Text('Refresh Feed'),
@@ -368,17 +384,21 @@ class _FullscreenFeedScreenState extends State<FullscreenFeedScreen>
                       _handleRefresh();
                     },
                   ),
-                  
+
                   ListTile(
                     leading: const Icon(Icons.visibility_off),
-                    title: Text(_showControls ? 'Hide Controls' : 'Show Controls'),
-                    subtitle: const Text('Toggle visibility of control buttons'),
+                    title: Text(
+                      _showControls ? 'Hide Controls' : 'Show Controls',
+                    ),
+                    subtitle: const Text(
+                      'Toggle visibility of control buttons',
+                    ),
                     onTap: () {
                       Navigator.pop(context);
                       _toggleControls();
                     },
                   ),
-                  
+
                   const SizedBox(height: 20),
                 ],
               ),

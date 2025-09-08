@@ -1,7 +1,6 @@
-
 name: pulse
 description: "A Twitter clone built with Flutter - Pulse social media app"
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:

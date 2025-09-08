@@ -20,17 +20,24 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
   final _priceController = TextEditingController();
   final _locationController = TextEditingController();
   final _deliveryDaysController = TextEditingController(text: '7');
-  
+
   String _selectedCategory = 'Design';
   String _selectedServiceType = 'fixed_price';
   bool _isRemote = true;
   final List<String> _selectedTags = [];
   final List<String> _selectedSkills = [];
   final List<String> _imageUrls = [];
-  
+
   final List<String> _categories = [
-    'Design', 'Development', 'Writing', 'Marketing', 'Video & Animation',
-    'Music & Audio', 'Programming', 'Business', 'Lifestyle'
+    'Design',
+    'Development',
+    'Writing',
+    'Marketing',
+    'Video & Animation',
+    'Music & Audio',
+    'Programming',
+    'Business',
+    'Lifestyle',
   ];
 
   final List<String> _serviceTypes = ['fixed_price', 'hourly', 'custom'];
@@ -48,7 +55,7 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Offer a Service'),
@@ -84,23 +91,35 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                 child: InkWell(
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Image picker coming soon!')),
+                      const SnackBar(
+                        content: Text('Image picker coming soon!'),
+                      ),
                     );
                   },
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.add_photo_alternate, size: 48, color: Colors.grey),
+                      Icon(
+                        Icons.add_photo_alternate,
+                        size: 48,
+                        color: Colors.grey,
+                      ),
                       SizedBox(height: 8),
-                      Text('Add Portfolio Images', style: TextStyle(color: Colors.grey)),
-                      Text('(Up to 5 images)', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      Text(
+                        'Add Portfolio Images',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      Text(
+                        '(Up to 5 images)',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
                     ],
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Title
               TextFormField(
                 controller: _titleController,
@@ -116,9 +135,9 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Description
               TextFormField(
                 controller: _descriptionController,
@@ -135,9 +154,9 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Price
               TextFormField(
                 controller: _priceController,
@@ -158,12 +177,12 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Category
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'Category *',
                   border: OutlineInputBorder(),
@@ -180,12 +199,12 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   });
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Service Type
               DropdownButtonFormField<String>(
-                value: _selectedServiceType,
+                initialValue: _selectedServiceType,
                 decoration: const InputDecoration(
                   labelText: 'Service Type *',
                   border: OutlineInputBorder(),
@@ -202,9 +221,9 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   });
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Remote work toggle
               SwitchListTile(
                 title: const Text('Remote Work Available'),
@@ -216,15 +235,19 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   });
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Location
               TextFormField(
                 controller: _locationController,
                 decoration: InputDecoration(
-                  labelText: _isRemote ? 'Primary Location' : 'Service Location *',
-                  hintText: _isRemote ? 'Your base location' : 'Where you provide this service',
+                  labelText: _isRemote
+                      ? 'Primary Location'
+                      : 'Service Location *',
+                  hintText: _isRemote
+                      ? 'Your base location'
+                      : 'Where you provide this service',
                   border: const OutlineInputBorder(),
                   prefixIcon: const Icon(Icons.location_on),
                 ),
@@ -235,9 +258,9 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Delivery Days
               TextFormField(
                 controller: _deliveryDaysController,
@@ -258,9 +281,9 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Skills section
               Text(
                 'Skills & Technologies',
@@ -284,7 +307,8 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                         border: InputBorder.none,
                       ),
                       onSubmitted: (value) {
-                        if (value.isNotEmpty && !_selectedSkills.contains(value)) {
+                        if (value.isNotEmpty &&
+                            !_selectedSkills.contains(value)) {
                           setState(() {
                             _selectedSkills.add(value);
                           });
@@ -312,9 +336,9 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Tags section
               Text(
                 'Tags (Optional)',
@@ -338,7 +362,8 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                         border: InputBorder.none,
                       ),
                       onSubmitted: (value) {
-                        if (value.isNotEmpty && !_selectedTags.contains(value)) {
+                        if (value.isNotEmpty &&
+                            !_selectedTags.contains(value)) {
                           setState(() {
                             _selectedTags.add(value);
                           });
@@ -366,9 +391,9 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Terms and conditions
               Container(
                 padding: const EdgeInsets.all(12),
@@ -393,7 +418,7 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
   void _createService() async {
     if (_formKey.currentState!.validate()) {
       final marketplaceProvider = context.read<MarketplaceProvider>();
-      
+
       final service = ServiceModel(
         id: const Uuid().v4(),
         providerId: 'current_user_id', // This should come from AuthProvider
@@ -410,9 +435,9 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
         skills: _selectedSkills,
         deliveryDays: int.parse(_deliveryDaysController.text),
       );
-      
+
       final success = await marketplaceProvider.createService(service);
-      
+
       if (success && mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -420,7 +445,11 @@ class _CreateServiceScreenState extends State<CreateServiceScreen> {
         );
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(marketplaceProvider.error ?? 'Failed to post service')),
+          SnackBar(
+            content: Text(
+              marketplaceProvider.error ?? 'Failed to post service',
+            ),
+          ),
         );
       }
     }

@@ -6,11 +6,11 @@ class StoryProgressIndicator extends StatelessWidget {
   final AnimationController animationController;
 
   const StoryProgressIndicator({
-    Key? key,
+    super.key,
     required this.storiesCount,
     required this.currentIndex,
     required this.animationController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,7 @@ class StoryProgressIndicator extends StatelessWidget {
       children: List.generate(storiesCount, (index) {
         return Expanded(
           child: Container(
-            margin: EdgeInsets.only(
-              right: index < storiesCount - 1 ? 4 : 0,
-            ),
+            margin: EdgeInsets.only(right: index < storiesCount - 1 ? 4 : 0),
             child: _buildProgressBar(index),
           ),
         );
@@ -39,13 +37,13 @@ class StoryProgressIndicator extends StatelessWidget {
         animation: animationController,
         builder: (context, child) {
           double progress = 0.0;
-          
+
           if (index < currentIndex) {
             progress = 1.0;
           } else if (index == currentIndex) {
             progress = animationController.value;
           }
-          
+
           return Container(
             width: double.infinity,
             decoration: BoxDecoration(

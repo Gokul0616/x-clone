@@ -6,11 +6,7 @@ class TweetMedia extends StatelessWidget {
   final List<String> imageUrls;
   final double? height;
 
-  const TweetMedia({
-    super.key,
-    required this.imageUrls,
-    this.height,
-  });
+  const TweetMedia({super.key, required this.imageUrls, this.height});
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +190,7 @@ class TweetMedia extends StatelessWidget {
           ),
         );
       },
-      child: Container(
+      child: SizedBox(
         width: width,
         height: height,
         child: Hero(
@@ -210,10 +206,7 @@ class TweetMedia extends StatelessWidget {
             ),
             errorWidget: (context, url, error) => Container(
               color: Colors.grey[300],
-              child: const Icon(
-                Icons.error_outline,
-                color: Colors.grey,
-              ),
+              child: const Icon(Icons.error_outline, color: Colors.grey),
             ),
           ),
         ),
@@ -265,11 +258,7 @@ class TweetMedia extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      color: Colors.white,
-                      size: 64,
-                    ),
+                    Icon(Icons.error_outline, color: Colors.white, size: 64),
                     SizedBox(height: 16),
                     Text(
                       'Failed to load image',

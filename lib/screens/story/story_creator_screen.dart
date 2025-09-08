@@ -9,7 +9,7 @@ import '../../constants/app_colors.dart';
 import '../../widgets/story/text_story_creator.dart';
 
 class StoryCreatorScreen extends StatefulWidget {
-  const StoryCreatorScreen({Key? key}) : super(key: key);
+  const StoryCreatorScreen({super.key});
 
   @override
   State<StoryCreatorScreen> createState() => _StoryCreatorScreenState();
@@ -31,19 +31,18 @@ class _StoryCreatorScreenState extends State<StoryCreatorScreen>
   void initState() {
     super.initState();
     _initializeCamera();
-    
+
     _buttonAnimationController = AnimationController(
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    
-    _buttonScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.9,
-    ).animate(CurvedAnimation(
-      parent: _buttonAnimationController,
-      curve: Curves.easeInOut,
-    ));
+
+    _buttonScaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+      CurvedAnimation(
+        parent: _buttonAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   @override
@@ -62,9 +61,9 @@ class _StoryCreatorScreenState extends State<StoryCreatorScreen>
           ResolutionPreset.high,
           enableAudio: true,
         );
-        
+
         await _cameraController!.initialize();
-        
+
         if (mounted) {
           setState(() {
             _isCameraReady = true;
@@ -161,7 +160,7 @@ class _StoryCreatorScreenState extends State<StoryCreatorScreen>
   Future<void> _pickFromGallery(StoryType type) async {
     try {
       XFile? file;
-      
+
       if (type == StoryType.image) {
         file = await _imagePicker.pickImage(source: ImageSource.gallery);
       } else {
@@ -179,14 +178,13 @@ class _StoryCreatorScreenState extends State<StoryCreatorScreen>
 
   Future<void> _uploadStory(StoryType type, String filePath) async {
     final storyProvider = Provider.of<StoryProvider>(context, listen: false);
-    
+
     // Show loading dialog
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(color: Colors.white),
-      ),
+      builder: (context) =>
+          const Center(child: CircularProgressIndicator(color: Colors.white)),
     );
 
     final success = await storyProvider.uploadStory(
@@ -206,28 +204,20 @@ class _StoryCreatorScreenState extends State<StoryCreatorScreen>
   }
 
   void _createTextStory() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const TextStoryCreator(),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => const TextStoryCreator()));
   }
 
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.errorColor,
-      ),
+      SnackBar(content: Text(message), backgroundColor: AppColors.errorColor),
     );
   }
 
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.successColor,
-      ),
+      SnackBar(content: Text(message), backgroundColor: AppColors.successColor),
     );
   }
 
@@ -239,9 +229,7 @@ class _StoryCreatorScreenState extends State<StoryCreatorScreen>
         children: [
           // Camera preview
           if (_isCameraReady)
-            Positioned.fill(
-              child: CameraPreview(_cameraController!),
-            )
+            Positioned.fill(child: CameraPreview(_cameraController!))
           else
             Container(
               color: Colors.black,
@@ -349,7 +337,7 @@ class _StoryCreatorScreenState extends State<StoryCreatorScreen>
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
 
                 // Capture controls
@@ -439,17 +427,17 @@ class _StoryCreatorScreenState extends State<StoryCreatorScreen>
     );
   }
 
-  Widget _buildStoryTypeButton(String label, IconData icon, VoidCallback onTap) {
+  Widget _buildStoryTypeButton(
+    String label,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 24,
-          ),
+          Icon(icon, color: Colors.white, size: 24),
           const SizedBox(height: 4),
           Text(
             label,

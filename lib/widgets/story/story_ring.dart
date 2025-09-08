@@ -12,14 +12,14 @@ class StoryRing extends StatelessWidget {
   final bool showAddIcon;
 
   const StoryRing({
-    Key? key,
+    super.key,
     required this.user,
     this.hasUnviewedStories = false,
     this.isOwnStory = false,
     this.onTap,
     this.size = 70.0,
     this.showAddIcon = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +47,7 @@ class StoryRing extends StatelessWidget {
                       ],
                     )
                   : LinearGradient(
-                      colors: [
-                        Colors.grey.shade300,
-                        Colors.grey.shade400,
-                      ],
+                      colors: [Colors.grey.shade300, Colors.grey.shade400],
                     ),
             ),
             child: Container(
@@ -113,7 +110,7 @@ class StoryRing extends StatelessWidget {
                             ),
                           ),
                   ),
-                  
+
                   // Add icon for own story
                   if (showAddIcon)
                     Positioned(
@@ -168,14 +165,14 @@ class AnimatedStoryRing extends StatefulWidget {
   final bool showAddIcon;
 
   const AnimatedStoryRing({
-    Key? key,
+    super.key,
     required this.user,
     this.hasUnviewedStories = false,
     this.isOwnStory = false,
     this.onTap,
     this.size = 70.0,
     this.showAddIcon = false,
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedStoryRing> createState() => _AnimatedStoryRingState();
@@ -198,18 +195,12 @@ class _AnimatedStoryRingState extends State<AnimatedStoryRing>
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _rotationAnimation = Tween<double>(
       begin: 0.0,
       end: 0.02,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override

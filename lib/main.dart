@@ -11,8 +11,6 @@ import 'screens/auth/auth_wrapper.dart';
 import 'screens/home/main_screen.dart';
 import 'utils/themes.dart';
 import 'constants/app_strings.dart';
-import 'services/socket_service.dart';
-import 'services/upload_service.dart';
 
 void main() {
   runApp(const PulseApp());

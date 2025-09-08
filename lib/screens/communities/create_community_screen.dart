@@ -83,7 +83,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppStrings.createCommunity),
@@ -154,7 +154,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Community name
             TextFormField(
               controller: _nameController,
@@ -174,7 +174,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               onChanged: (value) => setState(() {}),
             ),
             const SizedBox(height: 16),
-            
+
             // Description
             TextFormField(
               controller: _descriptionController,
@@ -196,18 +196,13 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               },
             ),
             const SizedBox(height: 16),
-            
+
             // Category
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
-              decoration: const InputDecoration(
-                labelText: 'Category',
-              ),
+              initialValue: _selectedCategory,
+              decoration: const InputDecoration(labelText: 'Category'),
               items: _categories.map((category) {
-                return DropdownMenuItem(
-                  value: category,
-                  child: Text(category),
-                );
+                return DropdownMenuItem(value: category, child: Text(category));
               }).toList(),
               onChanged: (value) {
                 setState(() {
@@ -216,7 +211,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               },
             ),
             const SizedBox(height: 24),
-            
+
             // Privacy settings
             Card(
               child: Padding(
@@ -252,7 +247,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Rules section
             Card(
               child: Padding(
@@ -279,7 +274,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                     OutlinedButton.icon(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Add rules feature coming soon!')),
+                          const SnackBar(
+                            content: Text('Add rules feature coming soon!'),
+                          ),
                         );
                       },
                       icon: const Icon(Icons.add),
@@ -290,7 +287,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Guidelines
             Container(
               padding: const EdgeInsets.all(AppConstants.paddingMedium),

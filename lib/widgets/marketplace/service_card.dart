@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import '../../models/service_model.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
@@ -23,12 +22,10 @@ class ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -93,9 +90,9 @@ class ServiceCard extends StatelessWidget {
                         ),
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // Service info
               Expanded(
                 child: Column(
@@ -127,9 +124,9 @@ class ServiceCard extends StatelessWidget {
                           ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 4),
-                    
+
                     // Description
                     Text(
                       service.description,
@@ -137,21 +134,26 @@ class ServiceCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // Provider info
                     if (service.provider != null)
                       Row(
                         children: [
                           CircleAvatar(
                             radius: 10,
-                            backgroundImage: service.provider!.profileImageUrl != null
-                                ? NetworkImage(service.provider!.profileImageUrl!)
+                            backgroundImage:
+                                service.provider!.profileImageUrl != null
+                                ? NetworkImage(
+                                    service.provider!.profileImageUrl!,
+                                  )
                                 : null,
                             child: service.provider!.profileImageUrl == null
                                 ? Text(
-                                    service.provider!.displayName.substring(0, 1).toUpperCase(),
+                                    service.provider!.displayName
+                                        .substring(0, 1)
+                                        .toUpperCase(),
                                     style: const TextStyle(fontSize: 10),
                                   )
                                 : null,
@@ -167,11 +169,7 @@ class ServiceCard extends StatelessWidget {
                             ),
                           ),
                           if (service.rating > 0) ...[
-                            Icon(
-                              Icons.star,
-                              size: 12,
-                              color: Colors.amber,
-                            ),
+                            Icon(Icons.star, size: 12, color: Colors.amber),
                             const SizedBox(width: 2),
                             Text(
                               '${service.rating.toStringAsFixed(1)} (${service.reviewsCount})',
@@ -180,9 +178,9 @@ class ServiceCard extends StatelessWidget {
                           ],
                         ],
                       ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // Bottom row: Price, location, delivery time
                     Row(
                       children: [
@@ -196,9 +194,11 @@ class ServiceCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 12),
                         ],
-                        
+
                         Icon(
-                          service.isRemote ? Icons.cloud_outlined : Icons.location_on_outlined,
+                          service.isRemote
+                              ? Icons.cloud_outlined
+                              : Icons.location_on_outlined,
                           size: 12,
                           color: theme.brightness == Brightness.dark
                               ? AppColors.textSecondaryDark
@@ -216,9 +216,9 @@ class ServiceCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        
+
                         const SizedBox(width: 8),
-                        
+
                         Icon(
                           Icons.schedule,
                           size: 12,
@@ -237,9 +237,9 @@ class ServiceCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    
+
                     const SizedBox(height: 4),
-                    
+
                     // Skills/Tags
                     if (service.skills.isNotEmpty)
                       Wrap(
@@ -247,7 +247,10 @@ class ServiceCard extends StatelessWidget {
                         runSpacing: 2,
                         children: service.skills.take(3).map((skill) {
                           return Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.primaryBlue.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),

@@ -2,10 +2,79 @@ const express = require('express');
 const Tweet = require('../models/Tweet');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
+const mongoose = require('mongoose');
 const { auth, optionalAuth } = require('../middleware/auth');
 const router = express.Router();
 
 // Get timeline (home feed)
+// router.get('/timeline', optionalAuth, async (req, res) => {
+//   try {
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 20;
+//     const skip = (page - 1) * limit;
+
+//     let query = { isDeleted: { $ne: true } };
+//     // If user is authenticated, show personalized timeline
+//     if (req.user) {
+//       const user = await User.findOne({ _id: req.user._id });
+//       const followingUsers = user.following || [];
+//       query = {
+//         $or: [
+//           { userId: { $in: [req.user.id, ...followingUsers] } },
+//           { mentions: req.user.username }
+//         ],
+//         isDeleted: { $ne: true }
+//       };
+//     }
+
+//     const tweets = await Tweet.find(query)
+//       .populate('userId', 'id username displayName profileImageUrl isVerified')
+//       .populate('retweetedByUserId', 'id username displayName profileImageUrl isVerified')
+//       .populate('replyToUserId', 'id username displayName profileImageUrl isVerified')
+//       .populate({
+//         path: 'originalTweetId',
+//         populate: {
+//           path: 'userId',
+//           select: 'id username displayName profileImageUrl isVerified'
+//         }
+//       })
+//       .populate({
+//         path: 'quotedTweetId',
+//         populate: {
+//           path: 'userId',
+//           select: 'id username displayName profileImageUrl isVerified'
+//         }
+//       })
+//       .sort({ createdAt: -1 })
+//       .skip(skip)
+//       .limit(limit);
+
+//     // Update engagement scores periodically
+//     tweets.forEach(tweet => {
+//       if (tweet.lastEngagement < new Date(Date.now() - 60 * 60 * 1000)) { // 1 hour
+//         tweet.updateEngagementScore();
+//       }
+//     });
+
+//     res.status(200).json({
+//       status: 'success',
+//       tweets,
+//       pagination: {
+//         page,
+//         limit,
+//         hasMore: tweets.length === limit
+//       }
+//     });
+
+//   } catch (error) {
+//     console.error('Get timeline error:', error);
+//     res.status(500).json({
+//       status: 'error',
+//       message: 'Failed to get timeline'
+//     });
+//   }
+// });
+
 router.get('/timeline', optionalAuth, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -13,62 +82,198 @@ router.get('/timeline', optionalAuth, async (req, res) => {
     const skip = (page - 1) * limit;
 
     let query = { isDeleted: { $ne: true } };
-    
-    // If user is authenticated, show personalized timeline
-    if (req.user) {
-      const user = await User.findOne({ id: req.user.id });
+    let recommendedTweets = [];
+
+
+    if (req.user && req.user._id) {
+      // Find the authenticated user
+      const user = await User.findById(req.user._id).select('following preferences username');
+      if (!user) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'User not found'
+        });
+      }
+
+
+      // Debug: Test query for user's own tweets
+      const ownTweets = await Tweet.find({
+        userId: new mongoose.Types.ObjectId(req.user._id), // Fix ObjectId
+        isDeleted: { $ne: true }
+      })
+        .populate('userId', '_id username displayName profileImageUrl isVerified')
+        .sort({ createdAt: -1 })
+        .limit(limit);
+
+      // Get user's followed users
       const followingUsers = user.following || [];
-      
+
+      // Get user's interacted hashtags
+      const userInteractions = await Notification.find({
+        fromUserId: new mongoose.Types.ObjectId(req.user._id), // Fix ObjectId
+        type: { $in: ['like', 'retweet', 'reply'] }
+      }).distinct('tweetId');
+
+      const interactedHashtags = await Tweet.find({
+        _id: { $in: userInteractions },
+        hashtags: { $exists: true, $ne: [] }
+      }).distinct('hashtags');
+
+      // Get trending hashtags
+      const trendingHashtags = await Tweet.getTrendingHashtags(10, 24);
+      const trendingHashtagNames = trendingHashtags.map(trend => trend._id);
+
+      // Collaborative filtering
+      const similarUsers = await User.aggregate([
+        {
+          $match: {
+            _id: { $ne: new mongoose.Types.ObjectId(req.user._id) }, // Fix ObjectId
+            following: { $in: followingUsers }
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            commonFollows: {
+              $size: { $setIntersection: ['$following', followingUsers] }
+            }
+          }
+        },
+        { $sort: { commonFollows: -1 } },
+        { $limit: 10 }
+      ]);
+      const similarUserIds = similarUsers.map(user => user._id);
+
+      // Build personalized query
+      const orConditions = [
+        { userId: new mongoose.Types.ObjectId(req.user._id) }, // User's own tweets
+      ];
+      if (followingUsers.length > 0) {
+        orConditions.push({
+          userId: {
+            $in: followingUsers.map(id => new mongoose.Types.ObjectId(id)) // Fix ObjectId
+          }
+        });
+      }
+      if (user.username) {
+        orConditions.push({ mentions: user.username });
+      }
+      if (interactedHashtags.length > 0) {
+        orConditions.push({ hashtags: { $in: interactedHashtags } });
+      }
+      if (trendingHashtagNames.length > 0) {
+        orConditions.push({ hashtags: { $in: trendingHashtagNames } });
+      }
+      if (similarUserIds.length > 0) {
+        orConditions.push({
+          userId: {
+            $in: similarUserIds.map(id => new mongoose.Types.ObjectId(id)) // Fix ObjectId
+          }
+        });
+      }
+
+      query = {
+        $or: orConditions,
+        isDeleted: { $ne: true },
+        ...(user.preferences?.language && { language: user.preferences.language })
+      };
+
+      // Fetch recommended tweets
+      recommendedTweets = await Tweet.find(query)
+        .populate('userId', '_id username displayName profileImageUrl isVerified')
+        .populate('retweetedByUserId', '_id username displayName profileImageUrl isVerified')
+        .populate('replyToUserId', '_id username displayName profileImageUrl isVerified')
+        .populate({
+          path: 'originalTweetId',
+          populate: {
+            path: 'userId',
+            select: '_id username displayName profileImageUrl isVerified'
+          }
+        })
+        .populate({
+          path: 'quotedTweetId',
+          populate: {
+            path: 'userId',
+            select: '_id username displayName profileImageUrl isVerified'
+          }
+        })
+        .sort({ createdAt: -1, engagementScore: -1 })
+        .skip(skip)
+        .limit(limit);
+      // Fallback if no tweets are found
+      if (recommendedTweets.length === 0) {
+        recommendedTweets = await Tweet.find({
+          isDeleted: { $ne: true }
+        })
+          .populate('userId', '_id username displayName profileImageUrl isVerified')
+          .sort({ createdAt: -1 })
+          .limit(limit);
+      }
+    } else {
+      // Non-authenticated users
+      const trendingHashtags = await Tweet.getTrendingHashtags(10, 24);
+      const trendingHashtagNames = trendingHashtags.map(trend => trend._id);
+
       query = {
         $or: [
-          { userId: { $in: [req.user.id, ...followingUsers] } },
-          { mentions: req.user.username }
+          ...(trendingHashtagNames.length > 0 ? [{ hashtags: { $in: trendingHashtagNames } }] : []),
+          { isVerified: true }
         ],
         isDeleted: { $ne: true }
       };
+
+      recommendedTweets = await Tweet.find(query)
+        .populate('userId', '_id username displayName profileImageUrl isVerified')
+        .populate('retweetedByUserId', '_id username displayName profileImageUrl isVerified')
+        .populate('replyToUserId', '_id username displayName profileImageUrl isVerified')
+        .populate({
+          path: 'originalTweetId',
+          populate: {
+            path: 'userId',
+            select: '_id username displayName profileImageUrl isVerified'
+          }
+        })
+        .populate({
+          path: 'quotedTweetId',
+          populate: {
+            path: 'userId',
+            select: '_id username displayName profileImageUrl isVerified'
+          }
+        })
+        .sort({ createdAt: -1, engagementScore: -1 })
+        .skip(skip)
+        .limit(limit);
+
+      // Fallback for non-authenticated users
+      if (recommendedTweets.length === 0) {
+        recommendedTweets = await Tweet.find({
+          isDeleted: { $ne: true }
+        })
+          .populate('userId', '_id username displayName profileImageUrl isVerified')
+          .sort({ createdAt: -1 })
+          .limit(limit);
+      }
     }
 
-    const tweets = await Tweet.find(query)
-      .populate('userId', 'id username displayName profileImageUrl isVerified')
-      .populate('retweetedByUserId', 'id username displayName profileImageUrl isVerified')
-      .populate('replyToUserId', 'id username displayName profileImageUrl isVerified')
-      .populate({
-        path: 'originalTweetId',
-        populate: {
-          path: 'userId',
-          select: 'id username displayName profileImageUrl isVerified'
-        }
-      })
-      .populate({
-        path: 'quotedTweetId',
-        populate: {
-          path: 'userId',
-          select: 'id username displayName profileImageUrl isVerified'
-        }
-      })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
 
-    // Update engagement scores periodically
-    tweets.forEach(tweet => {
-      if (tweet.lastEngagement < new Date(Date.now() - 60 * 60 * 1000)) { // 1 hour
+    // Update engagement scores
+    recommendedTweets.forEach(tweet => {
+      if (tweet.lastEngagement < new Date(Date.now() - 60 * 60 * 1000)) {
         tweet.updateEngagementScore();
       }
     });
 
     res.status(200).json({
       status: 'success',
-      tweets,
+      tweets: recommendedTweets,
       pagination: {
         page,
         limit,
-        hasMore: tweets.length === limit
+        hasMore: recommendedTweets.length === limit
       }
     });
-
   } catch (error) {
-    console.error('Get timeline error:', error);
+    console.error('Timeline - Get timeline error:', error.message);
     res.status(500).json({
       status: 'error',
       message: 'Failed to get timeline'
@@ -80,7 +285,6 @@ router.get('/timeline', optionalAuth, async (req, res) => {
 router.post('/', auth, async (req, res) => {
   try {
     const { content, imageUrls, videoUrls, replyToTweetId, quotedTweetId, communityId } = req.body;
-
     if (!content || content.trim().length === 0) {
       return res.status(400).json({
         status: 'error',
@@ -197,7 +401,7 @@ router.post('/:tweetId/like', auth, async (req, res) => {
     }
 
     const isLiked = tweet.likedBy.includes(userId);
-    
+
     if (isLiked) {
       // Unlike
       tweet.likedBy = tweet.likedBy.filter(id => id !== userId);
@@ -259,12 +463,12 @@ router.post('/:tweetId/retweet', auth, async (req, res) => {
     }
 
     const isRetweeted = tweet.retweetedBy.includes(userId);
-    
+
     if (isRetweeted) {
       // Unretweet
       tweet.retweetedBy = tweet.retweetedBy.filter(id => id !== userId);
       tweet.retweetsCount = tweet.retweetedBy.length;
-      
+
       // Remove retweet from user's timeline
       await Tweet.findOneAndDelete({
         userId: userId,
@@ -327,11 +531,11 @@ router.get('/:tweetId/replies', optionalAuth, async (req, res) => {
       replyToTweetId: tweetId,
       isDeleted: { $ne: true }
     })
-    .populate('userId', 'id username displayName profileImageUrl isVerified')
-    .populate('replyToUserId', 'id username displayName profileImageUrl isVerified')
-    .sort({ createdAt: 1 }) // Oldest first for replies
-    .skip(skip)
-    .limit(limit);
+      .populate('userId', 'id username displayName profileImageUrl isVerified')
+      .populate('replyToUserId', 'id username displayName profileImageUrl isVerified')
+      .sort({ createdAt: 1 }) // Oldest first for replies
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       status: 'success',

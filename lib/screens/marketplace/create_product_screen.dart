@@ -19,15 +19,22 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _locationController = TextEditingController();
-  
+
   String _selectedCategory = 'Electronics';
   String _selectedCondition = 'used';
   final List<String> _selectedTags = [];
   final List<String> _imageUrls = [];
-  
+
   final List<String> _categories = [
-    'Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Books', 
-    'Vehicles', 'Jobs', 'Services', 'Real Estate'
+    'Electronics',
+    'Fashion',
+    'Home & Garden',
+    'Sports',
+    'Books',
+    'Vehicles',
+    'Jobs',
+    'Services',
+    'Real Estate',
   ];
 
   final List<String> _conditions = ['new', 'used', 'refurbished'];
@@ -44,7 +51,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sell a Product'),
@@ -80,23 +87,32 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                 child: InkWell(
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Image picker coming soon!')),
+                      const SnackBar(
+                        content: Text('Image picker coming soon!'),
+                      ),
                     );
                   },
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.add_photo_alternate, size: 48, color: Colors.grey),
+                      Icon(
+                        Icons.add_photo_alternate,
+                        size: 48,
+                        color: Colors.grey,
+                      ),
                       SizedBox(height: 8),
                       Text('Add Photos', style: TextStyle(color: Colors.grey)),
-                      Text('(Up to 10 photos)', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                      Text(
+                        '(Up to 10 photos)',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
                     ],
                   ),
                 ),
               ),
-              
+
               const SizedBox(height: 20),
-              
+
               // Title
               TextFormField(
                 controller: _titleController,
@@ -112,9 +128,9 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Description
               TextFormField(
                 controller: _descriptionController,
@@ -131,9 +147,9 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Price
               TextFormField(
                 controller: _priceController,
@@ -154,12 +170,12 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Category
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: const InputDecoration(
                   labelText: 'Category *',
                   border: OutlineInputBorder(),
@@ -176,12 +192,12 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                   });
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Condition
               DropdownButtonFormField<String>(
-                value: _selectedCondition,
+                initialValue: _selectedCondition,
                 decoration: const InputDecoration(
                   labelText: 'Condition *',
                   border: OutlineInputBorder(),
@@ -198,9 +214,9 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                   });
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Location
               TextFormField(
                 controller: _locationController,
@@ -217,9 +233,9 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Tags section
               Text(
                 'Tags (Optional)',
@@ -243,7 +259,8 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                         border: InputBorder.none,
                       ),
                       onSubmitted: (value) {
-                        if (value.isNotEmpty && !_selectedTags.contains(value)) {
+                        if (value.isNotEmpty &&
+                            !_selectedTags.contains(value)) {
                           setState(() {
                             _selectedTags.add(value);
                           });
@@ -271,9 +288,9 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
                   ],
                 ),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // Terms and conditions
               Container(
                 padding: const EdgeInsets.all(12),
@@ -298,7 +315,7 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
   void _createProduct() async {
     if (_formKey.currentState!.validate()) {
       final marketplaceProvider = context.read<MarketplaceProvider>();
-      
+
       final product = ProductModel(
         id: const Uuid().v4(),
         sellerId: 'current_user_id', // This should come from AuthProvider
@@ -312,9 +329,9 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
         imageUrls: _imageUrls,
         tags: _selectedTags,
       );
-      
+
       final success = await marketplaceProvider.createProduct(product);
-      
+
       if (success && mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -322,7 +339,11 @@ class _CreateProductScreenState extends State<CreateProductScreen> {
         );
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(marketplaceProvider.error ?? 'Failed to post product')),
+          SnackBar(
+            content: Text(
+              marketplaceProvider.error ?? 'Failed to post product',
+            ),
+          ),
         );
       }
     }

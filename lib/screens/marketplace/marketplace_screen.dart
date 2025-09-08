@@ -18,22 +18,31 @@ class MarketplaceScreen extends StatefulWidget {
   State<MarketplaceScreen> createState() => _MarketplaceScreenState();
 }
 
-class _MarketplaceScreenState extends State<MarketplaceScreen> with TickerProviderStateMixin {
+class _MarketplaceScreenState extends State<MarketplaceScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   String _selectedCategory = 'All';
   String _selectedLocation = 'All';
 
   final List<String> _categories = [
-    'All', 'Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Books', 
-    'Vehicles', 'Jobs', 'Services', 'Real Estate'
+    'All',
+    'Electronics',
+    'Fashion',
+    'Home & Garden',
+    'Sports',
+    'Books',
+    'Vehicles',
+    'Jobs',
+    'Services',
+    'Real Estate',
   ];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MarketplaceProvider>().loadProducts();
       context.read<MarketplaceProvider>().loadServices();
@@ -50,7 +59,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with TickerProvid
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Marketplace'),
@@ -109,15 +118,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with TickerProvid
               },
             ),
           ),
-          
+
           // Tab content
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
-                _buildProductsTab(),
-                _buildServicesTab(),
-              ],
+              children: [_buildProductsTab(), _buildServicesTab()],
             ),
           ),
         ],
@@ -128,11 +134,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with TickerProvid
   Widget _buildProductsTab() {
     return Consumer<MarketplaceProvider>(
       builder: (context, marketplaceProvider, child) {
-        if (marketplaceProvider.isLoading && marketplaceProvider.products.isEmpty) {
+        if (marketplaceProvider.isLoading &&
+            marketplaceProvider.products.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        if (marketplaceProvider.error != null && marketplaceProvider.products.isEmpty) {
+        if (marketplaceProvider.error != null &&
+            marketplaceProvider.products.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -206,7 +214,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with TickerProvid
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProductDetailScreen(product: product),
+                      builder: (context) =>
+                          ProductDetailScreen(product: product),
                     ),
                   );
                 },
@@ -221,7 +230,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with TickerProvid
   Widget _buildServicesTab() {
     return Consumer<MarketplaceProvider>(
       builder: (context, marketplaceProvider, child) {
-        if (marketplaceProvider.isLoading && marketplaceProvider.services.isEmpty) {
+        if (marketplaceProvider.isLoading &&
+            marketplaceProvider.services.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -261,7 +271,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with TickerProvid
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ServiceDetailScreen(service: service),
+                          builder: (context) =>
+                              ServiceDetailScreen(service: service),
                         ),
                       );
                     },
@@ -331,13 +342,10 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with TickerProvid
           mainAxisSize: MainAxisSize.min,
           children: [
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
+              initialValue: _selectedCategory,
               decoration: const InputDecoration(labelText: 'Category'),
               items: _categories.map((category) {
-                return DropdownMenuItem(
-                  value: category,
-                  child: Text(category),
-                );
+                return DropdownMenuItem(value: category, child: Text(category));
               }).toList(),
               onChanged: (value) {
                 setState(() {
@@ -347,13 +355,12 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> with TickerProvid
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _selectedLocation,
+              initialValue: _selectedLocation,
               decoration: const InputDecoration(labelText: 'Location'),
-              items: ['All', 'Local', 'National', 'International'].map((location) {
-                return DropdownMenuItem(
-                  value: location,
-                  child: Text(location),
-                );
+              items: ['All', 'Local', 'National', 'International'].map((
+                location,
+              ) {
+                return DropdownMenuItem(value: location, child: Text(location));
               }).toList(),
               onChanged: (value) {
                 setState(() {

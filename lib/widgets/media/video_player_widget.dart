@@ -24,7 +24,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   bool _isPlaying = false;
   bool _showControls = true;
   double _currentPosition = 0.0;
-  double _totalDuration = 100.0; // Placeholder
+  final double _totalDuration = 100.0; // Placeholder
 
   @override
   void initState() {
@@ -72,7 +72,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 ),
               ),
             ),
-            
+
             // Tap to toggle controls
             GestureDetector(
               onTap: _toggleControls,
@@ -82,7 +82,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 color: Colors.transparent,
               ),
             ),
-            
+
             // Play/Pause button overlay
             if (_showControls)
               Center(
@@ -102,7 +102,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   ),
                 ),
               ),
-            
+
             // Bottom controls
             if (_showControls)
               Positioned(
@@ -144,13 +144,16 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                           },
                         ),
                       ),
-                      
+
                       // Control buttons
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.replay_10, color: Colors.white),
+                            icon: const Icon(
+                              Icons.replay_10,
+                              color: Colors.white,
+                            ),
                             onPressed: () {
                               // Implement rewind 10 seconds
                             },
@@ -164,13 +167,19 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                             onPressed: _togglePlayPause,
                           ),
                           IconButton(
-                            icon: const Icon(Icons.forward_10, color: Colors.white),
+                            icon: const Icon(
+                              Icons.forward_10,
+                              color: Colors.white,
+                            ),
                             onPressed: () {
                               // Implement forward 10 seconds
                             },
                           ),
                           IconButton(
-                            icon: const Icon(Icons.fullscreen, color: Colors.white),
+                            icon: const Icon(
+                              Icons.fullscreen,
+                              color: Colors.white,
+                            ),
                             onPressed: () {
                               // Implement fullscreen
                               Navigator.push(
@@ -199,10 +208,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 class FullscreenVideoPlayer extends StatelessWidget {
   final String videoUrl;
 
-  const FullscreenVideoPlayer({
-    super.key,
-    required this.videoUrl,
-  });
+  const FullscreenVideoPlayer({super.key, required this.videoUrl});
 
   @override
   Widget build(BuildContext context) {

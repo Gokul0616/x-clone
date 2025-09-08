@@ -1,4 +1,3 @@
-import 'dart:math';
 import '../models/user_model.dart';
 import '../models/tweet_model.dart';
 import '../models/community_model.dart';
@@ -12,7 +11,7 @@ class MockApiService {
 
   // Mock current user
   static const String currentUserId = 'user_1';
-  
+
   // Mock data
   List<UserModel> _mockUsers = [];
   List<TweetModel> _mockTweets = [];
@@ -32,7 +31,8 @@ class MockApiService {
         username: 'johndoe',
         displayName: 'John Doe',
         email: 'john@example.com',
-        bio: 'Software developer passionate about Flutter and mobile development. Building the future one app at a time.',
+        bio:
+            'Software developer passionate about Flutter and mobile development. Building the future one app at a time.',
         profileImageUrl: 'https://i.pravatar.cc/150?img=1',
         bannerImageUrl: 'https://picsum.photos/600/200?random=1',
         location: 'San Francisco, CA',
@@ -50,7 +50,8 @@ class MockApiService {
         username: 'janedeveloper',
         displayName: 'Jane Smith',
         email: 'jane@example.com',
-        bio: 'UX Designer & Flutter enthusiast. Creating beautiful and functional mobile experiences.',
+        bio:
+            'UX Designer & Flutter enthusiast. Creating beautiful and functional mobile experiences.',
         profileImageUrl: 'https://i.pravatar.cc/150?img=2',
         bannerImageUrl: 'https://picsum.photos/600/200?random=2',
         location: 'New York, NY',
@@ -68,7 +69,8 @@ class MockApiService {
         username: 'techenthusiast',
         displayName: 'Alex Johnson',
         email: 'alex@example.com',
-        bio: 'Tech entrepreneur & startup founder. Always excited about new technologies and innovations.',
+        bio:
+            'Tech entrepreneur & startup founder. Always excited about new technologies and innovations.',
         profileImageUrl: 'https://i.pravatar.cc/150?img=3',
         bannerImageUrl: 'https://picsum.photos/600/200?random=3',
         location: 'Austin, TX',
@@ -86,7 +88,8 @@ class MockApiService {
         username: 'designerguru',
         displayName: 'Sarah Wilson',
         email: 'sarah@example.com',
-        bio: 'Product Designer with a passion for user-centered design and accessibility.',
+        bio:
+            'Product Designer with a passion for user-centered design and accessibility.',
         profileImageUrl: 'https://i.pravatar.cc/150?img=4',
         bannerImageUrl: 'https://picsum.photos/600/200?random=4',
         location: 'Seattle, WA',
@@ -103,7 +106,8 @@ class MockApiService {
         username: 'codemaster',
         displayName: 'Mike Chen',
         email: 'mike@example.com',
-        bio: 'Full-stack developer & open source contributor. Love sharing knowledge and building communities.',
+        bio:
+            'Full-stack developer & open source contributor. Love sharing knowledge and building communities.',
         profileImageUrl: 'https://i.pravatar.cc/150?img=5',
         bannerImageUrl: 'https://picsum.photos/600/200?random=5',
         location: 'Toronto, Canada',
@@ -123,7 +127,8 @@ class MockApiService {
       TweetModel(
         id: 'tweet_1',
         userId: 'user_1',
-        content: 'Just shipped a new Flutter app! The developer experience keeps getting better with each release. 🚀 #FlutterDev #MobileDev',
+        content:
+            'Just shipped a new Flutter app! The developer experience keeps getting better with each release. 🚀 #FlutterDev #MobileDev',
         imageUrls: ['https://picsum.photos/400/300?random=11'],
         createdAt: DateTime.now().subtract(const Duration(hours: 2)),
         likesCount: 45,
@@ -138,7 +143,8 @@ class MockApiService {
       TweetModel(
         id: 'tweet_2',
         userId: 'user_2',
-        content: 'Working on some exciting UI designs for our next mobile app. The new Material Design 3 components are amazing! ✨',
+        content:
+            'Working on some exciting UI designs for our next mobile app. The new Material Design 3 components are amazing! ✨',
         createdAt: DateTime.now().subtract(const Duration(hours: 4)),
         likesCount: 28,
         retweetsCount: 6,
@@ -151,8 +157,12 @@ class MockApiService {
       TweetModel(
         id: 'tweet_3',
         userId: 'user_3',
-        content: 'The future of mobile development is bright! With tools like Flutter, React Native, and native development, we have so many great options.',
-        imageUrls: ['https://picsum.photos/400/250?random=12', 'https://picsum.photos/400/250?random=13'],
+        content:
+            'The future of mobile development is bright! With tools like Flutter, React Native, and native development, we have so many great options.',
+        imageUrls: [
+          'https://picsum.photos/400/250?random=12',
+          'https://picsum.photos/400/250?random=13',
+        ],
         createdAt: DateTime.now().subtract(const Duration(hours: 6)),
         likesCount: 67,
         retweetsCount: 23,
@@ -165,7 +175,8 @@ class MockApiService {
       TweetModel(
         id: 'tweet_4',
         userId: 'user_4',
-        content: 'Accessibility in mobile apps is not optional - it\'s essential. Here are some key principles every designer should know 🧵',
+        content:
+            'Accessibility in mobile apps is not optional - it\'s essential. Here are some key principles every designer should know 🧵',
         createdAt: DateTime.now().subtract(const Duration(hours: 8)),
         likesCount: 89,
         retweetsCount: 34,
@@ -178,7 +189,8 @@ class MockApiService {
       TweetModel(
         id: 'tweet_5',
         userId: 'user_5',
-        content: 'Open source contribution tip: Start small, be consistent, and don\'t be afraid to ask questions. The community is amazing! 💜',
+        content:
+            'Open source contribution tip: Start small, be consistent, and don\'t be afraid to ask questions. The community is amazing! 💜',
         createdAt: DateTime.now().subtract(const Duration(hours: 12)),
         likesCount: 156,
         retweetsCount: 45,
@@ -192,7 +204,8 @@ class MockApiService {
       TweetModel(
         id: 'tweet_6',
         userId: 'user_2',
-        content: 'Totally agree! The Flutter community has been incredibly welcoming and helpful.',
+        content:
+            'Totally agree! The Flutter community has been incredibly welcoming and helpful.',
         createdAt: DateTime.now().subtract(const Duration(hours: 10)),
         likesCount: 23,
         retweetsCount: 3,
@@ -212,7 +225,8 @@ class MockApiService {
       CommunityModel(
         id: 'community_1',
         name: 'Flutter Developers',
-        description: 'A community for Flutter developers to share knowledge, tips, and showcase their apps.',
+        description:
+            'A community for Flutter developers to share knowledge, tips, and showcase their apps.',
         bannerImageUrl: 'https://picsum.photos/600/200?random=21',
         profileImageUrl: 'https://picsum.photos/150/150?random=22',
         creatorId: 'user_1',
@@ -233,7 +247,8 @@ class MockApiService {
       CommunityModel(
         id: 'community_2',
         name: 'UI/UX Designers',
-        description: 'Share design inspiration, get feedback, and discuss the latest trends in UI/UX design.',
+        description:
+            'Share design inspiration, get feedback, and discuss the latest trends in UI/UX design.',
         bannerImageUrl: 'https://picsum.photos/600/200?random=23',
         profileImageUrl: 'https://picsum.photos/150/150?random=24',
         creatorId: 'user_2',
@@ -254,7 +269,8 @@ class MockApiService {
       CommunityModel(
         id: 'community_3',
         name: 'Tech Entrepreneurs',
-        description: 'Connect with fellow entrepreneurs, share startup experiences, and discuss the latest in tech.',
+        description:
+            'Connect with fellow entrepreneurs, share startup experiences, and discuss the latest in tech.',
         bannerImageUrl: 'https://picsum.photos/600/200?random=25',
         profileImageUrl: 'https://picsum.photos/150/150?random=26',
         creatorId: 'user_3',
@@ -289,7 +305,8 @@ class MockApiService {
         id: 'message_2',
         senderId: 'user_1',
         conversationId: 'conv_1',
-        content: 'Thanks! I\'d recommend starting with the official documentation and building small projects first.',
+        content:
+            'Thanks! I\'d recommend starting with the official documentation and building small projects first.',
         createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
         isRead: true,
         sender: _mockUsers[0],
@@ -346,8 +363,10 @@ class MockApiService {
   // Authentication
   Future<UserModel?> login(String email, String password) async {
     _initializeMockData();
-    await Future.delayed(const Duration(milliseconds: 500)); // Simulate network delay
-    
+    await Future.delayed(
+      const Duration(milliseconds: 500),
+    ); // Simulate network delay
+
     // Simple mock authentication
     if (email == 'john@example.com' && password == 'password') {
       return _mockUsers.first;
@@ -355,10 +374,15 @@ class MockApiService {
     return null;
   }
 
-  Future<UserModel?> register(String email, String password, String username, String displayName) async {
+  Future<UserModel?> register(
+    String email,
+    String password,
+    String username,
+    String displayName,
+  ) async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 800));
-    
+
     // Create new user
     final newUser = UserModel(
       id: 'user_${_mockUsers.length + 1}',
@@ -367,7 +391,7 @@ class MockApiService {
       email: email,
       joinedDate: DateTime.now(),
     );
-    
+
     _mockUsers.add(newUser);
     return newUser;
   }
@@ -376,26 +400,31 @@ class MockApiService {
   Future<List<TweetModel>> getTimeline({int page = 1, int limit = 20}) async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 600));
-    
+
     // Return tweets sorted by creation date
     final sortedTweets = List<TweetModel>.from(_mockTweets)
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    
+
     final startIndex = (page - 1) * limit;
     final endIndex = startIndex + limit;
-    
+
     if (startIndex >= sortedTweets.length) return [];
-    
+
     return sortedTweets.sublist(
       startIndex,
       endIndex > sortedTweets.length ? sortedTweets.length : endIndex,
     );
   }
 
-  Future<TweetModel?> createTweet(String content, {List<String>? imageUrls, String? replyToTweetId, String? quotedTweetId}) async {
+  Future<TweetModel?> createTweet(
+    String content, {
+    List<String>? imageUrls,
+    String? replyToTweetId,
+    String? quotedTweetId,
+  }) async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 700));
-    
+
     final newTweet = TweetModel(
       id: 'tweet_${_mockTweets.length + 1}',
       userId: currentUserId,
@@ -406,30 +435,30 @@ class MockApiService {
       quotedTweetId: quotedTweetId,
       user: _mockUsers.firstWhere((user) => user.id == currentUserId),
     );
-    
+
     _mockTweets.insert(0, newTweet);
     return newTweet;
   }
 
   Future<bool> likeTweet(String tweetId) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    
+
     final tweetIndex = _mockTweets.indexWhere((tweet) => tweet.id == tweetId);
     if (tweetIndex != -1) {
       final tweet = _mockTweets[tweetIndex];
       final likedBy = List<String>.from(tweet.likedBy);
-      
+
       if (likedBy.contains(currentUserId)) {
         likedBy.remove(currentUserId);
       } else {
         likedBy.add(currentUserId);
       }
-      
+
       _mockTweets[tweetIndex] = tweet.copyWith(
         likedBy: likedBy,
         likesCount: likedBy.length,
       );
-      
+
       return true;
     }
     return false;
@@ -437,23 +466,23 @@ class MockApiService {
 
   Future<bool> retweetTweet(String tweetId) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    
+
     final tweetIndex = _mockTweets.indexWhere((tweet) => tweet.id == tweetId);
     if (tweetIndex != -1) {
       final tweet = _mockTweets[tweetIndex];
       final retweetedBy = List<String>.from(tweet.retweetedBy);
-      
+
       if (retweetedBy.contains(currentUserId)) {
         retweetedBy.remove(currentUserId);
       } else {
         retweetedBy.add(currentUserId);
       }
-      
+
       _mockTweets[tweetIndex] = tweet.copyWith(
         retweetedBy: retweetedBy,
         retweetsCount: retweetedBy.length,
       );
-      
+
       return true;
     }
     return false;
@@ -462,7 +491,7 @@ class MockApiService {
   Future<List<TweetModel>> getTweetReplies(String tweetId) async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 400));
-    
+
     return _mockTweets
         .where((tweet) => tweet.replyToTweetId == tweetId)
         .toList()
@@ -473,7 +502,7 @@ class MockApiService {
   Future<UserModel?> getUserById(String userId) async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 300));
-    
+
     try {
       return _mockUsers.firstWhere((user) => user.id == userId);
     } catch (e) {
@@ -484,27 +513,31 @@ class MockApiService {
   Future<List<UserModel>> searchUsers(String query) async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     return _mockUsers
-        .where((user) =>
-            user.displayName.toLowerCase().contains(query.toLowerCase()) ||
-            user.username.toLowerCase().contains(query.toLowerCase()))
+        .where(
+          (user) =>
+              user.displayName.toLowerCase().contains(query.toLowerCase()) ||
+              user.username.toLowerCase().contains(query.toLowerCase()),
+        )
         .toList();
   }
 
   Future<bool> followUser(String userId) async {
     await Future.delayed(const Duration(milliseconds: 400));
-    
-    final currentUserIndex = _mockUsers.indexWhere((user) => user.id == currentUserId);
+
+    final currentUserIndex = _mockUsers.indexWhere(
+      (user) => user.id == currentUserId,
+    );
     final targetUserIndex = _mockUsers.indexWhere((user) => user.id == userId);
-    
+
     if (currentUserIndex != -1 && targetUserIndex != -1) {
       final currentUser = _mockUsers[currentUserIndex];
       final targetUser = _mockUsers[targetUserIndex];
-      
+
       final following = List<String>.from(currentUser.following);
       final followers = List<String>.from(targetUser.followers);
-      
+
       if (following.contains(userId)) {
         following.remove(userId);
         followers.remove(currentUserId);
@@ -512,17 +545,17 @@ class MockApiService {
         following.add(userId);
         followers.add(currentUserId);
       }
-      
+
       _mockUsers[currentUserIndex] = currentUser.copyWith(
         following: following,
         followingCount: following.length,
       );
-      
+
       _mockUsers[targetUserIndex] = targetUser.copyWith(
         followers: followers,
         followersCount: followers.length,
       );
-      
+
       return true;
     }
     return false;
@@ -532,14 +565,17 @@ class MockApiService {
   Future<List<CommunityModel>> getCommunities() async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 600));
-    
+
     return List<CommunityModel>.from(_mockCommunities);
   }
 
-  Future<CommunityModel?> createCommunity(String name, String description) async {
+  Future<CommunityModel?> createCommunity(
+    String name,
+    String description,
+  ) async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 800));
-    
+
     final newCommunity = CommunityModel(
       id: 'community_${_mockCommunities.length + 1}',
       name: name,
@@ -550,7 +586,7 @@ class MockApiService {
       moderators: [currentUserId],
       creator: _mockUsers.firstWhere((user) => user.id == currentUserId),
     );
-    
+
     _mockCommunities.add(newCommunity);
     return newCommunity;
   }
@@ -559,14 +595,14 @@ class MockApiService {
   Future<List<ConversationModel>> getConversations() async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     return List<ConversationModel>.from(_mockConversations);
   }
 
   Future<List<MessageModel>> getMessages(String conversationId) async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 400));
-    
+
     return _mockMessages
         .where((message) => message.conversationId == conversationId)
         .toList()
@@ -576,7 +612,7 @@ class MockApiService {
   Future<MessageModel?> sendMessage(String receiverId, String content) async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 600));
-    
+
     final newMessage = MessageModel(
       id: 'message_${_mockMessages.length + 1}',
       senderId: currentUserId,
@@ -585,7 +621,7 @@ class MockApiService {
       createdAt: DateTime.now(),
       sender: _mockUsers.firstWhere((user) => user.id == currentUserId),
     );
-    
+
     _mockMessages.add(newMessage);
     return newMessage;
   }
@@ -594,7 +630,7 @@ class MockApiService {
   Future<List<NotificationModel>> getNotifications() async {
     _initializeMockData();
     await Future.delayed(const Duration(milliseconds: 400));
-    
+
     return _mockNotifications
         .where((notification) => notification.userId == currentUserId)
         .toList()

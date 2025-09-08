@@ -36,7 +36,7 @@ class StoryProvider with ChangeNotifier {
 
       final stories = await _storyService.getFollowingStories();
       _stories = stories.where((story) => !story.isExpired).toList();
-      
+
       // Group stories by user
       final Map<String, List<StoryModel>> storiesByUser = {};
       for (final story in _stories) {
@@ -123,12 +123,12 @@ class StoryProvider with ChangeNotifier {
   Future<void> markStoryAsViewed(String storyId) async {
     try {
       await _storyService.markStoryAsViewed(storyId);
-      
+
       // Update local story
       final storyIndex = _stories.indexWhere((s) => s.id == storyId);
       if (storyIndex != -1) {
         final currentUserId = await _getCurrentUserId();
-        if (currentUserId != null && 
+        if (currentUserId != null &&
             !_stories[storyIndex].viewedBy.contains(currentUserId)) {
           _stories[storyIndex] = _stories[storyIndex].copyWith(
             viewedBy: [..._stories[storyIndex].viewedBy, currentUserId],
@@ -145,7 +145,7 @@ class StoryProvider with ChangeNotifier {
   Future<void> reactToStory(String storyId, String emoji) async {
     try {
       await _storyService.reactToStory(storyId, emoji);
-      
+
       // Update local story
       final storyIndex = _stories.indexWhere((s) => s.id == storyId);
       if (storyIndex != -1) {
@@ -157,7 +157,7 @@ class StoryProvider with ChangeNotifier {
             emoji: emoji,
             createdAt: DateTime.now(),
           );
-          
+
           _stories[storyIndex] = _stories[storyIndex].copyWith(
             reactions: [..._stories[storyIndex].reactions, reaction],
           );
@@ -211,7 +211,7 @@ class StoryProvider with ChangeNotifier {
         storyIds: storyIds,
         coverImageUrl: coverImageUrl,
       );
-      
+
       if (highlight != null) {
         _highlights.add(highlight);
         notifyListeners();
@@ -272,10 +272,5 @@ class StoryProvider with ChangeNotifier {
     if (currentUserId == null) return false;
     final userStories = getStoriesForUser(userId);
     return userStories.any((story) => !story.viewedBy.contains(currentUserId));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

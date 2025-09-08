@@ -1,9 +1,8 @@
-
 import 'user_model.dart';
-class TweetModel {
 
+class TweetModel {
   final String id;
-  final String userId;
+  final String userId; // Still a String, but extracted from userId._id
   final String content;
   final List<String> imageUrls;
   final DateTime createdAt;
@@ -31,7 +30,7 @@ class TweetModel {
   final UserModel? retweetedByUser;
   final UserModel? replyToUser;
   final List<TweetModel> replies;
-  
+
   TweetModel({
     required this.id,
     required this.userId,
@@ -63,14 +62,16 @@ class TweetModel {
     this.replyToUser,
     this.replies = const [],
   });
-  
+
   factory TweetModel.fromJson(Map<String, dynamic> json) {
     return TweetModel(
       id: json['id'] ?? '',
-      userId: json['userId'] ?? '',
+      userId: json['userId'] is String
+          ? json['userId']
+          : json['userId']?['_id'] ?? '', // Extract _id from populated userId
       content: json['content'] ?? '',
       imageUrls: List<String>.from(json['imageUrls'] ?? []),
-      createdAt: json['createdAt'] != null 
+      createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
       likesCount: json['likesCount'] ?? 0,
@@ -81,41 +82,46 @@ class TweetModel {
       retweetedBy: List<String>.from(json['retweetedBy'] ?? []),
       isRetweet: json['isRetweet'] ?? false,
       originalTweetId: json['originalTweetId'],
-      retweetedByUserId: json['retweetedByUserId'],
+      retweetedByUserId: json['retweetedByUserId'] is String
+          ? json['retweetedByUserId']
+          : json['retweetedByUserId']?['_id'],
       isQuoteTweet: json['isQuoteTweet'] ?? false,
       quotedTweetId: json['quotedTweetId'],
       replyToTweetId: json['replyToTweetId'],
-      replyToUserId: json['replyToUserId'],
+      replyToUserId: json['replyToUserId'] is String
+          ? json['replyToUserId']
+          : json['replyToUserId']?['_id'],
       hashtags: List<String>.from(json['hashtags'] ?? []),
       mentions: List<String>.from(json['mentions'] ?? []),
       communityId: json['communityId'],
       isPinned: json['isPinned'] ?? false,
-      originalTweet: json['originalTweet'] != null 
+      originalTweet: json['originalTweet'] != null
           ? TweetModel.fromJson(json['originalTweet'])
           : null,
-      quotedTweet: json['quotedTweet'] != null 
+      quotedTweet: json['quotedTweet'] != null
           ? TweetModel.fromJson(json['quotedTweet'])
           : null,
-      replyToTweet: json['replyToTweet'] != null 
+      replyToTweet: json['replyToTweet'] != null
           ? TweetModel.fromJson(json['replyToTweet'])
           : null,
-      user: json['user'] != null 
-          ? UserModel.fromJson(json['user'])
+      user: json['userId'] != null && json['userId'] is Map
+          ? UserModel.fromJson(json['userId']) // Use populated userId as user
           : null,
-      retweetedByUser: json['retweetedByUser'] != null 
-          ? UserModel.fromJson(json['retweetedByUser'])
+      retweetedByUser:
+          json['retweetedByUserId'] != null && json['retweetedByUserId'] is Map
+          ? UserModel.fromJson(json['retweetedByUserId'])
           : null,
-      replyToUser: json['replyToUser'] != null 
-          ? UserModel.fromJson(json['replyToUser'])
+      replyToUser: json['replyToUserId'] != null && json['replyToUserId'] is Map
+          ? UserModel.fromJson(json['replyToUserId'])
           : null,
-      replies: json['replies'] != null 
+      replies: json['replies'] != null
           ? (json['replies'] as List)
-              .map((reply) => TweetModel.fromJson(reply))
-              .toList()
+                .map((reply) => TweetModel.fromJson(reply))
+                .toList()
           : [],
     );
   }
-  
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -149,7 +155,7 @@ class TweetModel {
       'replies': replies.map((reply) => reply.toJson()).toList(),
     };
   }
-  
+
   TweetModel copyWith({
     String? id,
     String? userId,
@@ -214,5 +220,3 @@ class TweetModel {
     );
   }
 }
-
-// Import for UserModel

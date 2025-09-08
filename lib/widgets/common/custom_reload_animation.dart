@@ -9,12 +9,12 @@ class CustomReloadAnimation extends StatefulWidget {
   final Color? color;
 
   const CustomReloadAnimation({
-    Key? key,
+    super.key,
     this.size = 40.0,
     this.isAnimating = false,
     this.onTap,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomReloadAnimation> createState() => _CustomReloadAnimationState();
@@ -111,7 +111,7 @@ class _CustomReloadAnimationState extends State<CustomReloadAnimation>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onTap,
-      child: Container(
+      child: SizedBox(
         width: widget.size,
         height: widget.size,
         child: widget.isAnimating
@@ -125,10 +125,11 @@ class _CustomReloadAnimationState extends State<CustomReloadAnimation>
                   values: [
                     // Customize the color if provided
                     if (widget.color != null)
-                      ValueDelegate.strokeColor(
-                        const ['Circle', 'Group 1', 'Ellipse 1'],
-                        value: widget.color!,
-                      ),
+                      ValueDelegate.strokeColor(const [
+                        'Circle',
+                        'Group 1',
+                        'Ellipse 1',
+                      ], value: widget.color!),
                   ],
                 ),
               )
@@ -150,12 +151,12 @@ class SimpleReloadAnimation extends StatefulWidget {
   final Color? color;
 
   const SimpleReloadAnimation({
-    Key? key,
+    super.key,
     this.size = 40.0,
     this.isAnimating = false,
     this.onTap,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   State<SimpleReloadAnimation> createState() => _SimpleReloadAnimationState();
@@ -198,7 +199,7 @@ class _SimpleReloadAnimationState extends State<SimpleReloadAnimation>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onTap,
-      child: Container(
+      child: SizedBox(
         width: widget.size,
         height: widget.size,
         child: AnimatedBuilder(

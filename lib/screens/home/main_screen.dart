@@ -5,15 +5,11 @@ import '../../providers/theme_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../constants/app_strings.dart';
 import '../../constants/app_colors.dart';
-import '../../constants/app_constants.dart';
 import 'home_screen.dart';
 import '../search/search_screen.dart';
 import '../notifications/notifications_screen.dart';
 import '../messages/messages_screen.dart';
-import '../communities/communities_screen.dart';
 import '../marketplace/marketplace_screen.dart';
-import '../profile/profile_screen.dart';
-import '../settings/settings_screen.dart';
 import '../../widgets/common/custom_drawer.dart';
 import '../../widgets/common/compose_tweet_fab.dart';
 
@@ -47,7 +43,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Load initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().loadNotifications();
@@ -67,18 +63,14 @@ class _MainScreenState extends State<MainScreen> {
     final theme = Theme.of(context);
     final authProvider = context.watch<AuthProvider>();
     final userProvider = context.watch<UserProvider>();
-    
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: Row(
           children: [
             // App logo
-            Image.asset(
-              'assets/images/logo.png',
-              height: 28,
-              width: 28,
-            ),
+            Image.asset('assets/images/logo.png', height: 28, width: 28),
             const SizedBox(width: 8),
             Text(_appBarTitles[_selectedIndex]),
           ],
@@ -91,8 +83,14 @@ class _MainScreenState extends State<MainScreen> {
                 : null,
             child: authProvider.currentUser?.profileImageUrl == null
                 ? Text(
-                    authProvider.currentUser?.displayName.substring(0, 1).toUpperCase() ?? 'U',
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    authProvider.currentUser?.displayName
+                            .substring(0, 1)
+                            .toUpperCase() ??
+                        'U',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   )
                 : null,
           ),
@@ -115,10 +113,7 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
       drawer: const CustomDrawer(),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
@@ -279,7 +274,9 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
       ),
-      floatingActionButton: _selectedIndex == 0 ? const ComposeTweetFAB() : null,
+      floatingActionButton: _selectedIndex == 0
+          ? const ComposeTweetFAB()
+          : null,
     );
   }
 }

@@ -5,10 +5,10 @@ class StoryReactions extends StatefulWidget {
   final VoidCallback onClose;
 
   const StoryReactions({
-    Key? key,
+    super.key,
     required this.onReaction,
     required this.onClose,
-  }) : super(key: key);
+  });
 
   @override
   State<StoryReactions> createState() => _StoryReactionsState();
@@ -21,7 +21,14 @@ class _StoryReactionsState extends State<StoryReactions>
   late Animation<double> _opacityAnimation;
 
   final List<String> _reactions = [
-    '❤️', '😂', '😮', '😢', '😠', '👏', '🔥', '💯'
+    '❤️',
+    '😂',
+    '😮',
+    '😢',
+    '😠',
+    '👏',
+    '🔥',
+    '💯',
   ];
 
   @override
@@ -32,21 +39,13 @@ class _StoryReactionsState extends State<StoryReactions>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
 
-    _opacityAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOut,
-    ));
+    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
 
     _animationController.forward();
   }
@@ -129,10 +128,7 @@ class _StoryReactionsState extends State<StoryReactions>
                           onPressed: widget.onClose,
                           child: const Text(
                             'Cancel',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 16,
-                            ),
+                            style: TextStyle(color: Colors.grey, fontSize: 16),
                           ),
                         ),
                       ],

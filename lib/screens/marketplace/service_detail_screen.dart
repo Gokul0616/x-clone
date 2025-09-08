@@ -9,10 +9,7 @@ import '../../widgets/media/fullscreen_image_viewer.dart';
 class ServiceDetailScreen extends StatefulWidget {
   final ServiceModel service;
 
-  const ServiceDetailScreen({
-    super.key,
-    required this.service,
-  });
+  const ServiceDetailScreen({super.key, required this.service});
 
   @override
   State<ServiceDetailScreen> createState() => _ServiceDetailScreenState();
@@ -31,7 +28,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.service.title),
@@ -60,7 +57,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
           children: [
             // Image carousel
             if (widget.service.imageUrls.isNotEmpty)
-              Container(
+              SizedBox(
                 height: 250,
                 child: Stack(
                   children: [
@@ -81,7 +78,8 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                                 builder: (context) => FullscreenImageViewer(
                                   imageUrls: widget.service.imageUrls,
                                   initialIndex: index,
-                                  heroTag: 'service_detail_${widget.service.id}',
+                                  heroTag:
+                                      'service_detail_${widget.service.id}',
                                 ),
                               ),
                             );
@@ -110,7 +108,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         );
                       },
                     ),
-                    
+
                     // Image indicators
                     if (widget.service.imageUrls.length > 1)
                       Positioned(
@@ -138,7 +136,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                   ],
                 ),
               ),
-            
+
             // Service details
             Padding(
               padding: const EdgeInsets.all(AppConstants.paddingMedium),
@@ -157,11 +155,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         ),
                       ),
                       if (widget.service.rating > 0) ...[
-                        Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                          size: 20,
-                        ),
+                        Icon(Icons.star, color: Colors.amber, size: 20),
                         const SizedBox(width: 4),
                         Text(
                           '${widget.service.rating.toStringAsFixed(1)} (${widget.service.reviewsCount})',
@@ -172,9 +166,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                       ],
                     ],
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Price and delivery info
                   Row(
                     children: [
@@ -189,7 +183,10 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         const Spacer(),
                       ],
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primaryBlue.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
@@ -204,9 +201,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                       ),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Description
                   Text(
                     'About This Service',
@@ -219,9 +216,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                     widget.service.description,
                     style: theme.textTheme.bodyMedium,
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Skills
                   if (widget.service.skills.isNotEmpty) ...[
                     Text(
@@ -236,7 +233,10 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                       runSpacing: 8,
                       children: widget.service.skills.map((skill) {
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primaryBlue.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
@@ -253,7 +253,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                     ),
                     const SizedBox(height: 16),
                   ],
-                  
+
                   // Details
                   Container(
                     padding: const EdgeInsets.all(AppConstants.paddingMedium),
@@ -265,19 +265,43 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                     ),
                     child: Column(
                       children: [
-                        _buildDetailRow(context, 'Category', widget.service.category),
-                        _buildDetailRow(context, 'Service Type', widget.service.serviceType),
-                        _buildDetailRow(context, 'Location', widget.service.location),
-                        _buildDetailRow(context, 'Remote Work', widget.service.isRemote ? 'Yes' : 'No'),
-                        _buildDetailRow(context, 'Posted', timeago.format(widget.service.createdAt)),
+                        _buildDetailRow(
+                          context,
+                          'Category',
+                          widget.service.category,
+                        ),
+                        _buildDetailRow(
+                          context,
+                          'Service Type',
+                          widget.service.serviceType,
+                        ),
+                        _buildDetailRow(
+                          context,
+                          'Location',
+                          widget.service.location,
+                        ),
+                        _buildDetailRow(
+                          context,
+                          'Remote Work',
+                          widget.service.isRemote ? 'Yes' : 'No',
+                        ),
+                        _buildDetailRow(
+                          context,
+                          'Posted',
+                          timeago.format(widget.service.createdAt),
+                        ),
                         if (widget.service.views > 0)
-                          _buildDetailRow(context, 'Views', widget.service.views.toString()),
+                          _buildDetailRow(
+                            context,
+                            'Views',
+                            widget.service.views.toString(),
+                          ),
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Provider info
                   if (widget.service.provider != null) ...[
                     Text(
@@ -299,13 +323,22 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                         children: [
                           CircleAvatar(
                             radius: 25,
-                            backgroundImage: widget.service.provider!.profileImageUrl != null
-                                ? NetworkImage(widget.service.provider!.profileImageUrl!)
+                            backgroundImage:
+                                widget.service.provider!.profileImageUrl != null
+                                ? NetworkImage(
+                                    widget.service.provider!.profileImageUrl!,
+                                  )
                                 : null,
-                            child: widget.service.provider!.profileImageUrl == null
+                            child:
+                                widget.service.provider!.profileImageUrl == null
                                 ? Text(
-                                    widget.service.provider!.displayName.substring(0, 1).toUpperCase(),
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    widget.service.provider!.displayName
+                                        .substring(0, 1)
+                                        .toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   )
                                 : null,
                           ),
@@ -351,7 +384,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                           OutlinedButton(
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Profile view coming soon!')),
+                                const SnackBar(
+                                  content: Text('Profile view coming soon!'),
+                                ),
                               );
                             },
                             child: const Text('View Profile'),
@@ -360,9 +395,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                       ),
                     ),
                   ],
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Tags
                   if (widget.service.tags.isNotEmpty) ...[
                     Text(
@@ -377,7 +412,10 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
                       runSpacing: 8,
                       children: widget.service.tags.map((tag) {
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primaryBlue.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
@@ -417,7 +455,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               child: OutlinedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Message provider feature coming soon!')),
+                    const SnackBar(
+                      content: Text('Message provider feature coming soon!'),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.message_outlined),
@@ -432,7 +472,9 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
               child: ElevatedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Order service feature coming soon!')),
+                    const SnackBar(
+                      content: Text('Order service feature coming soon!'),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.shopping_cart),
@@ -452,7 +494,7 @@ class _ServiceDetailScreenState extends State<ServiceDetailScreen> {
 
   Widget _buildDetailRow(BuildContext context, String label, String value) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

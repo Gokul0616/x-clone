@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import '../models/tweet_model.dart';
-import '../models/user_model.dart';
 import '../services/api_service.dart';
 
 class TweetProvider with ChangeNotifier {
@@ -44,7 +43,7 @@ class TweetProvider with ChangeNotifier {
 
       _hasMoreTweets = newTweets.length == 20;
       _currentPage++;
-      
+
       _setLoading(false);
       notifyListeners();
     } catch (e) {
@@ -69,7 +68,7 @@ class TweetProvider with ChangeNotifier {
       _tweets.addAll(newTweets);
       _hasMoreTweets = newTweets.length == 20;
       _currentPage++;
-      
+
       _isLoadingMore = false;
       notifyListeners();
     } catch (e) {
@@ -79,7 +78,8 @@ class TweetProvider with ChangeNotifier {
   }
 
   // Create new tweet
-  Future<bool> createTweet(String content, {
+  Future<bool> createTweet(
+    String content, {
     List<String>? imageUrls,
     String? replyToTweetId,
     String? quotedTweetId,
@@ -102,7 +102,7 @@ class TweetProvider with ChangeNotifier {
           // Update reply count for parent tweet
           _updateParentTweetReplies(replyToTweetId);
         }
-        
+
         notifyListeners();
         return true;
       }
@@ -117,28 +117,28 @@ class TweetProvider with ChangeNotifier {
   Future<bool> toggleLikeTweet(String tweetId) async {
     try {
       final success = await _apiService.likeTweet(tweetId);
-      
+
       if (success) {
         // Update local tweet data
         final tweetIndex = _tweets.indexWhere((tweet) => tweet.id == tweetId);
         if (tweetIndex != -1) {
           final tweet = _tweets[tweetIndex];
           final likedBy = List<String>.from(tweet.likedBy);
-          
+
           // Assuming current user ID is available (you might need to get this from AuthProvider)
           const currentUserId = 'user_1'; // This should come from AuthProvider
-          
+
           if (likedBy.contains(currentUserId)) {
             likedBy.remove(currentUserId);
           } else {
             likedBy.add(currentUserId);
           }
-          
+
           _tweets[tweetIndex] = tweet.copyWith(
             likedBy: likedBy,
             likesCount: likedBy.length,
           );
-          
+
           notifyListeners();
         }
         return true;
@@ -154,27 +154,27 @@ class TweetProvider with ChangeNotifier {
   Future<bool> toggleRetweetTweet(String tweetId) async {
     try {
       final success = await _apiService.retweetTweet(tweetId);
-      
+
       if (success) {
         // Update local tweet data
         final tweetIndex = _tweets.indexWhere((tweet) => tweet.id == tweetId);
         if (tweetIndex != -1) {
           final tweet = _tweets[tweetIndex];
           final retweetedBy = List<String>.from(tweet.retweetedBy);
-          
+
           const currentUserId = 'user_1'; // This should come from AuthProvider
-          
+
           if (retweetedBy.contains(currentUserId)) {
             retweetedBy.remove(currentUserId);
           } else {
             retweetedBy.add(currentUserId);
           }
-          
+
           _tweets[tweetIndex] = tweet.copyWith(
             retweetedBy: retweetedBy,
             retweetsCount: retweetedBy.length,
           );
-          
+
           notifyListeners();
         }
         return true;
@@ -212,31 +212,39 @@ class TweetProvider with ChangeNotifier {
 
   // Search tweets
   List<TweetModel> searchTweets(String query) {
-    return _tweets.where((tweet) =>
-        tweet.content.toLowerCase().contains(query.toLowerCase()) ||
-        tweet.hashtags.any((hashtag) =>
-            hashtag.toLowerCase().contains(query.toLowerCase()))).toList();
+    return _tweets
+        .where(
+          (tweet) =>
+              tweet.content.toLowerCase().contains(query.toLowerCase()) ||
+              tweet.hashtags.any(
+                (hashtag) =>
+                    hashtag.toLowerCase().contains(query.toLowerCase()),
+              ),
+        )
+        .toList();
   }
 
   // Get trending hashtags
   List<String> getTrendingHashtags() {
     final Map<String, int> hashtagCounts = {};
-    
+
     for (final tweet in _tweets) {
       for (final hashtag in tweet.hashtags) {
         hashtagCounts[hashtag] = (hashtagCounts[hashtag] ?? 0) + 1;
       }
     }
-    
+
     final sortedHashtags = hashtagCounts.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    
+
     return sortedHashtags.take(10).map((entry) => entry.key).toList();
   }
 
   // Update parent tweet replies count (for reply tweets)
   void _updateParentTweetReplies(String parentTweetId) {
-    final parentIndex = _tweets.indexWhere((tweet) => tweet.id == parentTweetId);
+    final parentIndex = _tweets.indexWhere(
+      (tweet) => tweet.id == parentTweetId,
+    );
     if (parentIndex != -1) {
       final parentTweet = _tweets[parentIndex];
       _tweets[parentIndex] = parentTweet.copyWith(

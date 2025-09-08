@@ -6,8 +6,8 @@ import '../models/user_model.dart';
 class MarketplaceProvider with ChangeNotifier {
   List<ProductModel> _products = [];
   List<ServiceModel> _services = [];
-  List<ProductModel> _likedProducts = [];
-  List<ServiceModel> _likedServices = [];
+  final List<ProductModel> _likedProducts = [];
+  final List<ServiceModel> _likedServices = [];
   bool _isLoading = false;
   String? _error;
 
@@ -26,7 +26,7 @@ class MarketplaceProvider with ChangeNotifier {
     try {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 1));
-      
+
       _products = _getMockProducts();
       _setLoading(false);
       notifyListeners();
@@ -44,7 +44,7 @@ class MarketplaceProvider with ChangeNotifier {
     try {
       // Simulate API call
       await Future.delayed(const Duration(seconds: 1));
-      
+
       _services = _getMockServices();
       _setLoading(false);
       notifyListeners();
@@ -63,15 +63,24 @@ class MarketplaceProvider with ChangeNotifier {
     List<ProductModel> filtered = _products;
 
     if (query != null && query.isNotEmpty) {
-      filtered = filtered.where((product) =>
-        product.title.toLowerCase().contains(query.toLowerCase()) ||
-        product.description.toLowerCase().contains(query.toLowerCase()) ||
-        product.tags.any((tag) => tag.toLowerCase().contains(query.toLowerCase()))
-      ).toList();
+      filtered = filtered
+          .where(
+            (product) =>
+                product.title.toLowerCase().contains(query.toLowerCase()) ||
+                product.description.toLowerCase().contains(
+                  query.toLowerCase(),
+                ) ||
+                product.tags.any(
+                  (tag) => tag.toLowerCase().contains(query.toLowerCase()),
+                ),
+          )
+          .toList();
     }
 
     if (category != null && category != 'All') {
-      filtered = filtered.where((product) => product.category == category).toList();
+      filtered = filtered
+          .where((product) => product.category == category)
+          .toList();
     }
 
     if (location != null && location != 'All') {
@@ -90,15 +99,24 @@ class MarketplaceProvider with ChangeNotifier {
     List<ServiceModel> filtered = _services;
 
     if (query != null && query.isNotEmpty) {
-      filtered = filtered.where((service) =>
-        service.title.toLowerCase().contains(query.toLowerCase()) ||
-        service.description.toLowerCase().contains(query.toLowerCase()) ||
-        service.tags.any((tag) => tag.toLowerCase().contains(query.toLowerCase()))
-      ).toList();
+      filtered = filtered
+          .where(
+            (service) =>
+                service.title.toLowerCase().contains(query.toLowerCase()) ||
+                service.description.toLowerCase().contains(
+                  query.toLowerCase(),
+                ) ||
+                service.tags.any(
+                  (tag) => tag.toLowerCase().contains(query.toLowerCase()),
+                ),
+          )
+          .toList();
     }
 
     if (category != null && category != 'All') {
-      filtered = filtered.where((service) => service.category == category).toList();
+      filtered = filtered
+          .where((service) => service.category == category)
+          .toList();
     }
 
     if (location != null && location != 'All') {
@@ -112,13 +130,13 @@ class MarketplaceProvider with ChangeNotifier {
   void toggleProductLike(String productId) {
     final product = _products.firstWhere((p) => p.id == productId);
     final isLiked = _likedProducts.any((p) => p.id == productId);
-    
+
     if (isLiked) {
       _likedProducts.removeWhere((p) => p.id == productId);
     } else {
       _likedProducts.add(product);
     }
-    
+
     notifyListeners();
   }
 
@@ -126,13 +144,13 @@ class MarketplaceProvider with ChangeNotifier {
   void toggleServiceLike(String serviceId) {
     final service = _services.firstWhere((s) => s.id == serviceId);
     final isLiked = _likedServices.any((s) => s.id == serviceId);
-    
+
     if (isLiked) {
       _likedServices.removeWhere((s) => s.id == serviceId);
     } else {
       _likedServices.add(service);
     }
-    
+
     notifyListeners();
   }
 
@@ -152,7 +170,7 @@ class MarketplaceProvider with ChangeNotifier {
       _setLoading(true);
       // Simulate API call
       await Future.delayed(const Duration(seconds: 1));
-      
+
       _products.insert(0, product);
       _setLoading(false);
       notifyListeners();
@@ -170,7 +188,7 @@ class MarketplaceProvider with ChangeNotifier {
       _setLoading(true);
       // Simulate API call
       await Future.delayed(const Duration(seconds: 1));
-      
+
       _services.insert(0, service);
       _setLoading(false);
       notifyListeners();
@@ -217,7 +235,8 @@ class MarketplaceProvider with ChangeNotifier {
         id: 'product_1',
         sellerId: 'seller_1',
         title: 'iPhone 14 Pro Max',
-        description: 'Like new iPhone 14 Pro Max, 256GB, Space Black. Includes original box and accessories.',
+        description:
+            'Like new iPhone 14 Pro Max, 256GB, Space Black. Includes original box and accessories.',
         price: 899.99,
         category: 'Electronics',
         condition: 'used',
@@ -231,7 +250,8 @@ class MarketplaceProvider with ChangeNotifier {
         id: 'product_2',
         sellerId: 'seller_2',
         title: 'MacBook Air M2',
-        description: 'Excellent condition MacBook Air with M2 chip, 16GB RAM, 512GB SSD.',
+        description:
+            'Excellent condition MacBook Air with M2 chip, 16GB RAM, 512GB SSD.',
         price: 1299.99,
         category: 'Electronics',
         condition: 'used',
@@ -245,7 +265,8 @@ class MarketplaceProvider with ChangeNotifier {
         id: 'product_3',
         sellerId: 'seller_3',
         title: 'Vintage Leather Jacket',
-        description: 'Authentic vintage leather jacket from the 90s. Size M. Great condition.',
+        description:
+            'Authentic vintage leather jacket from the 90s. Size M. Great condition.',
         price: 149.99,
         category: 'Fashion',
         condition: 'used',
@@ -272,7 +293,8 @@ class MarketplaceProvider with ChangeNotifier {
         id: 'service_1',
         providerId: 'provider_1',
         title: 'Professional Logo Design',
-        description: 'I will create a unique and professional logo for your business within 48 hours.',
+        description:
+            'I will create a unique and professional logo for your business within 48 hours.',
         startingPrice: 49.99,
         category: 'Design',
         location: 'Remote',
@@ -290,7 +312,8 @@ class MarketplaceProvider with ChangeNotifier {
         id: 'service_2',
         providerId: 'provider_2',
         title: 'Website Development',
-        description: 'Full-stack web development services using modern technologies.',
+        description:
+            'Full-stack web development services using modern technologies.',
         startingPrice: 299.99,
         category: 'Development',
         location: 'San Francisco, CA',

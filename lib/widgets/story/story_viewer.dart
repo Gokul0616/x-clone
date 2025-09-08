@@ -14,13 +14,13 @@ class StoryViewer extends StatefulWidget {
   final Function(String storyId, String emoji)? onReaction;
 
   const StoryViewer({
-    Key? key,
+    super.key,
     required this.stories,
     this.initialIndex = 0,
     this.onClose,
     this.onStoryViewed,
     this.onReaction,
-  }) : super(key: key);
+  });
 
   @override
   State<StoryViewer> createState() => _StoryViewerState();
@@ -32,7 +32,7 @@ class _StoryViewerState extends State<StoryViewer>
   late AnimationController _progressController;
   late AnimationController _reactionController;
   VideoPlayerController? _videoController;
-  
+
   int _currentIndex = 0;
   bool _isPaused = false;
   bool _showReactions = false;
@@ -43,12 +43,12 @@ class _StoryViewerState extends State<StoryViewer>
     super.initState();
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: _currentIndex);
-    
+
     _progressController = AnimationController(
       duration: _storyDuration,
       vsync: this,
     );
-    
+
     _reactionController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -69,7 +69,7 @@ class _StoryViewerState extends State<StoryViewer>
 
   void _startStoryTimer() {
     _progressController.reset();
-    
+
     if (widget.stories[_currentIndex].type == StoryType.video) {
       _initVideoPlayer();
     } else {
@@ -86,23 +86,23 @@ class _StoryViewerState extends State<StoryViewer>
     if (story.mediaUrl != null) {
       _videoController?.dispose();
       _videoController = VideoPlayerController.network(story.mediaUrl!);
-      
+
       try {
         await _videoController!.initialize();
         _videoController!.play();
-        
+
         // Use video duration for progress
         final videoDuration = _videoController!.value.duration;
-        _progressController.duration = videoDuration.inMilliseconds == 0 
-            ? _storyDuration 
+        _progressController.duration = videoDuration.inMilliseconds == 0
+            ? _storyDuration
             : videoDuration;
-        
+
         _progressController.forward().then((_) {
           if (!_isPaused) {
             _nextStory();
           }
         });
-        
+
         setState(() {});
       } catch (e) {
         print('Error initializing video: $e');
@@ -186,12 +186,11 @@ class _StoryViewerState extends State<StoryViewer>
   }
 
   void _reactToStory(String emoji) {
-    
     final story = widget.stories[_currentIndex];
     widget.onReaction?.call(story.id, emoji);
-    
+
     _hideReactionPicker();
-    
+
     // Show brief reaction feedback
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -316,7 +315,7 @@ class _StoryViewerState extends State<StoryViewer>
   }
 
   Widget _buildImageStory(StoryModel story) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: double.infinity,
       child: story.mediaUrl != null
@@ -355,7 +354,7 @@ class _StoryViewerState extends State<StoryViewer>
 
   Widget _buildVideoStory(StoryModel story) {
     if (_videoController != null && _videoController!.value.isInitialized) {
-      return Container(
+      return SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: FittedBox(
@@ -390,10 +389,7 @@ class _StoryViewerState extends State<StoryViewer>
             : const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF667eea),
-                  Color(0xFF764ba2),
-                ],
+                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
               ),
       ),
       child: Center(
@@ -456,11 +452,7 @@ class _StoryViewerState extends State<StoryViewer>
         ),
         IconButton(
           onPressed: _closeViewer,
-          icon: const Icon(
-            Icons.close,
-            color: Colors.white,
-            size: 28,
-          ),
+          icon: const Icon(Icons.close, color: Colors.white, size: 28),
         ),
       ],
     );
@@ -527,11 +519,7 @@ class _StoryViewerState extends State<StoryViewer>
               shape: BoxShape.circle,
               color: Colors.white24,
             ),
-            child: const Icon(
-              Icons.send,
-              color: Colors.white,
-              size: 24,
-            ),
+            child: const Icon(Icons.send, color: Colors.white, size: 24),
           ),
         ),
       ],

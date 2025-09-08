@@ -15,14 +15,14 @@
 
 //   final String baseUrl = AppConstants.baseUrl;
 //   final MockApiService _mockService = MockApiService();
-  
+
 //   // Helper method to get headers
 //   Map<String, String> get _headers => {
 //     'Content-Type': 'application/json',
 //     'Accept': 'application/json',
-    
+
 //   };
-  
+
 //   Map<String, String> _headersWithAuth(String token) => {
 //     ..._headers,
 //     'Authorization': 'Bearer $token',
@@ -33,7 +33,7 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.login(email, password);
 //     }
-    
+
 //     try {
 //       final response = await http.post(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.loginEndpoint}'),
@@ -43,7 +43,7 @@
 //           'password': password,
 //         }),
 //       );
-      
+
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         return UserModel.fromJson(data['user']);
@@ -59,7 +59,7 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.register(email, password, username, displayName);
 //     }
-    
+
 //     try {
 //       final response = await http.post(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.registerEndpoint}'),
@@ -71,7 +71,7 @@
 //           'displayName': displayName,
 //         }),
 //       );
-      
+
 //       if (response.statusCode == 201) {
 //         final data = json.decode(response.body);
 //         return UserModel.fromJson(data['user']);
@@ -88,13 +88,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.getTimeline(page: page, limit: limit);
 //     }
-    
+
 //     try {
 //       final response = await http.get(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/timeline?page=$page&limit=$limit'),
 //         headers: _headers,
 //       );
-      
+
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         return (data['tweets'] as List)
@@ -112,7 +112,7 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.createTweet(content, imageUrls: imageUrls, replyToTweetId: replyToTweetId, quotedTweetId: quotedTweetId);
 //     }
-    
+
 //     try {
 //       final response = await http.post(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}'),
@@ -124,7 +124,7 @@
 //           'quotedTweetId': quotedTweetId,
 //         }),
 //       );
-      
+
 //       if (response.statusCode == 201) {
 //         final data = json.decode(response.body);
 //         return TweetModel.fromJson(data['tweet']);
@@ -140,13 +140,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.likeTweet(tweetId);
 //     }
-    
+
 //     try {
 //       final response = await http.post(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/$tweetId/like'),
 //         headers: _headers,
 //       );
-      
+
 //       return response.statusCode == 200;
 //     } catch (e) {
 //       print('Like tweet error: $e');
@@ -158,13 +158,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.retweetTweet(tweetId);
 //     }
-    
+
 //     try {
 //       final response = await http.post(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/$tweetId/retweet'),
 //         headers: _headers,
 //       );
-      
+
 //       return response.statusCode == 200;
 //     } catch (e) {
 //       print('Retweet error: $e');
@@ -176,13 +176,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.getTweetReplies(tweetId);
 //     }
-    
+
 //     try {
 //       final response = await http.get(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/$tweetId/replies'),
 //         headers: _headers,
 //       );
-      
+
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         return (data['replies'] as List)
@@ -201,13 +201,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.getUserById(userId);
 //     }
-    
+
 //     try {
 //       final response = await http.get(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.usersEndpoint}/$userId'),
 //         headers: _headers,
 //       );
-      
+
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         return UserModel.fromJson(data['user']);
@@ -223,13 +223,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.searchUsers(query);
 //     }
-    
+
 //     try {
 //       final response = await http.get(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.searchEndpoint}/users?q=$query'),
 //         headers: _headers,
 //       );
-      
+
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         return (data['users'] as List)
@@ -247,13 +247,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.followUser(userId);
 //     }
-    
+
 //     try {
 //       final response = await http.post(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.usersEndpoint}/$userId/follow'),
 //         headers: _headers,
 //       );
-      
+
 //       return response.statusCode == 200;
 //     } catch (e) {
 //       print('Follow user error: $e');
@@ -266,13 +266,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.getCommunities();
 //     }
-    
+
 //     try {
 //       final response = await http.get(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.communitiesEndpoint}'),
 //         headers: _headers,
 //       );
-      
+
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         return (data['communities'] as List)
@@ -290,7 +290,7 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.createCommunity(name, description);
 //     }
-    
+
 //     try {
 //       final response = await http.post(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.communitiesEndpoint}'),
@@ -300,7 +300,7 @@
 //           'description': description,
 //         }),
 //       );
-      
+
 //       if (response.statusCode == 201) {
 //         final data = json.decode(response.body);
 //         return CommunityModel.fromJson(data['community']);
@@ -317,13 +317,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.getConversations();
 //     }
-    
+
 //     try {
 //       final response = await http.get(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.messagesEndpoint}/conversations'),
 //         headers: _headers,
 //       );
-      
+
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         return (data['conversations'] as List)
@@ -341,13 +341,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.getMessages(conversationId);
 //     }
-    
+
 //     try {
 //       final response = await http.get(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.messagesEndpoint}/conversations/$conversationId'),
 //         headers: _headers,
 //       );
-      
+
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         return (data['messages'] as List)
@@ -365,7 +365,7 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.sendMessage(receiverId, content);
 //     }
-    
+
 //     try {
 //       final response = await http.post(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.messagesEndpoint}'),
@@ -375,7 +375,7 @@
 //           'content': content,
 //         }),
 //       );
-      
+
 //       if (response.statusCode == 201) {
 //         final data = json.decode(response.body);
 //         return MessageModel.fromJson(data['message']);
@@ -392,13 +392,13 @@
 //     if (AppConstants.useMockApi) {
 //       return await _mockService.getNotifications();
 //     }
-    
+
 //     try {
 //       final response = await http.get(
 //         Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.notificationsEndpoint}'),
 //         headers: _headers,
 //       );
-      
+
 //       if (response.statusCode == 200) {
 //         final data = json.decode(response.body);
 //         return (data['notifications'] as List)
@@ -425,9 +425,6 @@ import '../models/message_model.dart';
 import '../models/notification_model.dart';
 import 'mock_api_service.dart';
 
-// Only import dart:html if running on web
-import 'dart:html' as html show window;
-
 class ApiService {
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
@@ -439,45 +436,33 @@ class ApiService {
 
   // Helper method to get headers
   Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      };
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 
   Map<String, String> _headersWithAuth() => {
-        ..._headers,
-        if (_token != null) 'Authorization': 'Bearer $_token',
-      };
+    ..._headers,
+    if (_token != null) 'Authorization': 'Bearer $_token',
+  };
 
-  // Store token in local storage (mobile: SharedPreferences, web: window.localStorage)
+  // Store token using SharedPreferences
   Future<void> _storeToken(String token) async {
     _token = token;
-    if (kIsWeb) {
-      html.window.localStorage['auth_token'] = token;
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('auth_token', token);
-    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('auth_token', token);
   }
 
-  // Retrieve token from local storage
+  // Retrieve token using SharedPreferences
   Future<void> _loadToken() async {
-    if (kIsWeb) {
-      _token = html.window.localStorage['auth_token'];
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      _token = prefs.getString('auth_token');
-    }
+    final prefs = await SharedPreferences.getInstance();
+    _token = prefs.getString('auth_token');
   }
 
-  // Clear token from local storage
+  // Clear token using SharedPreferences
   Future<void> clearToken() async {
     _token = null;
-    if (kIsWeb) {
-      html.window.localStorage.remove('auth_token');
-    } else {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('auth_token');
-    }
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('auth_token');
   }
 
   // Authentication
@@ -488,12 +473,11 @@ class ApiService {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.loginEndpoint}'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.loginEndpoint}',
+        ),
         headers: _headers, // No auth token for login
-        body: json.encode({
-          'email': email,
-          'password': password,
-        }),
+        body: json.encode({'email': email, 'password': password}),
       );
 
       if (response.statusCode == 200) {
@@ -511,14 +495,26 @@ class ApiService {
     }
   }
 
-  Future<UserModel?> register(String email, String password, String username, String displayName) async {
+  Future<UserModel?> register(
+    String email,
+    String password,
+    String username,
+    String displayName,
+  ) async {
     if (AppConstants.useMockApi) {
-      return await _mockService.register(email, password, username, displayName);
+      return await _mockService.register(
+        email,
+        password,
+        username,
+        displayName,
+      );
     }
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.registerEndpoint}'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.registerEndpoint}',
+        ),
         headers: _headers, // No auth token for register
         body: json.encode({
           'email': email,
@@ -552,11 +548,14 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.get(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/timeline?page=$page&limit=$limit'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/timeline?page=$page&limit=$limit',
+        ),
         headers: _headersWithAuth(),
       );
+      print(response.body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 2012) {
         final data = json.decode(response.body);
         return (data['tweets'] as List)
             .map((tweet) => TweetModel.fromJson(tweet))
@@ -569,15 +568,27 @@ class ApiService {
     }
   }
 
-  Future<TweetModel?> createTweet(String content, {List<String>? imageUrls, String? replyToTweetId, String? quotedTweetId}) async {
+  Future<TweetModel?> createTweet(
+    String content, {
+    List<String>? imageUrls,
+    String? replyToTweetId,
+    String? quotedTweetId,
+  }) async {
     if (AppConstants.useMockApi) {
-      return await _mockService.createTweet(content, imageUrls: imageUrls, replyToTweetId: replyToTweetId, quotedTweetId: quotedTweetId);
+      return await _mockService.createTweet(
+        content,
+        imageUrls: imageUrls,
+        replyToTweetId: replyToTweetId,
+        quotedTweetId: quotedTweetId,
+      );
     }
 
     try {
       await _loadToken(); // Load token before API call
       final response = await http.post(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}',
+        ),
         headers: _headersWithAuth(),
         body: json.encode({
           'content': content,
@@ -606,7 +617,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.post(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/$tweetId/like'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/$tweetId/like',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -625,7 +638,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.post(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/$tweetId/retweet'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/$tweetId/retweet',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -644,7 +659,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.get(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/$tweetId/replies'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.tweetsEndpoint}/$tweetId/replies',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -670,7 +687,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.get(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.usersEndpoint}/$userId'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.usersEndpoint}/$userId',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -693,7 +712,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.get(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.searchEndpoint}/users?q=$query'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.searchEndpoint}/users?q=$query',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -718,7 +739,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.post(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.usersEndpoint}/$userId/follow'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.usersEndpoint}/$userId/follow',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -738,7 +761,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.get(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.communitiesEndpoint}'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.communitiesEndpoint}',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -755,7 +780,10 @@ class ApiService {
     }
   }
 
-  Future<CommunityModel?> createCommunity(String name, String description) async {
+  Future<CommunityModel?> createCommunity(
+    String name,
+    String description,
+  ) async {
     if (AppConstants.useMockApi) {
       return await _mockService.createCommunity(name, description);
     }
@@ -763,12 +791,11 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.post(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.communitiesEndpoint}'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.communitiesEndpoint}',
+        ),
         headers: _headersWithAuth(),
-        body: json.encode({
-          'name': name,
-          'description': description,
-        }),
+        body: json.encode({'name': name, 'description': description}),
       );
 
       if (response.statusCode == 201) {
@@ -791,7 +818,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.get(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.messagesEndpoint}/conversations'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.messagesEndpoint}/conversations',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -816,7 +845,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.get(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.messagesEndpoint}/conversations/$conversationId'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.messagesEndpoint}/conversations/$conversationId',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -841,12 +872,11 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.post(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.messagesEndpoint}'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.messagesEndpoint}',
+        ),
         headers: _headersWithAuth(),
-        body: json.encode({
-          'receiverId': receiverId,
-          'content': content,
-        }),
+        body: json.encode({'receiverId': receiverId, 'content': content}),
       );
 
       if (response.statusCode == 201) {
@@ -869,7 +899,9 @@ class ApiService {
     try {
       await _loadToken(); // Load token before API call
       final response = await http.get(
-        Uri.parse('$baseUrl${AppConstants.apiVersion}${AppConstants.notificationsEndpoint}'),
+        Uri.parse(
+          '$baseUrl${AppConstants.apiVersion}${AppConstants.notificationsEndpoint}',
+        ),
         headers: _headersWithAuth(),
       );
 
@@ -901,7 +933,10 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> post(
+    String endpoint,
+    Map<String, dynamic> data,
+  ) async {
     try {
       await _loadToken();
       final response = await http.post(
@@ -940,7 +975,10 @@ class ApiService {
     } else {
       try {
         final data = json.decode(response.body);
-        throw Exception(data['message'] ?? 'Request failed with status ${response.statusCode}');
+        throw Exception(
+          data['message'] ??
+              'Request failed with status ${response.statusCode}',
+        );
       } catch (e) {
         throw Exception('Request failed with status ${response.statusCode}');
       }

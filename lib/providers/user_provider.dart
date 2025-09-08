@@ -6,11 +6,11 @@ import '../models/notification_model.dart';
 import '../services/api_service.dart';
 
 class UserProvider with ChangeNotifier {
-  List<UserModel> _users = [];
+  final List<UserModel> _users = [];
   List<CommunityModel> _communities = [];
   List<ConversationModel> _conversations = [];
   List<NotificationModel> _notifications = [];
-  
+
   bool _isLoading = false;
   String? _error;
 
@@ -27,7 +27,9 @@ class UserProvider with ChangeNotifier {
   Future<UserModel?> getUserById(String userId) async {
     try {
       // Check if user already exists in local cache
-      final existingUser = _users.where((user) => user.id == userId).firstOrNull;
+      final existingUser = _users
+          .where((user) => user.id == userId)
+          .firstOrNull;
       if (existingUser != null) {
         return existingUser;
       }
@@ -65,26 +67,26 @@ class UserProvider with ChangeNotifier {
   Future<bool> followUser(String userId) async {
     try {
       final success = await _apiService.followUser(userId);
-      
+
       if (success) {
         // Update local user data if exists
         final userIndex = _users.indexWhere((user) => user.id == userId);
         if (userIndex != -1) {
           final user = _users[userIndex];
           const currentUserId = 'user_1'; // This should come from AuthProvider
-          
+
           final followers = List<String>.from(user.followers);
           if (followers.contains(currentUserId)) {
             followers.remove(currentUserId);
           } else {
             followers.add(currentUserId);
           }
-          
+
           _users[userIndex] = user.copyWith(
             followers: followers,
             followersCount: followers.length,
           );
-          
+
           notifyListeners();
         }
         return true;
@@ -116,7 +118,7 @@ class UserProvider with ChangeNotifier {
 
     try {
       final community = await _apiService.createCommunity(name, description);
-      
+
       if (community != null) {
         _communities.insert(0, community);
         notifyListeners();
@@ -132,23 +134,25 @@ class UserProvider with ChangeNotifier {
   Future<bool> joinCommunity(String communityId) async {
     try {
       // In a real app, this would make an API call
-      final communityIndex = _communities.indexWhere((c) => c.id == communityId);
+      final communityIndex = _communities.indexWhere(
+        (c) => c.id == communityId,
+      );
       if (communityIndex != -1) {
         final community = _communities[communityIndex];
         const currentUserId = 'user_1'; // This should come from AuthProvider
-        
+
         final members = List<String>.from(community.members);
         if (members.contains(currentUserId)) {
           members.remove(currentUserId);
         } else {
           members.add(currentUserId);
         }
-        
+
         _communities[communityIndex] = community.copyWith(
           members: members,
           membersCount: members.length,
         );
-        
+
         notifyListeners();
         return true;
       }
@@ -160,11 +164,18 @@ class UserProvider with ChangeNotifier {
   }
 
   List<CommunityModel> searchCommunities(String query) {
-    return _communities.where((community) =>
-        community.name.toLowerCase().contains(query.toLowerCase()) ||
-        community.description.toLowerCase().contains(query.toLowerCase()) ||
-        community.tags.any((tag) =>
-            tag.toLowerCase().contains(query.toLowerCase()))).toList();
+    return _communities
+        .where(
+          (community) =>
+              community.name.toLowerCase().contains(query.toLowerCase()) ||
+              community.description.toLowerCase().contains(
+                query.toLowerCase(),
+              ) ||
+              community.tags.any(
+                (tag) => tag.toLowerCase().contains(query.toLowerCase()),
+              ),
+        )
+        .toList();
   }
 
   // Messages
@@ -182,7 +193,9 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<List<MessageModel>> getMessagesForConversation(String conversationId) async {
+  Future<List<MessageModel>> getMessagesForConversation(
+    String conversationId,
+  ) async {
     try {
       return await _apiService.getMessages(conversationId);
     } catch (e) {
@@ -196,7 +209,7 @@ class UserProvider with ChangeNotifier {
 
     try {
       final message = await _apiService.sendMessage(receiverId, content);
-      
+
       if (message != null) {
         // Update conversation list if needed
         // In a real app, you might need to update the conversation's last message
@@ -228,9 +241,12 @@ class UserProvider with ChangeNotifier {
   Future<bool> markNotificationAsRead(String notificationId) async {
     try {
       // In a real app, this would make an API call
-      final notificationIndex = _notifications.indexWhere((n) => n.id == notificationId);
+      final notificationIndex = _notifications.indexWhere(
+        (n) => n.id == notificationId,
+      );
       if (notificationIndex != -1) {
-        _notifications[notificationIndex] = _notifications[notificationIndex].copyWith(isRead: true);
+        _notifications[notificationIndex] = _notifications[notificationIndex]
+            .copyWith(isRead: true);
         notifyListeners();
         return true;
       }
@@ -244,8 +260,9 @@ class UserProvider with ChangeNotifier {
   Future<bool> markAllNotificationsAsRead() async {
     try {
       // In a real app, this would make an API call
-      _notifications = _notifications.map((notification) =>
-          notification.copyWith(isRead: true)).toList();
+      _notifications = _notifications
+          .map((notification) => notification.copyWith(isRead: true))
+          .toList();
       notifyListeners();
       return true;
     } catch (e) {
@@ -262,11 +279,11 @@ class UserProvider with ChangeNotifier {
   // Get unread messages count
   int get unreadMessagesCount {
     var count = 0;
-    
+
     for (final conversation in _conversations) {
       count += conversation.unreadCount;
     }
-    
+
     return count;
   }
 
@@ -294,7 +311,9 @@ class UserProvider with ChangeNotifier {
   // Check if current user is member of community
   bool isMemberOfCommunity(String communityId) {
     const currentUserId = 'user_1'; // This should come from AuthProvider
-    final community = _communities.where((c) => c.id == communityId).firstOrNull;
+    final community = _communities
+        .where((c) => c.id == communityId)
+        .firstOrNull;
     return community?.members.contains(currentUserId) ?? false;
   }
 

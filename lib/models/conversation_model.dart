@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'message_model.dart';
 import 'user_model.dart';
 
