@@ -553,9 +553,8 @@ class ApiService {
         ),
         headers: _headersWithAuth(),
       );
-      print(response.body);
 
-      if (response.statusCode == 2012) {
+      if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return (data['tweets'] as List)
             .map((tweet) => TweetModel.fromJson(tweet))
