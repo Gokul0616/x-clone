@@ -122,70 +122,82 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
         final bookmarkedProducts = bookmarksProvider.bookmarkedProducts;
 
         if (bookmarkedProducts.isEmpty) {
-          return _buildEmptyState(
-            'No bookmarked products yet',
-            'Products you bookmark will appear here.',
-            Icons.shopping_bag_outlined,
+          return RefreshIndicator(
+            onRefresh: () => bookmarksProvider.loadBookmarks(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 300,
+                child: _buildEmptyState(
+                  'No bookmarked products yet',
+                  'Products you bookmark will appear here.',
+                  Icons.shopping_bag_outlined,
+                ),
+              ),
+            ),
           );
         }
 
-        return GridView.builder(
-          padding: const EdgeInsets.all(AppConstants.paddingMedium),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.75,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-          ),
-          itemCount: bookmarkedProducts.length,
-          itemBuilder: (context, index) {
-            final product = bookmarkedProducts[index];
-            return Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.shopping_bag_outlined,
-                        size: 40,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          product.title,
-                          style: Theme.of(context).textTheme.titleSmall,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          '\$${product.price.toStringAsFixed(2)}',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: AppColors.primaryBlue,
-                            fontWeight: FontWeight.bold,
+        return RefreshIndicator(
+          onRefresh: () => bookmarksProvider.loadBookmarks(),
+          child: GridView.builder(
+            padding: const EdgeInsets.all(AppConstants.paddingMedium),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.75,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemCount: bookmarkedProducts.length,
+            itemBuilder: (context, index) {
+              final product = bookmarkedProducts[index];
+              return Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
                           ),
                         ),
-                      ],
+                        child: const Icon(
+                          Icons.shopping_bag_outlined,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.title,
+                            style: Theme.of(context).textTheme.titleSmall,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            '\$${product.price.toStringAsFixed(2)}',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: AppColors.primaryBlue,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );
