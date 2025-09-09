@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Colors
+  // Primary Colors - Classic Twitter Blue
   static const Color primaryBlue = Color(0xFF1DA1F2);
   static const Color primaryBlueDark = Color(0xFF1A91DA);
   static const Color primaryBlueLight = Color(0xFF71C9F8);
   
-  // Background Colors - Light Theme
+  // Background Colors - Light Theme (Pure Twitter)
   static const Color backgroundLight = Color(0xFFFFFFFF);
   static const Color surfaceLight = Color(0xFFF7F9FA);
   static const Color cardLight = Color(0xFFFFFFFF);
   
-  // Background Colors - Dark Theme
-  static const Color backgroundDark = Color(0xFF000000);
-  static const Color surfaceDark = Color(0xFF16181C);
-  static const Color cardDark = Color(0xFF1C1F23);
+  // Background Colors - Dark Theme (Twitter Dark)
+  static const Color backgroundDark = Color(0xFF15202B);
+  static const Color surfaceDark = Color(0xFF192734);
+  static const Color cardDark = Color(0xFF192734);
   
-  // Text Colors - Light Theme
-  static const Color textPrimaryLight = Color(0xFF0F1419);
-  static const Color textSecondaryLight = Color(0xFF536471);
-  static const Color textTertiaryLight = Color(0xFF8B98A5);
+  // Text Colors - Light Theme (Twitter Classic)
+  static const Color textPrimaryLight = Color(0xFF14171A);
+  static const Color textSecondaryLight = Color(0xFF657786);
+  static const Color textTertiaryLight = Color(0xFF8899A6);
   
-  // Text Colors - Dark Theme
-  static const Color textPrimaryDark = Color(0xFFE7E9EA);
-  static const Color textSecondaryDark = Color(0xFF71767B);
-  static const Color textTertiaryDark = Color(0xFF565656);
+  // Text Colors - Dark Theme (Twitter Dark)
+  static const Color textPrimaryDark = Color(0xFFFFFFFF);
+  static const Color textSecondaryDark = Color(0xFF8899A6);
+  static const Color textTertiaryDark = Color(0xFF657786);
   
   // Action Colors
   static const Color likeColor = Color(0xFFE91E63);
