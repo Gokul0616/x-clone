@@ -309,15 +309,27 @@ class _SearchScreenState extends State<SearchScreen>
 
   Widget _buildUserResults() {
     if (_userResults.isEmpty) {
-      return _buildNoResultsState(type: 'people');
+      return RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height - 300,
+            child: _buildNoResultsState(type: 'people'),
+          ),
+        ),
+      );
     }
 
-    return ListView.builder(
-      itemCount: _userResults.length,
-      itemBuilder: (context, index) {
-        final user = _userResults[index];
-        return UserTile(user: user);
-      },
+    return RefreshIndicator(
+      onRefresh: _handleRefresh,  
+      child: ListView.builder(
+        itemCount: _userResults.length,
+        itemBuilder: (context, index) {
+          final user = _userResults[index];
+          return UserTile(user: user);
+        },
+      ),
     );
   }
 
