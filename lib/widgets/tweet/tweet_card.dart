@@ -159,23 +159,26 @@ class TweetCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // User info and timestamp
-                        _buildUserInfo(context),
-                        const SizedBox(height: 4),
+                        // User info and timestamp with enhanced styling
+                        _buildEnhancedUserInfo(context),
+                        const SizedBox(height: 8),
 
-                        // Tweet text
-                        if (tweet.content.isNotEmpty) _buildTweetText(context),
+                        // Tweet text with better typography
+                        if (tweet.content.isNotEmpty) _buildEnhancedTweetText(context),
 
-                        // Media attachments
+                        // Media attachments with enhanced styling
                         if (tweet.imageUrls.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 12),
-                            child: TweetMedia(imageUrls: tweet.imageUrls),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: TweetMedia(imageUrls: tweet.imageUrls),
+                            ),
                           ),
 
-                        // Quoted tweet
+                        // Quoted tweet with card styling
                         if (tweet.quotedTweet != null)
-                          _buildQuotedTweet(context),
+                          _buildEnhancedQuotedTweet(context),
 
                         // Reply to tweet indicator
                         if (tweet.replyToTweet != null && !isDetail)
@@ -183,14 +186,23 @@ class TweetCard extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        // Tweet actions
+                        // Enhanced tweet actions
                         if (showActionButtons)
-                          TweetActions(
-                            tweet: tweet,
-                            onReply: () => _handleReply(context),
-                            onRetweet: () => _handleRetweet(context),
-                            onLike: () => _handleLike(context),
-                            onShare: () => _handleShare(context),
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.grey[850]?.withOpacity(0.3)
+                                  : Colors.grey[50],
+                            ),
+                            child: TweetActions(
+                              tweet: tweet,
+                              onReply: () => _handleReply(context),
+                              onRetweet: () => _handleRetweet(context),
+                              onLike: () => _handleLike(context),
+                              onShare: () => _handleShare(context),
+                            ),
                           ),
                       ],
                     ),
