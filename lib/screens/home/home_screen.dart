@@ -48,23 +48,6 @@ class _HomeScreenState extends State<HomeScreen>
     super.build(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          AppStrings.appName,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        actions: [
-          IconButton(
-            icon: CustomReloadAnimation(
-              size: 30,
-              isAnimating: context.watch<TweetProvider>().isLoading,
-              onTap: _handleRefresh,
-            ),
-            onPressed: _handleRefresh,
-            tooltip: 'Refresh',
-          ),
-        ],
-      ),
       body: Consumer<TweetProvider>(
         builder: (context, tweetProvider, child) {
           if (tweetProvider.isLoading && tweetProvider.tweets.isEmpty) {
