@@ -26,42 +26,45 @@ class TweetActions extends StatelessWidget {
     final isLiked = tweetProvider.isLikedByCurrentUser(tweet.id);
     final isRetweeted = tweetProvider.isRetweetedByCurrentUser(tweet.id);
     
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Reply
-        _buildActionButton(
-          icon: Icons.chat_bubble_outline,
-          count: tweet.repliesCount,
-          color: AppColors.replyColor,
-          onPressed: onReply,
-        ),
-        
-        // Retweet
-        _buildActionButton(
-          icon: isRetweeted ? Icons.repeat : Icons.repeat,
-          count: tweet.retweetsCount,
-          color: isRetweeted ? AppColors.retweetColor : AppColors.replyColor,
-          isActive: isRetweeted,
-          onPressed: onRetweet,
-        ),
-        
-        // Like
-        _buildActionButton(
-          icon: isLiked ? Icons.favorite : Icons.favorite_border,
-          count: tweet.likesCount,
-          color: isLiked ? AppColors.likeColor : AppColors.replyColor,
-          isActive: isLiked,
-          onPressed: onLike,
-        ),
-        
-        // Share
-        _buildActionButton(
-          icon: Icons.share_outlined,
-          color: AppColors.shareColor,
-          onPressed: onShare,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Reply
+          _buildActionButton(
+            icon: Icons.chat_bubble_outline,
+            count: tweet.repliesCount,
+            color: AppColors.replyColor,
+            onPressed: onReply,
+          ),
+          
+          // Retweet
+          _buildActionButton(
+            icon: Icons.repeat,
+            count: tweet.retweetsCount,
+            color: isRetweeted ? AppColors.retweetColor : AppColors.replyColor,
+            isActive: isRetweeted,
+            onPressed: onRetweet,
+          ),
+          
+          // Like
+          _buildActionButton(
+            icon: isLiked ? Icons.favorite : Icons.favorite_border,
+            count: tweet.likesCount,
+            color: isLiked ? AppColors.likeColor : AppColors.replyColor,
+            isActive: isLiked,
+            onPressed: onLike,
+          ),
+          
+          // Share
+          _buildActionButton(
+            icon: Icons.share_outlined,
+            color: AppColors.replyColor,
+            onPressed: onShare,
+          ),
+        ],
+      ),
     );
   }
 
