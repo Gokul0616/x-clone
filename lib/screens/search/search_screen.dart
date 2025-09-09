@@ -94,8 +94,8 @@ class _SearchScreenState extends State<SearchScreen>
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search Pulse',
-                prefixIcon: const Icon(Icons.search),
+                hintText: 'Search Twitter',
+                prefixIcon: const Icon(Icons.search, color: AppColors.textSecondaryLight),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear),
