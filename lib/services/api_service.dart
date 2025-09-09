@@ -514,19 +514,23 @@ class ApiService {
     }
   }
 
-  Future<UserModel?> register(
+  Future<Map<String, dynamic>?> register(
     String email,
     String password,
     String username,
     String displayName,
   ) async {
     if (AppConstants.useMockApi) {
-      return await _mockService.register(
+      final user = await _mockService.register(
         email,
         password,
         username,
         displayName,
       );
+      if (user != null) {
+        return {'user': user.toJson(), 'token': 'mock_token_${user.id}'};
+      }
+      return null;
     }
 
     try {
@@ -549,7 +553,10 @@ class ApiService {
         if (token != null) {
           await _storeToken(token); // Store token
         }
-        return UserModel.fromJson(data['user']);
+        return {
+          'user': data['user'],
+          'token': token,
+        };
       }
       return null;
     } catch (e) {
