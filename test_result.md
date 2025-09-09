@@ -564,27 +564,41 @@ Performance characteristics:
 │   ├── middleware/            # Auth & validation
 │   ├── socket/                # WebSocket handlers
 │   └── uploads/               # File storage + story media
-├── lib/                       # Enhanced Flutter App (75+ files)
+├── lib/                       # Enhanced Flutter App (85+ files)
 │   ├── models/                # Data models + story models
 │   │   ├── story_model.dart   # Complete Instagram story model
 │   │   ├── user_model.dart    # Enhanced with story fields
 │   │   └── [existing models]  # Tweet, Community, etc.
-│   ├── services/              # API & Socket services + story service
+│   ├── services/              # API & Socket services + account services
+│   │   ├── account_switch_service.dart    # NEW: Multi-account management
 │   │   ├── story_service.dart # Complete story CRUD operations
 │   │   ├── api_service.dart   # Enhanced with story endpoints
 │   │   └── [existing services]
-│   ├── providers/             # State management + story provider
+│   ├── providers/             # State management + account provider
+│   │   ├── account_switch_provider.dart   # NEW: Account switching state
 │   │   ├── story_provider.dart # Story state management
 │   │   ├── theme_provider.dart # Enhanced with new themes
 │   │   └── [existing providers]
-│   ├── screens/               # UI screens + story screens
+│   ├── screens/               # UI screens + enhanced auth screens
+│   │   ├── auth/              # Enhanced login/register screens
+│   │   │   ├── login_screen.dart     # Support for adding accounts
+│   │   │   └── register_screen.dart  # Support for creating additional accounts
 │   │   ├── story/             # Story-specific screens
 │   │   │   └── story_creator_screen.dart
 │   │   ├── home/              # Enhanced home with fullscreen
 │   │   │   ├── home_screen.dart          # With stories bar
 │   │   │   └── fullscreen_feed_screen.dart # Distraction-free reading
 │   │   └── [existing screens]
-│   ├── widgets/               # Enhanced components + story widgets
+│   ├── widgets/               # Enhanced components + new account widgets
+│   │   ├── common/            # Enhanced common widgets
+│   │   │   ├── custom_drawer.dart        # Updated with profile switching
+│   │   │   ├── drawer_profiles_row.dart  # NEW: Profile switching UI
+│   │   │   └── custom_reload_animation.dart # Lottie animation
+│   │   ├── dialogs/           # NEW: Dialog widgets
+│   │   │   └── account_switch_bottom_sheet.dart # NEW: Account switching modal
+│   │   ├── tweet/             # Enhanced tweet widgets
+│   │   │   ├── tweet_card.dart           # ENHANCED: Modern Twitter UI
+│   │   │   └── [existing tweet widgets]
 │   │   ├── story/             # Story-specific widgets
 │   │   │   ├── stories_bar.dart          # Story carousel
 │   │   │   ├── story_viewer.dart         # Instagram-like viewer
@@ -595,8 +609,6 @@ Performance characteristics:
 │   │   ├── media/             # Enhanced media widgets
 │   │   │   ├── fullscreen_image_viewer.dart # With zoom/pan
 │   │   │   └── video_player_widget.dart # Enhanced controls
-│   │   ├── common/            # New common widgets
-│   │   │   └── custom_reload_animation.dart # Lottie animation
 │   │   └── [existing widgets] # Tweet, profile, etc.
 │   └── utils/                 # Enhanced utilities & themes
 │       └── themes.dart        # Professional gradients & shadows
