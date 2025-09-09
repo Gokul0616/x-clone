@@ -8,6 +8,7 @@ import '../../constants/app_colors.dart';
 import '../../screens/tweet/tweet_detail_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../screens/compose/compose_tweet_screen.dart';
+import '../../widgets/dialogs/retweet_bottom_sheet.dart';
 import 'tweet_actions.dart';
 import 'tweet_media.dart';
 
@@ -32,24 +33,13 @@ class TweetCard extends StatelessWidget {
     final currentUser = context.watch<AuthProvider>().currentUser;
     
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: isDarkMode 
-                ? Colors.black.withOpacity(0.3)
-                : Colors.grey.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+        color: theme.scaffoldBackgroundColor,
+        border: Border(
+          bottom: BorderSide(
+            color: isDarkMode ? Colors.grey[800]! : Colors.grey[200]!,
+            width: 0.5,
           ),
-        ],
-        border: Border.all(
-          color: isDarkMode 
-              ? Colors.grey[800]! 
-              : Colors.grey[200]!,
-          width: 0.5,
         ),
       ),
       child: InkWell(
@@ -63,7 +53,6 @@ class TweetCard extends StatelessWidget {
                   ),
                 );
               },
-        borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -76,81 +65,43 @@ class TweetCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Profile avatar with online indicator
-                  Stack(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (tweet.user != null) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ProfileScreen(userId: tweet.user!.id),
+                  // Profile avatar
+                  GestureDetector(
+                    onTap: () {
+                      if (tweet.user != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProfileScreen(userId: tweet.user!.id),
+                          ),
+                        );
+                      }
+                    },
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundImage: tweet.user?.profileImageUrl != null
+                          ? NetworkImage(tweet.user!.profileImageUrl!)
+                          : null,
+                      backgroundColor: isDarkMode 
+                          ? Colors.grey[700] 
+                          : Colors.grey[300],
+                      child: tweet.user?.profileImageUrl == null
+                          ? Text(
+                              tweet.user?.displayName
+                                      .substring(0, 1)
+                                      .toUpperCase() ??
+                                  'U',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: isDarkMode 
+                                    ? Colors.white 
+                                    : Colors.black,
                               ),
-                            );
-                          }
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isDarkMode 
-                                  ? Colors.grey[700]! 
-                                  : Colors.grey[300]!,
-                              width: 2,
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 22,
-                            backgroundImage: tweet.user?.profileImageUrl != null
-                                ? NetworkImage(tweet.user!.profileImageUrl!)
-                                : null,
-                            backgroundColor: isDarkMode 
-                                ? Colors.grey[800] 
-                                : Colors.grey[200],
-                            child: tweet.user?.profileImageUrl == null
-                                ? Text(
-                                    tweet.user?.displayName
-                                            .substring(0, 1)
-                                            .toUpperCase() ??
-                                        'U',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: isDarkMode 
-                                          ? Colors.white 
-                                          : Colors.black,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ),
-                      ),
-                      // Online indicator (if user is verified or online)
-                      if (tweet.user?.isVerified == true)
-                        Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            width: 16,
-                            height: 16,
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryBlue,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
-                                width: 2,
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.verified,
-                              color: Colors.white,
-                              size: 10,
-                            ),
-                          ),
-                        ),
-                    ],
+                            )
+                          : null,
+                    ),
                   ),
                   const SizedBox(width: 12),
 
@@ -159,14 +110,14 @@ class TweetCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // User info and timestamp with enhanced styling
-                        _buildEnhancedUserInfo(context),
-                        const SizedBox(height: 8),
+                        // User info and timestamp
+                        _buildUserInfo(context),
+                        const SizedBox(height: 4),
 
-                        // Tweet text with better typography
-                        if (tweet.content.isNotEmpty) _buildEnhancedTweetText(context),
+                        // Tweet text
+                        if (tweet.content.isNotEmpty) _buildTweetText(context),
 
-                        // Media attachments with enhanced styling
+                        // Media attachments
                         if (tweet.imageUrls.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 12),
@@ -176,9 +127,9 @@ class TweetCard extends StatelessWidget {
                             ),
                           ),
 
-                        // Quoted tweet with card styling
+                        // Quoted tweet
                         if (tweet.quotedTweet != null)
-                          _buildEnhancedQuotedTweet(context),
+                          _buildQuotedTweet(context),
 
                         // Reply to tweet indicator
                         if (tweet.replyToTweet != null && !isDetail)
@@ -186,23 +137,14 @@ class TweetCard extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        // Enhanced tweet actions
+                        // Tweet actions
                         if (showActionButtons)
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Theme.of(context).brightness == Brightness.dark
-                                  ? Colors.grey[850]?.withOpacity(0.3)
-                                  : Colors.grey[50],
-                            ),
-                            child: TweetActions(
-                              tweet: tweet,
-                              onReply: () => _handleReply(context),
-                              onRetweet: () => _handleRetweet(context),
-                              onLike: () => _handleLike(context),
-                              onShare: () => _handleShare(context),
-                            ),
+                          TweetActions(
+                            tweet: tweet,
+                            onReply: () => _handleReply(context),
+                            onRetweet: () => _handleRetweet(context),
+                            onLike: () => _handleLike(context),
+                            onShare: () => _handleShare(context),
                           ),
                       ],
                     ),
@@ -237,201 +179,9 @@ class TweetCard extends StatelessWidget {
     );
   }
 
-  Widget _buildEnhancedUserInfo(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
-
-    return Row(
-      children: [
-        // Display name with enhanced styling
-        GestureDetector(
-          onTap: () {
-            if (tweet.user != null) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(userId: tweet.user!.id),
-                ),
-              );
-            }
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: isDarkMode 
-                  ? Colors.grey[800]?.withOpacity(0.3)
-                  : Colors.grey[100]?.withOpacity(0.7),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  tweet.user?.displayName ?? 'Unknown User',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                    color: isDarkMode ? Colors.white : Colors.black87,
-                  ),
-                ),
-                // Verified badge
-                if (tweet.user?.isVerified == true) ...[
-                  const SizedBox(width: 4),
-                  Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryBlue,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.check,
-                      size: 12,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-
-        const SizedBox(width: 8),
-
-        // Username and timestamp
-        Expanded(
-          child: Text(
-            '@${tweet.user?.username ?? 'unknown'} • ${timeago.format(tweet.createdAt, allowFromNow: true)}',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: isDarkMode
-                  ? Colors.grey[400]
-                  : Colors.grey[600],
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-
-        // More options with enhanced styling
-        Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isDarkMode 
-                ? Colors.grey[800]?.withOpacity(0.3)
-                : Colors.grey[100]?.withOpacity(0.7),
-          ),
-          child: IconButton(
-            icon: Icon(
-              Icons.more_horiz,
-              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-            ),
-            iconSize: 18,
-            onPressed: () => _showTweetOptions(context),
-            padding: const EdgeInsets.all(4),
-            constraints: const BoxConstraints(
-              minWidth: 28,
-              minHeight: 28,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildEnhancedTweetText(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Text(
-        tweet.content,
-        style: theme.textTheme.bodyLarge?.copyWith(
-          fontSize: 16,
-          height: 1.4,
-          fontWeight: FontWeight.w400,
-          color: isDarkMode ? Colors.white : Colors.black87,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEnhancedQuotedTweet(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDarkMode = theme.brightness == Brightness.dark;
-    final quotedTweet = tweet.quotedTweet!;
-
-    return Container(
-      margin: const EdgeInsets.only(top: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDarkMode 
-            ? Colors.grey[850]?.withOpacity(0.5)
-            : Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDarkMode 
-              ? Colors.grey[700]! 
-              : Colors.grey[300]!,
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Quoted tweet user info
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 12,
-                backgroundImage: quotedTweet.user?.profileImageUrl != null
-                    ? NetworkImage(quotedTweet.user!.profileImageUrl!)
-                    : null,
-                child: quotedTweet.user?.profileImageUrl == null
-                    ? Text(
-                        quotedTweet.user?.displayName
-                                .substring(0, 1)
-                                .toUpperCase() ??
-                            'U',
-                        style: const TextStyle(fontSize: 10),
-                      )
-                    : null,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                quotedTweet.user?.displayName ?? 'Unknown',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                '@${quotedTweet.user?.username ?? 'unknown'}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          // Quoted tweet content
-          Text(
-            quotedTweet.content,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontSize: 14,
-              height: 1.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildUserInfo(BuildContext context) {
     final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
     return Row(
       children: [
@@ -459,19 +209,19 @@ class TweetCard extends StatelessWidget {
         // Verified badge
         if (tweet.user?.isVerified == true) ...[
           const SizedBox(width: 4),
-          Icon(Icons.verified, size: 18, color: AppColors.verified),
+          Icon(Icons.verified, size: 16, color: AppColors.primaryBlue),
         ],
 
         const SizedBox(width: 4),
 
-        // Username and timestamp in same line
+        // Username and timestamp
         Expanded(
           child: Text(
             '@${tweet.user?.username ?? 'unknown'} · ${timeago.format(tweet.createdAt, allowFromNow: true)}',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.brightness == Brightness.dark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondaryLight,
+              color: isDarkMode
+                  ? Colors.grey[400]
+                  : Colors.grey[600],
               fontSize: 15,
             ),
             overflow: TextOverflow.ellipsis,
@@ -480,11 +230,17 @@ class TweetCard extends StatelessWidget {
 
         // More options
         IconButton(
-          icon: const Icon(Icons.more_horiz),
+          icon: Icon(
+            Icons.more_horiz,
+            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+          ),
           iconSize: 20,
           onPressed: () => _showTweetOptions(context),
           padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
+          constraints: const BoxConstraints(
+            minWidth: 32,
+            minHeight: 32,
+          ),
         ),
       ],
     );
@@ -497,39 +253,44 @@ class TweetCard extends StatelessWidget {
       padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: Text(
         tweet.content,
-        style: theme.textTheme.bodyLarge?.copyWith(fontSize: 15, height: 1.4),
+        style: theme.textTheme.bodyLarge?.copyWith(
+          fontSize: 15, 
+          height: 1.4
+        ),
       ),
     );
   }
 
   Widget _buildQuotedTweet(BuildContext context) {
     final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+    final quotedTweet = tweet.quotedTweet!;
 
     return Container(
-      margin: const EdgeInsets.only(top: 8),
+      margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         border: Border.all(
-          color: theme.brightness == Brightness.dark
-              ? AppColors.borderDark
-              : AppColors.borderLight,
+          color: isDarkMode 
+              ? Colors.grey[700]! 
+              : Colors.grey[300]!,
         ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Quoted tweet user info
           Row(
             children: [
               CircleAvatar(
                 radius: 10,
-                backgroundImage:
-                    tweet.quotedTweet!.user?.profileImageUrl != null
-                    ? NetworkImage(tweet.quotedTweet!.user!.profileImageUrl!)
+                backgroundImage: quotedTweet.user?.profileImageUrl != null
+                    ? NetworkImage(quotedTweet.user!.profileImageUrl!)
                     : null,
-                child: tweet.quotedTweet!.user?.profileImageUrl == null
+                child: quotedTweet.user?.profileImageUrl == null
                     ? Text(
-                        tweet.quotedTweet!.user?.displayName
+                        quotedTweet.user?.displayName
                                 .substring(0, 1)
                                 .toUpperCase() ??
                             'U',
@@ -537,26 +298,30 @@ class TweetCard extends StatelessWidget {
                       )
                     : null,
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 8),
               Text(
-                tweet.quotedTweet!.user?.displayName ?? 'Unknown',
-                style: theme.textTheme.bodySmall?.copyWith(
+                quotedTweet.user?.displayName ?? 'Unknown',
+                style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
+                  fontSize: 14,
                 ),
               ),
               const SizedBox(width: 4),
               Text(
-                '@${tweet.quotedTweet!.user?.username ?? 'unknown'}',
+                '@${quotedTweet.user?.username ?? 'unknown'}',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.brightness == Brightness.dark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
+                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                  fontSize: 14,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(tweet.quotedTweet!.content, style: theme.textTheme.bodyMedium),
+          const SizedBox(height: 6),
+          // Quoted tweet content
+          Text(
+            quotedTweet.content,
+            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 14),
+          ),
         ],
       ),
     );
@@ -587,7 +352,11 @@ class TweetCard extends StatelessWidget {
   }
 
   void _handleRetweet(BuildContext context) {
-    context.read<TweetProvider>().toggleRetweetTweet(tweet.id);
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => RetweetBottomSheet(tweet: tweet),
+    );
   }
 
   void _handleLike(BuildContext context) {
@@ -618,7 +387,6 @@ class TweetCard extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement pin/unpin functionality
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Pin feature coming soon!')),
                 );
@@ -635,7 +403,6 @@ class TweetCard extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement delete functionality
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Delete feature coming soon!')),
                 );
@@ -647,7 +414,6 @@ class TweetCard extends StatelessWidget {
               title: Text('Unfollow @${tweet.user?.username ?? 'user'}'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement unfollow functionality
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Unfollow feature coming soon!'),
@@ -666,7 +432,6 @@ class TweetCard extends StatelessWidget {
               ),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implement block functionality
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Block feature coming soon!')),
                 );
@@ -684,7 +449,6 @@ class TweetCard extends StatelessWidget {
             ),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Implement report functionality
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Report feature coming soon!')),
               );

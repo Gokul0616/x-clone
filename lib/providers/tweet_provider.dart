@@ -10,6 +10,7 @@ class TweetProvider with ChangeNotifier {
   String? _error;
   int _currentPage = 1;
   bool _hasMoreTweets = true;
+  String? _currentUserId;
 
   List<TweetModel> get tweets => _tweets;
   bool get isLoading => _isLoading;
@@ -18,6 +19,11 @@ class TweetProvider with ChangeNotifier {
   bool get hasMoreTweets => _hasMoreTweets;
 
   final ApiService _apiService = ApiService();
+
+  // Set current user ID for like/retweet checks
+  void setCurrentUserId(String? userId) {
+    _currentUserId = userId;
+  }
 
   // Load initial tweets
   Future<void> loadTweets({bool refresh = false}) async {
@@ -122,17 +128,14 @@ class TweetProvider with ChangeNotifier {
       if (success) {
         // Update local tweet data
         final tweetIndex = _tweets.indexWhere((tweet) => tweet.id == tweetId);
-        if (tweetIndex != -1) {
+        if (tweetIndex != -1 && _currentUserId != null) {
           final tweet = _tweets[tweetIndex];
           final likedBy = List<String>.from(tweet.likedBy);
 
-          // Assuming current user ID is available (you might need to get this from AuthProvider)
-          const currentUserId = 'user_1'; // This should come from AuthProvider
-
-          if (likedBy.contains(currentUserId)) {
-            likedBy.remove(currentUserId);
+          if (likedBy.contains(_currentUserId)) {
+            likedBy.remove(_currentUserId);
           } else {
-            likedBy.add(currentUserId);
+            likedBy.add(_currentUserId!);
           }
 
           _tweets[tweetIndex] = tweet.copyWith(
@@ -159,16 +162,14 @@ class TweetProvider with ChangeNotifier {
       if (success) {
         // Update local tweet data
         final tweetIndex = _tweets.indexWhere((tweet) => tweet.id == tweetId);
-        if (tweetIndex != -1) {
+        if (tweetIndex != -1 && _currentUserId != null) {
           final tweet = _tweets[tweetIndex];
           final retweetedBy = List<String>.from(tweet.retweetedBy);
 
-          const currentUserId = 'user_1'; // This should come from AuthProvider
-
-          if (retweetedBy.contains(currentUserId)) {
-            retweetedBy.remove(currentUserId);
+          if (retweetedBy.contains(_currentUserId)) {
+            retweetedBy.remove(_currentUserId);
           } else {
-            retweetedBy.add(currentUserId);
+            retweetedBy.add(_currentUserId!);
           }
 
           _tweets[tweetIndex] = tweet.copyWith(
@@ -291,15 +292,15 @@ class TweetProvider with ChangeNotifier {
 
   // Check if user liked a tweet
   bool isLikedByCurrentUser(String tweetId) {
-    const currentUserId = 'user_1'; // This should come from AuthProvider
+    if (_currentUserId == null) return false;
     final tweet = getTweetById(tweetId);
-    return tweet?.likedBy.contains(currentUserId) ?? false;
+    return tweet?.likedBy.contains(_currentUserId) ?? false;
   }
 
   // Check if user retweeted a tweet
   bool isRetweetedByCurrentUser(String tweetId) {
-    const currentUserId = 'user_1'; // This should come from AuthProvider
+    if (_currentUserId == null) return false;
     final tweet = getTweetById(tweetId);
-    return tweet?.retweetedBy.contains(currentUserId) ?? false;
+    return tweet?.retweetedBy.contains(_currentUserId) ?? false;
   }
 }
