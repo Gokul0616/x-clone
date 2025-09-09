@@ -9,7 +9,7 @@ import 'home_screen.dart';
 import '../search/search_screen.dart';
 import '../notifications/notifications_screen.dart';
 import '../messages/messages_screen.dart';
-import '../marketplace/marketplace_screen.dart';
+import '../spaces/spaces_screen.dart';
 import '../../widgets/common/custom_drawer.dart';
 import '../../widgets/common/compose_tweet_fab.dart';
 
