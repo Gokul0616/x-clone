@@ -310,6 +310,15 @@ class _MessagesScreenState extends State<MessagesScreen>
     );
   }
 
+  void _openConnections() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ConnectionsScreen(),
+      ),
+    );
+  }
+
   void _showNewMessageDialog() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('New message feature coming soon!')),
