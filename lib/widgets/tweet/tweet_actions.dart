@@ -79,23 +79,23 @@ class TweetActions extends StatelessWidget {
       onTap: onPressed,
       borderRadius: BorderRadius.circular(20),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
               size: 18,
-              color: isActive ? color : color.withOpacity(0.6),
+              color: isActive ? color : color.withOpacity(0.7),
             ),
             if (count != null && count > 0) ...[
-              const SizedBox(width: 4),
+              const SizedBox(width: 6),
               Text(
                 _formatCount(count),
                 style: TextStyle(
-                  fontSize: 12,
-                  color: isActive ? color : color.withOpacity(0.6),
-                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                  color: isActive ? color : color.withOpacity(0.7),
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
