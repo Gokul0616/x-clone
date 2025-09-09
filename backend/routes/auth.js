@@ -329,7 +329,7 @@ router.post('/login', async (req, res) => {
         message: 'Email and password are required'
       });
     }
-
+    console.log(email, password);
     const user = await User.findOne({ email }).select('+password');
     console.log(user);
     if (!user) {

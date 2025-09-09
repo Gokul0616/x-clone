@@ -86,10 +86,10 @@ router.get('/timeline', optionalAuth, async (req, res) => {
 
     console.log('Getting timeline for user:', req.user ? req.user._id : 'anonymous');
 
-
     if (req.user && req.user._id) {
       // Find the authenticated user
       const user = await User.findById(req.user._id).select('following preferences username');
+      console.log(user);
       if (!user) {
         return res.status(404).json({
           status: 'error',
@@ -113,7 +113,7 @@ router.get('/timeline', optionalAuth, async (req, res) => {
 
       // Get user's interacted hashtags
       const userInteractions = await Notification.find({
-        fromUserId: new mongoose.Types.ObjectId(req.user._id), // Fix ObjectId
+        fromUserId: req.user._id, // Fix ObjectId
         type: { $in: ['like', 'retweet', 'reply'] }
       }).distinct('tweetId');
 
@@ -130,7 +130,7 @@ router.get('/timeline', optionalAuth, async (req, res) => {
       const similarUsers = await User.aggregate([
         {
           $match: {
-            _id: { $ne: new mongoose.Types.ObjectId(req.user._id) }, // Fix ObjectId
+            _id: { $ne: req.user._id }, // Fix ObjectId
             following: { $in: followingUsers }
           }
         },
@@ -168,7 +168,7 @@ router.get('/timeline', optionalAuth, async (req, res) => {
       if (similarUserIds.length > 0) {
         orConditions.push({
           userId: {
-            $in: similarUserIds.map(id => new mongoose.Types.ObjectId(id)) // Fix ObjectId
+            $in: similarUserIds.map(id => id) // Fix ObjectId
           }
         });
       }
@@ -286,6 +286,7 @@ router.get('/timeline', optionalAuth, async (req, res) => {
 router.post('/', auth, async (req, res) => {
   try {
     const { content, imageUrls, videoUrls, replyToTweetId, quotedTweetId, communityId } = req.body;
+    console.log(req.body);
     if (!content || content.trim().length === 0) {
       return res.status(400).json({
         status: 'error',
@@ -303,7 +304,8 @@ router.post('/', auth, async (req, res) => {
 
     // Handle reply
     if (replyToTweetId) {
-      const parentTweet = await Tweet.findOne({ id: replyToTweetId });
+      const parentTweet = await Tweet.findOne({ _id: replyToTweetId });
+      console.log(parentTweet, "parentTweet");
       if (!parentTweet) {
         return res.status(404).json({
           status: 'error',
@@ -313,7 +315,7 @@ router.post('/', auth, async (req, res) => {
       tweetData.replyToTweetId = replyToTweetId;
       tweetData.replyToUserId = parentTweet.userId;
     }
-
+    console.log(quotedTweetId, "quotedTweetId");
     // Handle quote tweet
     if (quotedTweetId) {
       const quotedTweet = await Tweet.findOne({ id: quotedTweetId });
@@ -333,7 +335,7 @@ router.post('/', auth, async (req, res) => {
     // Update parent tweet reply count
     if (replyToTweetId) {
       await Tweet.findOneAndUpdate(
-        { id: replyToTweetId },
+        { _id: replyToTweetId },
         { $inc: { repliesCount: 1 } }
       );
 
@@ -393,7 +395,7 @@ router.post('/:tweetId/like', auth, async (req, res) => {
     const { tweetId } = req.params;
     const userId = req.user.id;
 
-    const tweet = await Tweet.findOne({ id: tweetId });
+    const tweet = await Tweet.findOne({ _id: tweetId });
     if (!tweet) {
       return res.status(404).json({
         status: 'error',
@@ -447,14 +449,13 @@ router.post('/:tweetId/retweet', auth, async (req, res) => {
     const { tweetId } = req.params;
     const userId = req.user.id;
 
-    const tweet = await Tweet.findOne({ id: tweetId });
+    const tweet = await Tweet.findOne({ _id: tweetId });
     if (!tweet) {
       return res.status(404).json({
         status: 'error',
         message: 'Tweet not found'
       });
     }
-
     // Check if user is trying to retweet their own tweet
     if (tweet.userId === userId) {
       return res.status(400).json({

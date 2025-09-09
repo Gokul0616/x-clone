@@ -84,11 +84,14 @@ notificationSchema.virtual('community', {
 });
 
 // Static method to create notification
-notificationSchema.statics.createNotification = async function(notificationData) {
+notificationSchema.statics.createNotification = async function (notificationData) {
   try {
-    const notification = new this(notificationData);
+    const notification = new this({
+      ...notificationData,
+      _id: uuidv4(), // Ensure a unique ID
+    });
     await notification.save();
-    
+
     // Emit real-time notification via Socket.IO
     // This will be handled in the socket handlers
     return notification;
@@ -99,7 +102,7 @@ notificationSchema.statics.createNotification = async function(notificationData)
 };
 
 // Static method to mark all as read
-notificationSchema.statics.markAllAsRead = function(userId) {
+notificationSchema.statics.markAllAsRead = function (userId) {
   return this.updateMany(
     { userId, isRead: false },
     { isRead: true, readAt: new Date() }
