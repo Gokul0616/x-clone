@@ -242,6 +242,7 @@ class _AccountSwitchBottomSheetState extends State<AccountSwitchBottomSheet> {
       // Clear all cached data
       context.read<TweetProvider>().clearCache();
       context.read<UserProvider>().clearCache();
+      context.read<MessageProvider>().clearCache();
       
       // Close bottom sheet
       if (mounted) {
