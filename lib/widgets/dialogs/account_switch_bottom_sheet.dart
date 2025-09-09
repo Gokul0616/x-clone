@@ -4,6 +4,7 @@ import '../../providers/account_switch_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/tweet_provider.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/message_provider.dart';
 import '../../constants/app_colors.dart';
 import '../../screens/auth/login_screen.dart';
 import '../../screens/auth/register_screen.dart';
