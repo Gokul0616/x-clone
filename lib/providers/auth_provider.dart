@@ -103,7 +103,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Register
-  Future<bool> register(String email, String password, String username, String displayName) async {
+  Future<bool> register(String email, String password, String username, String displayName, {bool isAddingAccount = false}) async {
     _setLoading(true);
     _clearError();
 
@@ -114,6 +114,13 @@ class AuthProvider with ChangeNotifier {
         _currentUser = user;
         _isLoggedIn = true;
         await _saveUserToStorage(user);
+        
+        // Save account for switching (get token from API service)
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString('auth_token');
+        if (token != null) {
+          await AccountSwitchService.saveAccount(token, user);
+        }
         
         _setLoading(false);
         notifyListeners();
