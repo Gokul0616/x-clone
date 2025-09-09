@@ -209,67 +209,79 @@ class _BookmarksScreenState extends State<BookmarksScreen> with TickerProviderSt
         final bookmarkedServices = bookmarksProvider.bookmarkedServices;
 
         if (bookmarkedServices.isEmpty) {
-          return _buildEmptyState(
-            'No bookmarked services yet',
-            'Services you bookmark will appear here.',
-            Icons.work_outline,
+          return RefreshIndicator(
+            onRefresh: () => bookmarksProvider.loadBookmarks(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 300,
+                child: _buildEmptyState(
+                  'No bookmarked services yet',
+                  'Services you bookmark will appear here.',
+                  Icons.work_outline,
+                ),
+              ),
+            ),
           );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(AppConstants.paddingMedium),
-          itemCount: bookmarkedServices.length,
-          itemBuilder: (context, index) {
-            final service = bookmarkedServices[index];
-            return Card(
-              child: ListTile(
-                leading: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(8),
+        return RefreshIndicator(
+          onRefresh: () => bookmarksProvider.loadBookmarks(),
+          child: ListView.builder(
+            padding: const EdgeInsets.all(AppConstants.paddingMedium),
+            itemCount: bookmarkedServices.length,
+            itemBuilder: (context, index) {
+              final service = bookmarkedServices[index];
+              return Card(
+                child: ListTile(
+                  leading: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.work_outline,
+                      color: Colors.grey,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.work_outline,
-                    color: Colors.grey,
+                  title: Text(
+                    service.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                title: Text(
-                  service.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                subtitle: Text(
-                  service.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: service.startingPrice != null
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'From',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          Text(
-                            '\$${service.startingPrice!.toStringAsFixed(0)}',
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: AppColors.primaryBlue,
-                              fontWeight: FontWeight.bold,
+                  subtitle: Text(
+                    service.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: service.startingPrice != null
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              'From',
+                              style: Theme.of(context).textTheme.bodySmall,
                             ),
-                          ),
-                        ],
-                      )
-                    : null,
-                onTap: () {
-                  // Navigate to service detail
-                },
-              ),
-            );
-          },
+                            Text(
+                              '\$${service.startingPrice!.toStringAsFixed(0)}',
+                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                color: AppColors.primaryBlue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : null,
+                  onTap: () {
+                    // Navigate to service detail
+                  },
+                ),
+              );
+            },
+          ),
         );
       },
     );
