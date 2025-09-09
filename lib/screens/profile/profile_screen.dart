@@ -125,6 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Container(
                       height: 200,
                       decoration: BoxDecoration(
+                        color: AppColors.primaryBlue.withOpacity(0.3),
                         image: _user!.bannerImageUrl != null
                             ? DecorationImage(
                                 image: NetworkImage(_user!.bannerImageUrl!),
@@ -135,16 +136,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     'Error loading banner image: $exception',
                                   );
                                 },
-                              )
-                            : null,
-                        gradient: _user!.bannerImageUrl == null
-                            ? LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  AppColors.primaryBlue,
-                                  AppColors.primaryBlueDark,
-                                ],
                               )
                             : null,
                       ),
