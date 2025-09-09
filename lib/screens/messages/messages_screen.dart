@@ -19,20 +19,33 @@ class MessagesScreen extends StatefulWidget {
 }
 
 class _MessagesScreenState extends State<MessagesScreen>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
+
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<UserProvider>().loadConversations();
+      context.read<MessageProvider>().refreshAll();
     });
   }
 
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   Future<void> _handleRefresh() async {
-    await context.read<UserProvider>().loadConversations();
+    await Future.wait([
+      context.read<UserProvider>().loadConversations(),
+      context.read<MessageProvider>().refreshAll(),
+    ]);
   }
 
   @override
