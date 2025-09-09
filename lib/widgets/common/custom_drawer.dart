@@ -102,6 +102,9 @@ class CustomDrawer extends StatelessWidget {
                       ),
                     ],
                   ),
+
+                  // Profiles Row for Account Switching
+                  const DrawerProfilesRow(),
                 ],
               ),
             ),
