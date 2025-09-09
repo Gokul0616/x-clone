@@ -66,6 +66,12 @@ class _ProfileScreenState extends State<ProfileScreen>
     });
   }
 
+  Future<void> _handleRefresh() async {
+    await _loadUser();
+    // Also refresh tweets for this user
+    await context.read<TweetProvider>().loadTweets(refresh: true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
