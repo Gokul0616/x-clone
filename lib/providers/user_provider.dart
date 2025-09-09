@@ -318,6 +318,17 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Clear cache for account switching
+  void clearCache() {
+    _users.clear();
+    _searchResults.clear();
+    _conversations.clear();
+    _notifications.clear();
+    _communities.clear();
+    _clearError();
+    notifyListeners();
+  }
+
   // Check if current user is member of community
   bool isMemberOfCommunity(String communityId, BuildContext context) {
     final currentUser = context.read<AuthProvider>().currentUser;
