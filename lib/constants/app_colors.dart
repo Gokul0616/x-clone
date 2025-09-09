@@ -26,20 +26,20 @@ class AppColors {
   static const Color textSecondaryDark = Color(0xFF8899A6);
   static const Color textTertiaryDark = Color(0xFF657786);
   
-  // Action Colors
-  static const Color likeColor = Color(0xFFE91E63);
-  static const Color retweetColor = Color(0xFF00D084);
+  // Action Colors (Classic Twitter)
+  static const Color likeColor = Color(0xFFE0245E);
+  static const Color retweetColor = Color(0xFF17BF63);
   static const Color shareColor = Color(0xFF1DA1F2);
-  static const Color replyColor = Color(0xFF536471);
+  static const Color replyColor = Color(0xFF657786);
   
   // Status Colors
-  static const Color successColor = Color(0xFF00BA7C);
+  static const Color successColor = Color(0xFF17BF63);
   static const Color warningColor = Color(0xFFFFAD1F);
-  static const Color errorColor = Color(0xFFF4212E);
+  static const Color errorColor = Color(0xFFE0245E);
   
-  // Border Colors
-  static const Color borderLight = Color(0xFFEFF3F4);
-  static const Color borderDark = Color(0xFF2F3336);
+  // Border Colors (Twitter Classic)
+  static const Color borderLight = Color(0xFFE1E8ED);
+  static const Color borderDark = Color(0xFF38444D);
   
   // Special Colors
   static const Color verified = Color(0xFF1D9BF0);
