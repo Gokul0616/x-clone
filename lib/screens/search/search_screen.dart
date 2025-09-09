@@ -142,39 +142,50 @@ class _SearchScreenState extends State<SearchScreen>
     final tweetProvider = context.watch<TweetProvider>();
     final trending = tweetProvider.getTrendingHashtags();
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Trending section
-          if (trending.isNotEmpty) ...[
-            Padding(
-              padding: const EdgeInsets.all(AppConstants.paddingMedium),
-              child: Text(
-                'Trending',
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ...trending
-                .take(10)
-                .map(
-                  (hashtag) => ListTile(
-                    leading: const Icon(Icons.tag),
-                    title: Text('#$hashtag'),
-                    subtitle: const Text('Trending'),
-                    onTap: () {
-                      _searchController.text = '#$hashtag';
-                      _performSearch('#$hashtag');
-                    },
+    return RefreshIndicator(
+      onRefresh: () async {
+        // Refresh trending hashtags by refreshing tweets
+        await context.read<TweetProvider>().loadTweets(refresh: true);
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Trending section
+            if (trending.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                child: Text(
+                  'Trending',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-          ],
+              ),
+              ...trending
+                  .take(10)
+                  .map(
+                    (hashtag) => ListTile(
+                      leading: const Icon(Icons.tag),
+                      title: Text('#$hashtag'),
+                      subtitle: const Text('Trending'),
+                      onTap: () {
+                        _searchController.text = '#$hashtag';
+                        _performSearch('#$hashtag');
+                      },
+                    ),
+                  ),
+            ],
 
-          // Recent searches (mock data)
-          if (trending.isEmpty) _buildEmptyState(),
-        ],
+            // Recent searches (mock data)
+            if (trending.isEmpty) 
+              SizedBox(
+                height: MediaQuery.of(context).size.height - 200,
+                child: _buildEmptyState(),
+              ),
+          ],
+        ),
       ),
     );
   }
