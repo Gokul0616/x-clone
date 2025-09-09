@@ -258,10 +258,22 @@ class _SearchScreenState extends State<SearchScreen>
     }
 
     if (allResults.isEmpty) {
-      return _buildNoResultsState();
+      return RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height - 300,
+            child: _buildNoResultsState(),
+          ),
+        ),
+      );
     }
 
-    return ListView(children: allResults);
+    return RefreshIndicator(
+      onRefresh: _handleRefresh,
+      child: ListView(children: allResults),
+    );
   }
 
   Widget _buildTweetResults() {
