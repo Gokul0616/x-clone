@@ -142,36 +142,56 @@ class _MessagesScreenState extends State<MessagesScreen>
   Widget _buildEmptyState() {
     final theme = Theme.of(context);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.mail_outline,
-            size: 64,
-            color: theme.brightness == Brightness.dark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondaryLight,
+    return Column(
+      children: [
+        // Stories section at the top when no conversations
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            children: [
+              const StoriesBar(),
+              Container(
+                height: 8,
+                color: Theme.of(context).dividerColor.withOpacity(0.3),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          Text('No messages yet', style: theme.textTheme.headlineSmall),
-          const SizedBox(height: 8),
-          Text(
-            'When you send or receive messages, they\'ll show up here.',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.brightness == Brightness.dark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondaryLight,
+        ),
+        // Empty state content
+        Expanded(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.mail_outline,
+                  size: 64,
+                  color: theme.brightness == Brightness.dark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondaryLight,
+                ),
+                const SizedBox(height: 16),
+                Text('No messages yet', style: theme.textTheme.headlineSmall),
+                const SizedBox(height: 8),
+                Text(
+                  'When you send or receive messages, they\'ll show up here.',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.brightness == Brightness.dark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => _showNewMessageDialog(),
+                  child: Text(AppStrings.newMessage),
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () => _showNewMessageDialog(),
-            child: Text(AppStrings.newMessage),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
