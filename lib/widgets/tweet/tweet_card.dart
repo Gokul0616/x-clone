@@ -236,9 +236,15 @@ class TweetCard extends StatelessWidget {
   Widget _buildTweetText(BuildContext context) {
     final theme = Theme.of(context);
     
-    return Text(
-      tweet.content,
-      style: theme.textTheme.bodyLarge,
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      child: Text(
+        tweet.content,
+        style: theme.textTheme.bodyLarge?.copyWith(
+          fontSize: 15,
+          height: 1.4,
+        ),
+      ),
     );
   }
 
