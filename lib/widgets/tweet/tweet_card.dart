@@ -5,7 +5,6 @@ import '../../models/tweet_model.dart';
 import '../../providers/tweet_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../constants/app_colors.dart';
-import '../../constants/app_constants.dart';
 import '../../screens/tweet/tweet_detail_screen.dart';
 import '../../screens/profile/profile_screen.dart';
 import '../../screens/compose/compose_tweet_screen.dart';
@@ -31,7 +30,6 @@ class TweetCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
     final currentUser = context.watch<AuthProvider>().currentUser;
-
     return Container(
       decoration: BoxDecoration(
         color: isDarkMode ? AppColors.cardDark : AppColors.cardLight,
@@ -43,14 +41,16 @@ class TweetCard extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        onTap: isDetail ? null : () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TweetDetailScreen(tweet: tweet),
-            ),
-          );
-        },
+        onTap: isDetail
+            ? null
+            : () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TweetDetailScreen(tweet: tweet),
+                  ),
+                );
+              },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
@@ -58,7 +58,7 @@ class TweetCard extends StatelessWidget {
             children: [
               // Retweet indicator
               if (tweet.isRetweet) _buildRetweetIndicator(context),
-              
+
               // Main tweet content
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +70,8 @@ class TweetCard extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProfileScreen(userId: tweet.user!.id),
+                            builder: (context) =>
+                                ProfileScreen(userId: tweet.user!.id),
                           ),
                         );
                       }
@@ -82,7 +83,10 @@ class TweetCard extends StatelessWidget {
                           : null,
                       child: tweet.user?.profileImageUrl == null
                           ? Text(
-                              tweet.user?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                              tweet.user?.displayName
+                                      .substring(0, 1)
+                                      .toUpperCase() ??
+                                  'U',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -92,7 +96,7 @@ class TweetCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  
+
                   // Tweet content
                   Expanded(
                     child: Column(
@@ -101,28 +105,27 @@ class TweetCard extends StatelessWidget {
                         // User info and timestamp
                         _buildUserInfo(context),
                         const SizedBox(height: 4),
-                        
+
                         // Tweet text
-                        if (tweet.content.isNotEmpty)
-                          _buildTweetText(context),
-                        
+                        if (tweet.content.isNotEmpty) _buildTweetText(context),
+
                         // Media attachments
                         if (tweet.imageUrls.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 12),
                             child: TweetMedia(imageUrls: tweet.imageUrls),
                           ),
-                        
+
                         // Quoted tweet
                         if (tweet.quotedTweet != null)
                           _buildQuotedTweet(context),
-                        
+
                         // Reply to tweet indicator
                         if (tweet.replyToTweet != null && !isDetail)
                           _buildReplyIndicator(context),
-                        
+
                         const SizedBox(height: 12),
-                        
+
                         // Tweet actions
                         if (showActionButtons)
                           TweetActions(
@@ -146,16 +149,12 @@ class TweetCard extends StatelessWidget {
 
   Widget _buildRetweetIndicator(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.only(left: 32, bottom: 4),
       child: Row(
         children: [
-          Icon(
-            Icons.repeat,
-            size: 16,
-            color: AppColors.retweetColor,
-          ),
+          Icon(Icons.repeat, size: 16, color: AppColors.retweetColor),
           const SizedBox(width: 4),
           Text(
             '${tweet.retweetedByUser?.displayName ?? 'Someone'} retweeted',
@@ -171,7 +170,7 @@ class TweetCard extends StatelessWidget {
 
   Widget _buildUserInfo(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Row(
       children: [
         // Display name
@@ -194,19 +193,15 @@ class TweetCard extends StatelessWidget {
             ),
           ),
         ),
-        
+
         // Verified badge
         if (tweet.user?.isVerified == true) ...[
           const SizedBox(width: 4),
-          Icon(
-            Icons.verified,
-            size: 18,
-            color: AppColors.verified,
-          ),
+          Icon(Icons.verified, size: 18, color: AppColors.verified),
         ],
-        
+
         const SizedBox(width: 4),
-        
+
         // Username and timestamp in same line
         Expanded(
           child: Text(
@@ -220,7 +215,7 @@ class TweetCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        
+
         // More options
         IconButton(
           icon: const Icon(Icons.more_horiz),
@@ -235,22 +230,19 @@ class TweetCard extends StatelessWidget {
 
   Widget _buildTweetText(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 4),
       child: Text(
         tweet.content,
-        style: theme.textTheme.bodyLarge?.copyWith(
-          fontSize: 15,
-          height: 1.4,
-        ),
+        style: theme.textTheme.bodyLarge?.copyWith(fontSize: 15, height: 1.4),
       ),
     );
   }
 
   Widget _buildQuotedTweet(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.all(12),
@@ -269,12 +261,16 @@ class TweetCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 10,
-                backgroundImage: tweet.quotedTweet!.user?.profileImageUrl != null
+                backgroundImage:
+                    tweet.quotedTweet!.user?.profileImageUrl != null
                     ? NetworkImage(tweet.quotedTweet!.user!.profileImageUrl!)
                     : null,
                 child: tweet.quotedTweet!.user?.profileImageUrl == null
                     ? Text(
-                        tweet.quotedTweet!.user?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                        tweet.quotedTweet!.user?.displayName
+                                .substring(0, 1)
+                                .toUpperCase() ??
+                            'U',
                         style: const TextStyle(fontSize: 10),
                       )
                     : null,
@@ -298,10 +294,7 @@ class TweetCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          Text(
-            tweet.quotedTweet!.content,
-            style: theme.textTheme.bodyMedium,
-          ),
+          Text(tweet.quotedTweet!.content, style: theme.textTheme.bodyMedium),
         ],
       ),
     );
@@ -309,7 +302,7 @@ class TweetCard extends StatelessWidget {
 
   Widget _buildReplyIndicator(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Text(
@@ -341,15 +334,15 @@ class TweetCard extends StatelessWidget {
 
   void _handleShare(BuildContext context) {
     // TODO: Implement share functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Share feature coming soon!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Share feature coming soon!')));
   }
 
   void _showTweetOptions(BuildContext context) {
     final currentUser = context.read<AuthProvider>().currentUser;
     final isOwnTweet = currentUser?.id == tweet.userId;
-    
+
     showModalBottomSheet(
       context: context,
       builder: (context) => Column(
@@ -358,7 +351,9 @@ class TweetCard extends StatelessWidget {
           if (isOwnTweet) ...[
             ListTile(
               leading: const Icon(Icons.push_pin_outlined),
-              title: Text(tweet.isPinned ? 'Unpin from profile' : 'Pin to profile'),
+              title: Text(
+                tweet.isPinned ? 'Unpin from profile' : 'Pin to profile',
+              ),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement pin/unpin functionality
@@ -368,8 +363,14 @@ class TweetCard extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete_outline, color: AppColors.errorColor),
-              title: const Text('Delete Tweet', style: TextStyle(color: AppColors.errorColor)),
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.errorColor,
+              ),
+              title: const Text(
+                'Delete Tweet',
+                style: TextStyle(color: AppColors.errorColor),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement delete functionality
@@ -386,14 +387,21 @@ class TweetCard extends StatelessWidget {
                 Navigator.pop(context);
                 // TODO: Implement unfollow functionality
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Unfollow feature coming soon!')),
+                  const SnackBar(
+                    content: Text('Unfollow feature coming soon!'),
+                  ),
                 );
               },
             ),
             ListTile(
-              leading: const Icon(Icons.block_outlined, color: AppColors.errorColor),
-              title: Text('Block @${tweet.user?.username ?? 'user'}', 
-                style: const TextStyle(color: AppColors.errorColor)),
+              leading: const Icon(
+                Icons.block_outlined,
+                color: AppColors.errorColor,
+              ),
+              title: Text(
+                'Block @${tweet.user?.username ?? 'user'}',
+                style: const TextStyle(color: AppColors.errorColor),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implement block functionality
@@ -404,8 +412,14 @@ class TweetCard extends StatelessWidget {
             ),
           ],
           ListTile(
-            leading: const Icon(Icons.report_outlined, color: AppColors.errorColor),
-            title: const Text('Report Tweet', style: TextStyle(color: AppColors.errorColor)),
+            leading: const Icon(
+              Icons.report_outlined,
+              color: AppColors.errorColor,
+            ),
+            title: const Text(
+              'Report Tweet',
+              style: TextStyle(color: AppColors.errorColor),
+            ),
             onTap: () {
               Navigator.pop(context);
               // TODO: Implement report functionality

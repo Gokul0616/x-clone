@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:twitter_clone/screens/marketplace/marketplace_screen.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/theme_provider.dart';
 import '../../providers/user_provider.dart';
@@ -27,7 +28,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const SearchScreen(),
-    const SpacesScreen(), // Changed from marketplace to spaces
+    const MarketplaceScreen(), // Changed from marketplace to spaces
     const NotificationsScreen(),
     const MessagesScreen(),
   ];
@@ -70,22 +71,22 @@ class _MainScreenState extends State<MainScreen> {
         title: Row(
           children: [
             // Twitter logo/icon
-            Container(
-              width: 28,
-              height: 28,
-              decoration: const BoxDecoration(
-                color: AppColors.primaryBlue,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.alternate_email,
-                color: Colors.white,
-                size: 18,
-              ),
-            ),
-            const SizedBox(width: 8),
             if (_selectedIndex != 0) // Show page title only if not on home
-              Text(_appBarTitles[_selectedIndex]),
+              Container(
+                width: 28,
+                height: 28,
+                decoration: const BoxDecoration(
+                  color: AppColors.primaryBlue,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.alternate_email,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+            const SizedBox(width: 8),
+            Text(_appBarTitles[_selectedIndex]),
           ],
         ),
         leading: IconButton(

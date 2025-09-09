@@ -1,5 +1,4 @@
 import 'user_model.dart';
-import 'package:uuid/uuid.dart';
 
 enum StoryType { image, video, text }
 
@@ -57,11 +56,11 @@ class StoryModel {
   });
 
   bool get isExpired => DateTime.now().isAfter(expiresAt);
-  
+
   bool get hasBeenViewedBy => viewedBy.isNotEmpty;
-  
+
   int get viewsCount => viewedBy.length;
-  
+
   int get reactionsCount => reactions.length;
 
   factory StoryModel.fromJson(Map<String, dynamic> json) {
@@ -75,17 +74,17 @@ class StoryModel {
       fontFamily: json['fontFamily'],
       fontSize: json['fontSize']?.toDouble(),
       textColor: json['textColor'],
-      createdAt: json['createdAt'] != null 
+      createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
-      expiresAt: json['expiresAt'] != null 
+      expiresAt: json['expiresAt'] != null
           ? DateTime.parse(json['expiresAt'])
           : DateTime.now().add(const Duration(hours: 24)),
       viewedBy: List<String>.from(json['viewedBy'] ?? []),
       reactions: json['reactions'] != null
           ? (json['reactions'] as List)
-              .map((r) => StoryReaction.fromJson(r))
-              .toList()
+                .map((r) => StoryReaction.fromJson(r))
+                .toList()
           : [],
       privacy: StoryPrivacy.values[json['privacy'] ?? 0],
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
@@ -97,8 +96,8 @@ class StoryModel {
       musicArtist: json['musicArtist'],
       stickers: json['stickers'] != null
           ? (json['stickers'] as List)
-              .map((s) => StorySticker.fromJson(s))
-              .toList()
+                .map((s) => StorySticker.fromJson(s))
+                .toList()
           : [],
       filters: json['filters'],
     );
@@ -205,7 +204,7 @@ class StoryReaction {
       id: json['id'] ?? '',
       userId: json['userId'] ?? '',
       emoji: json['emoji'] ?? '❤️',
-      createdAt: json['createdAt'] != null 
+      createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
@@ -271,7 +270,17 @@ class StorySticker {
   }
 }
 
-enum StickerType { emoji, gif, mention, hashtag, location, time, music, poll, question }
+enum StickerType {
+  emoji,
+  gif,
+  mention,
+  hashtag,
+  location,
+  time,
+  music,
+  poll,
+  question,
+}
 
 class StoryHighlight {
   final String id;
@@ -301,10 +310,10 @@ class StoryHighlight {
       name: json['name'] ?? '',
       coverImageUrl: json['coverImageUrl'],
       storyIds: List<String>.from(json['storyIds'] ?? []),
-      createdAt: json['createdAt'] != null 
+      createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
-      updatedAt: json['updatedAt'] != null 
+      updatedAt: json['updatedAt'] != null
           ? DateTime.parse(json['updatedAt'])
           : DateTime.now(),
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,

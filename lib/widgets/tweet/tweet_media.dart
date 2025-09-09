@@ -176,6 +176,8 @@ class TweetMedia extends StatelessWidget {
     double? width,
     double? height,
   }) {
+    print('Opening fullscreen viewer for $imageUrl');
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(

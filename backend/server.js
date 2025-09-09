@@ -54,7 +54,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static files for uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/v1/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/v1/auth', authRoutes);
@@ -88,7 +88,7 @@ app.use('*', (req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  
+
   if (err.name === 'ValidationError') {
     return res.status(400).json({
       status: 'error',
@@ -96,21 +96,21 @@ app.use((err, req, res, next) => {
       errors: Object.values(err.errors).map(e => e.message)
     });
   }
-  
+
   if (err.name === 'CastError') {
     return res.status(400).json({
       status: 'error',
       message: 'Invalid ID format'
     });
   }
-  
+
   if (err.code === 11000) {
     return res.status(400).json({
       status: 'error',
       message: 'Duplicate field value'
     });
   }
-  
+
   res.status(err.statusCode || 500).json({
     status: 'error',
     message: err.message || 'Something went wrong!'
@@ -122,13 +122,13 @@ mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => {
-  console.log('Connected to MongoDB');
-})
-.catch((error) => {
-  console.error('MongoDB connection error:', error);
-  console.log('⚠️  Continuing without database connection - API will use fallback mode');
-});
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+    console.log('⚠️  Continuing without database connection - API will use fallback mode');
+  });
 
 // Handle MongoDB connection events
 mongoose.connection.on('error', (error) => {

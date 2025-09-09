@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 const { auth } = require('../middleware/auth');
 const router = express.Router();
 
-// Create uploads directory if it doesn't exist
+
 const uploadsDir = path.join(__dirname, '..', 'uploads');
 const imagesDir = path.join(uploadsDir, 'images');
 const videosDir = path.join(uploadsDir, 'videos');
@@ -24,19 +24,13 @@ async function ensureDirectoriesExist() {
 
 ensureDirectoriesExist();
 
-// Configure multer for file uploads
+
 const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
-  // Check file type
-  console.log('Processing file:', {
-    fieldname: file.fieldname,
-    originalname: file.originalname,
-    mimetype: file.mimetype,
-    encoding: file.encoding
-  });
 
-  // Helper function to detect image type from file extension
+
+
   const getImageMimeType = (filename) => {
     const ext = filename.toLowerCase().split('.').pop();
     const mimeTypes = {
@@ -50,12 +44,12 @@ const fileFilter = (req, file, cb) => {
   };
 
   if (file.fieldname === 'images') {
-    // Check both mimetype and file extension
+
     const isImageMimetype = file.mimetype.startsWith('image/');
     const expectedMimetype = getImageMimeType(file.originalname);
 
     if (isImageMimetype || expectedMimetype) {
-      // If mimetype is octet-stream but filename suggests an image, override mimetype
+
       if (file.mimetype === 'application/octet-stream' && expectedMimetype) {
         file.mimetype = expectedMimetype;
       }
@@ -83,12 +77,12 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024, // 10MB default
-    files: 10 // Maximum 10 files per request
+    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024,
+    files: 10
   }
 });
 
-// Upload images
+
 router.post('/images', auth, upload.array('images', 4), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -101,11 +95,11 @@ router.post('/images', auth, upload.array('images', 4), async (req, res) => {
     const imageUrls = [];
 
     for (const file of req.files) {
-      // Generate unique filename
+
       const filename = `${uuidv4()}.webp`;
       const filepath = path.join(imagesDir, filename);
 
-      // Process and compress image
+
       await sharp(file.buffer)
         .resize(1200, 1200, {
           fit: 'inside',
@@ -114,8 +108,8 @@ router.post('/images', auth, upload.array('images', 4), async (req, res) => {
         .webp({ quality: 85 })
         .toFile(filepath);
 
-      // Generate URL
-      const imageUrl = `/uploads/images/${filename}`;
+
+      const imageUrl = `${process.env.URL}/uploads/images/${filename}`;
       imageUrls.push(imageUrl);
     }
 
@@ -149,7 +143,7 @@ router.post('/images', auth, upload.array('images', 4), async (req, res) => {
   }
 });
 
-// Upload videos
+
 router.post('/videos', auth, upload.array('videos', 2), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
@@ -162,15 +156,15 @@ router.post('/videos', auth, upload.array('videos', 2), async (req, res) => {
     const videoUrls = [];
 
     for (const file of req.files) {
-      // Generate unique filename
+
       const fileExtension = path.extname(file.originalname);
       const filename = `${uuidv4()}${fileExtension}`;
       const filepath = path.join(videosDir, filename);
 
-      // Save video file (no processing for now, but you could add ffmpeg processing here)
+
       await fs.writeFile(filepath, file.buffer);
 
-      // Generate URL
+
       const videoUrl = `/uploads/videos/${filename}`;
       videoUrls.push(videoUrl);
     }
@@ -205,7 +199,7 @@ router.post('/videos', auth, upload.array('videos', 2), async (req, res) => {
   }
 });
 
-// Upload profile/banner images
+
 router.post('/profile', auth, upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
@@ -215,7 +209,7 @@ router.post('/profile', auth, upload.single('image'), async (req, res) => {
       });
     }
 
-    const { type } = req.body; // 'profile' or 'banner'
+    const { type } = req.body;
 
     if (!type || !['profile', 'banner'].includes(type)) {
       return res.status(400).json({
@@ -224,22 +218,22 @@ router.post('/profile', auth, upload.single('image'), async (req, res) => {
       });
     }
 
-    // Generate unique filename
+
     const filename = `${type}_${uuidv4()}.webp`;
     const filepath = path.join(imagesDir, filename);
 
-    // Process image based on type
+
     let sharpInstance = sharp(req.file.buffer);
 
     if (type === 'profile') {
-      // Square profile image
+
       sharpInstance = sharpInstance
         .resize(400, 400, {
           fit: 'cover',
           position: 'center'
         });
     } else if (type === 'banner') {
-      // Banner image (wide aspect ratio)
+
       sharpInstance = sharpInstance
         .resize(1500, 500, {
           fit: 'cover',
@@ -251,7 +245,7 @@ router.post('/profile', auth, upload.single('image'), async (req, res) => {
       .webp({ quality: 90 })
       .toFile(filepath);
 
-    // Generate URL
+
     const imageUrl = `/uploads/images/${filename}`;
 
     res.status(200).json({
@@ -269,7 +263,7 @@ router.post('/profile', auth, upload.single('image'), async (req, res) => {
   }
 });
 
-// Delete uploaded file
+
 router.delete('/:type/:filename', auth, async (req, res) => {
   try {
     const { type, filename } = req.params;
@@ -284,7 +278,7 @@ router.delete('/:type/:filename', auth, async (req, res) => {
     const directory = type === 'images' ? imagesDir : videosDir;
     const filepath = path.join(directory, filename);
 
-    // Check if file exists
+
     try {
       await fs.access(filepath);
     } catch (error) {
@@ -294,7 +288,7 @@ router.delete('/:type/:filename', auth, async (req, res) => {
       });
     }
 
-    // Delete file
+
     await fs.unlink(filepath);
 
     res.status(200).json({
@@ -311,7 +305,7 @@ router.delete('/:type/:filename', auth, async (req, res) => {
   }
 });
 
-// Get file info
+
 router.get('/info/:type/:filename', async (req, res) => {
   try {
     const { type, filename } = req.params;
@@ -326,7 +320,7 @@ router.get('/info/:type/:filename', async (req, res) => {
     const directory = type === 'images' ? imagesDir : videosDir;
     const filepath = path.join(directory, filename);
 
-    // Check if file exists and get stats
+
     const stats = await fs.stat(filepath);
 
     res.status(200).json({

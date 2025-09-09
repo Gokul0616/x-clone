@@ -16,36 +16,46 @@ class SettingsScreen extends StatelessWidget {
     final authProvider = context.watch<AuthProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.settings),
-      ),
+      appBar: AppBar(title: const Text(AppStrings.settings)),
       body: ListView(
         children: [
           // Account section
           _buildSectionHeader(context, 'Account'),
           Card(
-            margin: const EdgeInsets.symmetric(horizontal: AppConstants.paddingMedium),
+            margin: const EdgeInsets.symmetric(
+              horizontal: AppConstants.paddingMedium,
+            ),
             child: Column(
               children: [
                 ListTile(
                   leading: CircleAvatar(
                     radius: 20,
-                    backgroundImage: authProvider.currentUser?.profileImageUrl != null
-                        ? NetworkImage(authProvider.currentUser!.profileImageUrl!)
+                    backgroundImage:
+                        authProvider.currentUser?.profileImageUrl != null
+                        ? NetworkImage(
+                            authProvider.currentUser!.profileImageUrl!,
+                          )
                         : null,
                     child: authProvider.currentUser?.profileImageUrl == null
                         ? Text(
-                            authProvider.currentUser?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                            authProvider.currentUser?.displayName
+                                    .substring(0, 1)
+                                    .toUpperCase() ??
+                                'U',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           )
                         : null,
                   ),
                   title: Text(authProvider.currentUser?.displayName ?? 'User'),
-                  subtitle: Text('@${authProvider.currentUser?.username ?? 'username'}'),
+                  subtitle: Text(
+                    '@${authProvider.currentUser?.username ?? 'username'}',
+                  ),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Account settings coming soon!')),
+                      const SnackBar(
+                        content: Text('Account settings coming soon!'),
+                      ),
                     );
                   },
                 ),
@@ -56,7 +66,9 @@ class SettingsScreen extends StatelessWidget {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Privacy settings coming soon!')),
+                      const SnackBar(
+                        content: Text('Privacy settings coming soon!'),
+                      ),
                     );
                   },
                 ),
@@ -67,25 +79,31 @@ class SettingsScreen extends StatelessWidget {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Security settings coming soon!')),
+                      const SnackBar(
+                        content: Text('Security settings coming soon!'),
+                      ),
                     );
                   },
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Appearance section
           _buildSectionHeader(context, AppStrings.appearance),
           Card(
-            margin: const EdgeInsets.symmetric(horizontal: AppConstants.paddingMedium),
+            margin: const EdgeInsets.symmetric(
+              horizontal: AppConstants.paddingMedium,
+            ),
             child: Column(
               children: [
                 ListTile(
                   leading: Icon(
-                    themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                    themeProvider.isDarkMode
+                        ? Icons.dark_mode
+                        : Icons.light_mode,
                   ),
                   title: const Text('Theme'),
                   subtitle: Text(themeProvider.themeModeDisplayName),
@@ -99,7 +117,9 @@ class SettingsScreen extends StatelessWidget {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Text size settings coming soon!')),
+                      const SnackBar(
+                        content: Text('Text size settings coming soon!'),
+                      ),
                     );
                   },
                 ),
@@ -110,30 +130,37 @@ class SettingsScreen extends StatelessWidget {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Accessibility settings coming soon!')),
+                      const SnackBar(
+                        content: Text('Accessibility settings coming soon!'),
+                      ),
                     );
                   },
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Notifications section
           _buildSectionHeader(context, AppStrings.notificationsSettings),
           Card(
-            margin: const EdgeInsets.symmetric(horizontal: AppConstants.paddingMedium),
+            margin: const EdgeInsets.symmetric(
+              horizontal: AppConstants.paddingMedium,
+            ),
             child: Column(
               children: [
                 ListTile(
                   leading: const Icon(Icons.notifications_outlined),
                   title: const Text('Push notifications'),
                   trailing: Switch(
-                    value: true, // This would be managed by a NotificationProvider
+                    value:
+                        true, // This would be managed by a NotificationProvider
                     onChanged: (value) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Notification settings coming soon!')),
+                        const SnackBar(
+                          content: Text('Notification settings coming soon!'),
+                        ),
                       );
                     },
                   ),
@@ -145,20 +172,24 @@ class SettingsScreen extends StatelessWidget {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Email settings coming soon!')),
+                      const SnackBar(
+                        content: Text('Email settings coming soon!'),
+                      ),
                     );
                   },
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Support section
           _buildSectionHeader(context, 'Support'),
           Card(
-            margin: const EdgeInsets.symmetric(horizontal: AppConstants.paddingMedium),
+            margin: const EdgeInsets.symmetric(
+              horizontal: AppConstants.paddingMedium,
+            ),
             child: Column(
               children: [
                 ListTile(
@@ -178,7 +209,9 @@ class SettingsScreen extends StatelessWidget {
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Feedback feature coming soon!')),
+                      const SnackBar(
+                        content: Text('Feedback feature coming soon!'),
+                      ),
                     );
                   },
                 ),
@@ -192,36 +225,52 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Danger zone
           _buildSectionHeader(context, 'Account Actions'),
           Card(
-            margin: const EdgeInsets.symmetric(horizontal: AppConstants.paddingMedium),
+            margin: const EdgeInsets.symmetric(
+              horizontal: AppConstants.paddingMedium,
+            ),
             child: Column(
               children: [
                 ListTile(
-                  leading: const Icon(Icons.logout_outlined, color: AppColors.errorColor),
-                  title: const Text('Log out', style: TextStyle(color: AppColors.errorColor)),
+                  leading: const Icon(
+                    Icons.logout_outlined,
+                    color: AppColors.errorColor,
+                  ),
+                  title: const Text(
+                    'Log out',
+                    style: TextStyle(color: AppColors.errorColor),
+                  ),
                   onTap: () => _showLogoutDialog(context),
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  leading: const Icon(Icons.delete_outline, color: AppColors.errorColor),
-                  title: const Text('Delete account', style: TextStyle(color: AppColors.errorColor)),
+                  leading: const Icon(
+                    Icons.delete_outline,
+                    color: AppColors.errorColor,
+                  ),
+                  title: const Text(
+                    'Delete account',
+                    style: TextStyle(color: AppColors.errorColor),
+                  ),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Delete account feature coming soon!')),
+                      const SnackBar(
+                        content: Text('Delete account feature coming soon!'),
+                      ),
                     );
                   },
                 ),
               ],
             ),
           ),
-          
+
           const SizedBox(height: 32),
-          
+
           // App version
           Center(
             child: Text(
@@ -233,7 +282,7 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 32),
         ],
       ),
@@ -242,7 +291,7 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _buildSectionHeader(BuildContext context, String title) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppConstants.paddingLarge,
@@ -262,7 +311,7 @@ class SettingsScreen extends StatelessWidget {
 
   void _showThemeDialog(BuildContext context) {
     final themeProvider = context.read<ThemeProvider>();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -321,7 +370,9 @@ class SettingsScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Log out'),
-        content: const Text('Are you sure you want to log out of your account?'),
+        content: const Text(
+          'Are you sure you want to log out of your account?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

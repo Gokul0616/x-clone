@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_colors.dart';
-import '../../constants/app_strings.dart';
 
 class SpacesScreen extends StatefulWidget {
   const SpacesScreen({super.key});
