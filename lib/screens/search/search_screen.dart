@@ -354,7 +354,7 @@ class _SearchScreenState extends State<SearchScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            'Find what\'s happening and discover new voices on Pulse.',
+            'Find what\'s happening and discover new voices on Twitter.',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.brightness == Brightness.dark
                   ? AppColors.textSecondaryDark
