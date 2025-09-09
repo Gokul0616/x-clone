@@ -224,6 +224,12 @@ class _AccountSwitchBottomSheetState extends State<AccountSwitchBottomSheet> {
       // Reload user in auth provider
       await context.read<AuthProvider>().loadUserFromStorage();
       
+      // Update tweet provider with new user
+      final newUser = context.read<AuthProvider>().currentUser;
+      if (newUser != null) {
+        context.read<TweetProvider>().setCurrentUserId(newUser.id);
+      }
+      
       // Clear all cached data
       context.read<TweetProvider>().clearCache();
       context.read<UserProvider>().clearCache();
@@ -234,9 +240,9 @@ class _AccountSwitchBottomSheetState extends State<AccountSwitchBottomSheet> {
         
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Account switched successfully'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text('Switched to ${newUser?.displayName ?? 'account'}'),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
