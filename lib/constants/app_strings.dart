@@ -22,6 +22,7 @@ class AppStrings {
   static const String messages = 'Messages';
   static const String bookmarks = 'Bookmarks';
   static const String communities = 'Spaces';
+  static const String marketplace = 'Marketplace';
   static const String profile = 'Profile';
   static const String settings = 'Settings';
   static const String logout = 'Log out';

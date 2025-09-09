@@ -71,22 +71,22 @@ class _MainScreenState extends State<MainScreen> {
         title: Row(
           children: [
             // Twitter logo/icon
-            if (_selectedIndex != 0) // Show page title only if not on home
-              Container(
-                width: 28,
-                height: 28,
-                decoration: const BoxDecoration(
-                  color: AppColors.primaryBlue,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.alternate_email,
-                  color: Colors.white,
-                  size: 18,
-                ),
+            Container(
+              width: 28,
+              height: 28,
+              decoration: const BoxDecoration(
+                color: AppColors.primaryBlue,
+                shape: BoxShape.circle,
               ),
+              child: const Icon(
+                Icons.alternate_email,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
             const SizedBox(width: 8),
-            Text(_appBarTitles[_selectedIndex]),
+            if (_selectedIndex != 0) // Show page title only if not on home
+              Text(_appBarTitles[_selectedIndex]),
           ],
         ),
         leading: IconButton(
