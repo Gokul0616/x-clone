@@ -273,23 +273,31 @@ class _AccountSwitchBottomSheetState extends State<AccountSwitchBottomSheet> {
     }
   }
 
-  void _navigateToRegister(BuildContext context) {
+  void _navigateToRegister(BuildContext context) async {
     Navigator.pop(context);
-    Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const RegisterScreen(isAddingAccount: true),
       ),
     );
+    // Refresh accounts after returning
+    if (mounted) {
+      context.read<AccountSwitchProvider>().refreshAccounts();
+    }
   }
 
-  void _navigateToLogin(BuildContext context) {
+  void _navigateToLogin(BuildContext context) async {
     Navigator.pop(context);
-    Navigator.push(
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => const LoginScreen(isAddingAccount: true),
       ),
     );
+    // Refresh accounts after returning
+    if (mounted) {
+      context.read<AccountSwitchProvider>().refreshAccounts();
+    }
   }
 }
