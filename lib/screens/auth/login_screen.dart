@@ -93,7 +93,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            AppStrings.appName,
+                            widget.isAddingAccount 
+                                ? 'Add Existing Account'
+                                : AppStrings.appName,
                             textAlign: TextAlign.center,
                             style: theme.textTheme.displayMedium?.copyWith(
                               color: AppColors.primaryBlue,
