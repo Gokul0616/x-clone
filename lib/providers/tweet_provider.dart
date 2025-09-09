@@ -275,6 +275,15 @@ class TweetProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Clear cache for account switching
+  void clearCache() {
+    _tweets.clear();
+    _currentPage = 1;
+    _hasMoreTweets = true;
+    _clearError();
+    notifyListeners();
+  }
+
   // Refresh tweets
   Future<void> refreshTweets() async {
     await loadTweets(refresh: true);
