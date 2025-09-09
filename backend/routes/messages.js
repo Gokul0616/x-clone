@@ -1,12 +1,13 @@
 const express = require('express');
 const Message = require('../models/Message');
 const { Conversation } = require('../models/Message');
+const MessageRequest = require('../models/MessageRequest');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
 const { auth } = require('../middleware/auth');
 const router = express.Router();
 
-// Get user's conversations
+// Get user's conversations (only accepted/normal conversations)
 router.get('/conversations', auth, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -15,7 +16,8 @@ router.get('/conversations', auth, async (req, res) => {
     const skip = (page - 1) * limit;
 
     const conversations = await Conversation.find({
-      participants: userId
+      participants: userId,
+      isRequestAccepted: true // Only show accepted conversations
     })
     .populate({
       path: 'participants',
@@ -59,6 +61,123 @@ router.get('/conversations', auth, async (req, res) => {
   }
 });
 
+// Get user's message requests (pending connections)
+router.get('/connections', auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    const messageRequests = await MessageRequest.find({
+      receiverId: userId,
+      status: 'pending'
+    })
+    .populate('senderId', 'id username displayName profileImageUrl isVerified')
+    .populate('firstMessageId', 'content createdAt messageType')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+    res.status(200).json({
+      status: 'success',
+      connections: messageRequests,
+      pagination: {
+        page,
+        limit,
+        hasMore: messageRequests.length === limit
+      }
+    });
+
+  } catch (error) {
+    console.error('Get connections error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to get connections'
+    });
+  }
+});
+
+// Accept a message request
+router.post('/connections/:requestId/accept', auth, async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const userId = req.user.id;
+
+    const messageRequest = await MessageRequest.findOne({
+      _id: requestId,
+      receiverId: userId,
+      status: 'pending'
+    });
+
+    if (!messageRequest) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Connection request not found'
+      });
+    }
+
+    // Accept the request
+    await messageRequest.accept();
+
+    // Create notification for sender
+    await Notification.createNotification({
+      userId: messageRequest.senderId,
+      type: 'message_request_accepted',
+      fromUserId: userId,
+      content: 'accepted your connection request'
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Connection request accepted'
+    });
+
+  } catch (error) {
+    console.error('Accept connection error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to accept connection request'
+    });
+  }
+});
+
+// Decline a message request
+router.post('/connections/:requestId/decline', auth, async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const userId = req.user.id;
+
+    const messageRequest = await MessageRequest.findOne({
+      _id: requestId,
+      receiverId: userId,
+      status: 'pending'
+    });
+
+    if (!messageRequest) {
+      return res.status(404).json({
+        status: 'error',
+        message: 'Connection request not found'
+      });
+    }
+
+    // Decline the request
+    await messageRequest.decline();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Connection request declined'
+    });
+
+  } catch (error) {
+    console.error('Decline connection error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to decline connection request'
+    });
+  }
+});
+
 // Get messages from a conversation
 router.get('/conversations/:conversationId', auth, async (req, res) => {
   try {
@@ -71,7 +190,8 @@ router.get('/conversations/:conversationId', auth, async (req, res) => {
     // Check if user is part of this conversation
     const conversation = await Conversation.findOne({
       id: conversationId,
-      participants: userId
+      participants: userId,
+      isRequestAccepted: true // Only allow access to accepted conversations
     });
 
     if (!conversation) {
@@ -156,22 +276,48 @@ router.post('/', auth, async (req, res) => {
       });
     }
 
-    // Find or create conversation
+    // Check if users are mutually following
+    const areMutuallyFollowing = await Conversation.areUsersMutuallyFollowing(senderId, receiverId);
+
+    // Find existing conversation
     let conversation = await Conversation.findOne({
       participants: { $all: [senderId, receiverId] },
       isGroup: false
     });
 
+    let isNewConversation = false;
+    let messageRequest = null;
+
     if (!conversation) {
+      // Create new conversation
       conversation = new Conversation({
         participants: [senderId, receiverId],
+        isRequestAccepted: areMutuallyFollowing, // Only auto-accept if mutually following
         unreadCounts: [
           { userId: senderId, count: 0 },
-          { userId: receiverId, count: 1 }
+          { userId: receiverId, count: areMutuallyFollowing ? 1 : 0 }
         ]
       });
-    } else {
+      isNewConversation = true;
+    } else if (!conversation.isRequestAccepted && !areMutuallyFollowing) {
+      // Conversation exists but not accepted and still not mutually following
+      return res.status(403).json({
+        status: 'error',
+        message: 'Connection request is still pending'
+      });
+    } else if (!conversation.isRequestAccepted && areMutuallyFollowing) {
+      // Now they're mutually following, auto-accept the conversation
+      conversation.isRequestAccepted = true;
+      
       // Update unread count for receiver
+      const receiverUnreadIndex = conversation.unreadCounts.findIndex(uc => uc.userId === receiverId);
+      if (receiverUnreadIndex > -1) {
+        conversation.unreadCounts[receiverUnreadIndex].count += 1;
+      } else {
+        conversation.unreadCounts.push({ userId: receiverId, count: 1 });
+      }
+    } else {
+      // Normal conversation flow - update unread count for receiver
       const receiverUnreadIndex = conversation.unreadCounts.findIndex(uc => uc.userId === receiverId);
       if (receiverUnreadIndex > -1) {
         conversation.unreadCounts[receiverUnreadIndex].count += 1;
@@ -198,28 +344,58 @@ router.post('/', auth, async (req, res) => {
     conversation.lastActivity = new Date();
     await conversation.save();
 
-    // Create notification for receiver
-    await Notification.createNotification({
-      userId: receiverId,
-      type: 'message',
-      fromUserId: senderId,
-      messageId: message.id,
-      content: content.substring(0, 100)
-    });
+    // Handle message request for non-mutual followers
+    if (isNewConversation && !areMutuallyFollowing) {
+      messageRequest = new MessageRequest({
+        senderId,
+        receiverId,
+        conversationId: conversation.id,
+        firstMessageId: message.id
+      });
+      await messageRequest.save();
+
+      // Create notification for connection request
+      await Notification.createNotification({
+        userId: receiverId,
+        type: 'connection_request',
+        fromUserId: senderId,
+        messageRequestId: messageRequest.id,
+        content: content.substring(0, 100)
+      });
+    } else {
+      // Create normal message notification
+      await Notification.createNotification({
+        userId: receiverId,
+        type: 'message',
+        fromUserId: senderId,
+        messageId: message.id,
+        content: content.substring(0, 100)
+      });
+    }
 
     // Emit real-time message via Socket.IO
     const io = req.app.get('socketio');
     if (io) {
-      io.to(`user_${receiverId}`).emit('new_message', {
-        message,
-        conversation: conversation.id
-      });
+      if (conversation.isRequestAccepted) {
+        io.to(`user_${receiverId}`).emit('new_message', {
+          message,
+          conversation: conversation.id
+        });
+      } else {
+        io.to(`user_${receiverId}`).emit('new_connection_request', {
+          messageRequest,
+          message
+        });
+      }
     }
 
     res.status(201).json({
       status: 'success',
-      message: 'Message sent successfully',
-      data: message
+      message: isNewConversation && !areMutuallyFollowing 
+        ? 'Connection request sent successfully'
+        : 'Message sent successfully',
+      data: message,
+      isConnectionRequest: isNewConversation && !areMutuallyFollowing
     });
 
   } catch (error) {
@@ -268,6 +444,7 @@ router.post('/conversations/group', auth, async (req, res) => {
       isGroup: true,
       groupName: groupName.trim(),
       groupImage,
+      isRequestAccepted: true, // Groups are always accepted
       unreadCounts: allParticipants.map(userId => ({ userId, count: 0 }))
     });
 

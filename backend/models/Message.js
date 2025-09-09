@@ -128,6 +128,11 @@ const conversationSchema = new mongoose.Schema({
   groupImage: {
     type: String
   },
+  // New field for message requests
+  isRequestAccepted: {
+    type: Boolean,
+    default: true // true for normal conversations, false for pending requests
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -141,6 +146,7 @@ const conversationSchema = new mongoose.Schema({
 // Indexes for conversations
 conversationSchema.index({ participants: 1 });
 conversationSchema.index({ lastActivity: -1 });
+conversationSchema.index({ isRequestAccepted: 1 });
 
 // Virtual for participant users
 conversationSchema.virtual('participantUsers', {
@@ -170,6 +176,21 @@ conversationSchema.methods.markAsRead = function(userId) {
     this.unreadCounts[userUnreadIndex].count = 0;
   }
   return this.save();
+};
+
+// Static method to check if users are mutually following
+conversationSchema.statics.areUsersMutuallyFollowing = async function(userId1, userId2) {
+  const User = require('./User');
+  
+  const user1 = await User.findOne({ id: userId1 });
+  const user2 = await User.findOne({ id: userId2 });
+  
+  if (!user1 || !user2) return false;
+  
+  const user1FollowsUser2 = user1.following.includes(userId2);
+  const user2FollowsUser1 = user2.following.includes(userId1);
+  
+  return user1FollowsUser2 && user2FollowsUser1;
 };
 
 module.exports.Conversation = mongoose.model('Conversation', conversationSchema);
