@@ -142,14 +142,14 @@ class _MainScreenState extends State<MainScreen> {
             label: AppStrings.home,
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined),
+            icon: Icon(Icons.search),
             activeIcon: Icon(Icons.search),
             label: AppStrings.search,
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.storefront_outlined),
-            activeIcon: Icon(Icons.storefront),
-            label: 'Marketplace',
+            icon: Icon(Icons.tag_outlined),
+            activeIcon: Icon(Icons.tag),
+            label: 'Spaces',
           ),
           BottomNavigationBarItem(
             icon: Stack(
