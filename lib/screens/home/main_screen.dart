@@ -221,7 +221,7 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(
             icon: Stack(
               children: [
-                const Icon(Icons.mail_outlined),
+                const Icon(Icons.mail_outline),
                 if (userProvider.unreadMessagesCount > 0)
                   Positioned(
                     right: 0,
