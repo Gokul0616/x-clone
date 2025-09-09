@@ -321,7 +321,7 @@ class UserProvider with ChangeNotifier {
   // Clear cache for account switching
   void clearCache() {
     _users.clear();
-    _searchResults.clear();
+    // _searchResults.clear();
     _conversations.clear();
     _notifications.clear();
     _communities.clear();
