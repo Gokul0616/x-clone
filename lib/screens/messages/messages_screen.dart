@@ -53,104 +53,195 @@ class _MessagesScreenState extends State<MessagesScreen>
     super.build(context);
 
     return Scaffold(
-      body: Consumer<UserProvider>(
-        builder: (context, userProvider, child) {
-          if (userProvider.isLoading && userProvider.conversations.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (userProvider.error != null &&
-              userProvider.conversations.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      appBar: AppBar(
+        title: const Text('Messages'),
+        elevation: 0,
+        actions: [
+          Consumer<MessageProvider>(
+            builder: (context, messageProvider, child) {
+              final requestCount = messageProvider.totalRequestsCount;
+              return Stack(
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: AppColors.errorColor,
+                  IconButton(
+                    icon: const Icon(Icons.connect_without_contact_outlined),
+                    onPressed: () => _openConnections(),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Something went wrong',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    userProvider.error!,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      userProvider.clearError();
-                      userProvider.loadConversations();
-                    },
-                    child: Text(AppStrings.retry),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (userProvider.conversations.isEmpty) {
-            return _buildEmptyState();
-          }
-
-          return RefreshIndicator(
-            onRefresh: _handleRefresh,
-            child: Column(
-              children: [
-                // Stories section at the top
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    children: [
-                      const StoriesBar(),
-                      Container(
-                        height: 8,
-                        color: Theme.of(context).dividerColor.withOpacity(0.3),
+                  if (requestCount > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: AppColors.errorColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          requestCount > 9 ? '9+' : requestCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
+                    ),
+                ],
+              );
+            },
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: [
+            const Tab(text: 'Chats'),
+            Consumer<MessageProvider>(
+              builder: (context, messageProvider, child) {
+                final requestCount = messageProvider.totalRequestsCount;
+                return Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Connections'),
+                      if (requestCount > 0) ...[
+                        const SizedBox(width: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.errorColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            requestCount > 9 ? '9+' : requestCount.toString(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
-                ),
-                // Conversations list
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: userProvider.conversations.length,
-                    itemBuilder: (context, index) {
-                      final conversation = userProvider.conversations[index];
-                      return Column(
-                        children: [
-                          ConversationTile(
-                            conversation: conversation,
-                            onTap: () => _openConversation(conversation),
-                          ),
-                          if (index < userProvider.conversations.length - 1)
-                            Divider(
-                              height: 1,
-                              color:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? AppColors.borderDark
-                                  : AppColors.borderLight,
-                            ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ],
+                );
+              },
             ),
-          );
-        },
+          ],
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildChatsTab(),
+          const ConnectionsScreen(),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showNewMessageDialog(),
         backgroundColor: AppColors.primaryBlue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
+    );
+  }
+
+  Widget _buildChatsTab() {
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, child) {
+        if (userProvider.isLoading && userProvider.conversations.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (userProvider.error != null &&
+            userProvider.conversations.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: AppColors.errorColor,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Something went wrong',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  userProvider.error!,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    userProvider.clearError();
+                    userProvider.loadConversations();
+                  },
+                  child: Text(AppStrings.retry),
+                ),
+              ],
+            ),
+          );
+        }
+
+        if (userProvider.conversations.isEmpty) {
+          return _buildEmptyState();
+        }
+
+        return RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: Column(
+            children: [
+              // Stories section at the top
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  children: [
+                    const StoriesBar(),
+                    Container(
+                      height: 8,
+                      color: Theme.of(context).dividerColor.withOpacity(0.3),
+                    ),
+                  ],
+                ),
+              ),
+              // Conversations list
+              Expanded(
+                child: ListView.builder(
+                  itemCount: userProvider.conversations.length,
+                  itemBuilder: (context, index) {
+                    final conversation = userProvider.conversations[index];
+                    return Column(
+                      children: [
+                        ConversationTile(
+                          conversation: conversation,
+                          onTap: () => _openConversation(conversation),
+                        ),
+                        if (index < userProvider.conversations.length - 1)
+                          Divider(
+                            height: 1,
+                            color:
+                                Theme.of(context).brightness ==
+                                    Brightness.dark
+                                ? AppColors.borderDark
+                                : AppColors.borderLight,
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
