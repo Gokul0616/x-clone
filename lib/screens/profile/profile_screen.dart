@@ -609,23 +609,35 @@ class _ProfileScreenState extends State<ProfileScreen>
             .toList();
 
         if (userTweets.isEmpty) {
-          return _buildEmptyState(
-            'No tweets yet',
-            'Tweets will appear here when posted.',
+          return RefreshIndicator(
+            onRefresh: _handleRefresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 300,
+                child: _buildEmptyState(
+                  'No tweets yet',
+                  'Tweets will appear here when posted.',
+                ),
+              ),
+            ),
           );
         }
 
-        return ListView.builder(
-          itemCount: userTweets.length,
-          itemBuilder: (context, index) {
-            final tweet = userTweets[index];
-            return Column(
-              children: [
-                TweetCard(tweet: tweet),
-                if (index < userTweets.length - 1) const Divider(height: 1),
-              ],
-            );
-          },
+        return RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: ListView.builder(
+            itemCount: userTweets.length,
+            itemBuilder: (context, index) {
+              final tweet = userTweets[index];
+              return Column(
+                children: [
+                  TweetCard(tweet: tweet),
+                  if (index < userTweets.length - 1) const Divider(height: 1),
+                ],
+              );
+            },
+          ),
         );
       },
     );
