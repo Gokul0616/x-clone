@@ -1,4 +1,5 @@
 import 'user_model.dart';
+import 'package:uuid/uuid.dart';
 
 enum StoryType { image, video, text }
 
