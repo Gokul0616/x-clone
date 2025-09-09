@@ -460,6 +460,16 @@ class ApiService {
     _token = prefs.getString('auth_token');
   }
 
+  // Set token directly (for account switching)
+  void setAuthToken(String token) {
+    _token = token;
+  }
+
+  // Clear token directly (for logout)
+  void clearAuthToken() {
+    _token = null;
+  }
+
   // Clear token using SharedPreferences
   Future<void> clearToken() async {
     _token = null;
