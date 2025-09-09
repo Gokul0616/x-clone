@@ -111,12 +111,93 @@ Container(
 - ✅ All data stored in MongoDB
 
 ## 🚀 Technology Stack Implemented
-- **Frontend**: Flutter (Dart) - Complete Twitter-like UI with 55+ files
+- **Frontend**: Flutter (Dart) - Complete Twitter-like UI with 65+ files
 - **Backend**: Node.js + Express.js - Full REST API with 15+ endpoints
 - **Database**: MongoDB with comprehensive schemas (5 models)
 - **Real-time**: Socket.IO for WebSocket connections
 - **File Storage**: Multer + Sharp for image/video processing
-- **Authentication**: JWT with bcrypt password hashing
+- **Authentication**: JWT with bcrypt password hashing + Multi-account support
+- **Account Management**: SharedPreferences with secure token storage
+
+## ✅ NEW SWITCH USER FEATURE COMPONENTS
+
+### 🔧 Core Services
+**AccountSwitchService** (`/app/lib/services/account_switch_service.dart`):
+- Manages up to 5 user accounts simultaneously
+- Secure token storage using SharedPreferences
+- Account switching with automatic token refresh
+- Data isolation between accounts
+
+**AccountSwitchProvider** (`/app/lib/providers/account_switch_provider.dart`):
+- State management for account switching
+- Real-time account list updates
+- Integration with existing auth system
+
+### 🎨 UI Components
+**DrawerProfilesRow** (`/app/lib/widgets/common/drawer_profiles_row.dart`):
+- Horizontal profile display in drawer
+- Current user + up to 3 other accounts
+- Interactive profile switching
+- Add account functionality
+
+**AccountSwitchBottomSheet** (`/app/lib/widgets/dialogs/account_switch_bottom_sheet.dart`):
+- Professional bottom sheet design
+- Account list with profile images
+- "Create new account" and "Add existing account" buttons
+- Smooth switching animations
+
+**Enhanced TweetCard** (`/app/lib/widgets/tweet/tweet_card.dart`):
+- Modern card design with shadows and rounded corners
+- Enhanced user info display with verification badges
+- Professional typography and spacing
+- Improved media display with rounded corners
+
+### 🔄 Enhanced Authentication
+**Updated AuthProvider** (`/app/lib/providers/auth_provider.dart`):
+- Support for adding multiple accounts
+- Automatic account saving on login/register
+- Integration with account switching service
+
+**Enhanced Login/Register Screens**:
+- Support for adding accounts without logout
+- Context-aware UI for account addition
+- Success feedback for account operations
+
+### 📱 User Experience Enhancements
+**Drawer Integration** (`/app/lib/widgets/common/custom_drawer.dart`):
+- Seamless profile switching from drawer
+- Visual feedback for current account
+- Quick access to account management
+
+**Data Management**:
+- Complete cache clearing on account switch
+- Isolated data per account
+- Automatic token refresh and validation
+
+## 🎯 SWITCH USER FEATURE WORKFLOW
+
+### 1. Account Addition Flow
+```
+User clicks "Add Account" → Login/Register Screen → 
+Success → Account saved → Bottom sheet closes → 
+Success message shown
+```
+
+### 2. Account Switching Flow
+```
+User taps profile in drawer → Bottom sheet opens → 
+User selects account → Token switched → 
+Cache cleared → Data refreshed → UI updated
+```
+
+### 3. Account Management
+```
+SharedPreferences stores:
+- Multiple account tokens
+- User data for each account
+- Current active account ID
+- Last used timestamps
+```
 
 ## ✅ NEW ADVANCED FEATURES IMPLEMENTED
 
