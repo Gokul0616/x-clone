@@ -734,23 +734,35 @@ class _ProfileScreenState extends State<ProfileScreen>
             .toList();
 
         if (likedTweets.isEmpty) {
-          return _buildEmptyState(
-            'No likes yet',
-            'Liked tweets will appear here.',
+          return RefreshIndicator(
+            onRefresh: _handleRefresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 300,
+                child: _buildEmptyState(
+                  'No likes yet',
+                  'Liked tweets will appear here.',
+                ),
+              ),
+            ),
           );
         }
 
-        return ListView.builder(
-          itemCount: likedTweets.length,
-          itemBuilder: (context, index) {
-            final tweet = likedTweets[index];
-            return Column(
-              children: [
-                TweetCard(tweet: tweet),
-                if (index < likedTweets.length - 1) const Divider(height: 1),
-              ],
-            );
-          },
+        return RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: ListView.builder(
+            itemCount: likedTweets.length,
+            itemBuilder: (context, index) {
+              final tweet = likedTweets[index];
+              return Column(
+                children: [
+                  TweetCard(tweet: tweet),
+                  if (index < likedTweets.length - 1) const Divider(height: 1),
+                ],
+              );
+            },
+          ),
         );
       },
     );
