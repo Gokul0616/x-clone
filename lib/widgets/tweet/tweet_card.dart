@@ -30,14 +30,26 @@ class TweetCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDarkMode = theme.brightness == Brightness.dark;
     final currentUser = context.watch<AuthProvider>().currentUser;
+    
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.cardDark : AppColors.cardLight,
-        border: Border(
-          bottom: BorderSide(
-            color: isDarkMode ? AppColors.borderDark : AppColors.borderLight,
-            width: 0.5,
+        color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: isDarkMode 
+                ? Colors.black.withOpacity(0.3)
+                : Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
+        ],
+        border: Border.all(
+          color: isDarkMode 
+              ? Colors.grey[800]! 
+              : Colors.grey[200]!,
+          width: 0.5,
         ),
       ),
       child: InkWell(
@@ -51,8 +63,9 @@ class TweetCard extends StatelessWidget {
                   ),
                 );
               },
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -63,37 +76,81 @@ class TweetCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Profile avatar
-                  GestureDetector(
-                    onTap: () {
-                      if (tweet.user != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ProfileScreen(userId: tweet.user!.id),
-                          ),
-                        );
-                      }
-                    },
-                    child: CircleAvatar(
-                      radius: 24,
-                      backgroundImage: tweet.user?.profileImageUrl != null
-                          ? NetworkImage(tweet.user!.profileImageUrl!)
-                          : null,
-                      child: tweet.user?.profileImageUrl == null
-                          ? Text(
-                              tweet.user?.displayName
-                                      .substring(0, 1)
-                                      .toUpperCase() ??
-                                  'U',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                  // Profile avatar with online indicator
+                  Stack(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          if (tweet.user != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProfileScreen(userId: tweet.user!.id),
                               ),
-                            )
-                          : null,
-                    ),
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isDarkMode 
+                                  ? Colors.grey[700]! 
+                                  : Colors.grey[300]!,
+                              width: 2,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 22,
+                            backgroundImage: tweet.user?.profileImageUrl != null
+                                ? NetworkImage(tweet.user!.profileImageUrl!)
+                                : null,
+                            backgroundColor: isDarkMode 
+                                ? Colors.grey[800] 
+                                : Colors.grey[200],
+                            child: tweet.user?.profileImageUrl == null
+                                ? Text(
+                                    tweet.user?.displayName
+                                            .substring(0, 1)
+                                            .toUpperCase() ??
+                                        'U',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: isDarkMode 
+                                          ? Colors.white 
+                                          : Colors.black,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                      // Online indicator (if user is verified or online)
+                      if (tweet.user?.isVerified == true)
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryBlue,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isDarkMode ? const Color(0xFF1E1E1E) : Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.verified,
+                              color: Colors.white,
+                              size: 10,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(width: 12),
 
