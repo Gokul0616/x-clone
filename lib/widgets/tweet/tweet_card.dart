@@ -190,6 +190,7 @@ class TweetCard extends StatelessWidget {
             tweet.user?.displayName ?? 'Unknown User',
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
+              fontSize: 15,
             ),
           ),
         ),
@@ -199,54 +200,34 @@ class TweetCard extends StatelessWidget {
           const SizedBox(width: 4),
           Icon(
             Icons.verified,
-            size: 16,
+            size: 18,
             color: AppColors.verified,
           ),
         ],
         
         const SizedBox(width: 4),
         
-        // Username
-        Text(
-          '@${tweet.user?.username ?? 'unknown'}',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.brightness == Brightness.dark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondaryLight,
+        // Username and timestamp in same line
+        Expanded(
+          child: Text(
+            '@${tweet.user?.username ?? 'unknown'} · ${timeago.format(tweet.createdAt, allowFromNow: true)}',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.brightness == Brightness.dark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondaryLight,
+              fontSize: 15,
+            ),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        
-        const SizedBox(width: 4),
-        
-        // Dot separator
-        Text(
-          '·',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.brightness == Brightness.dark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondaryLight,
-          ),
-        ),
-        
-        const SizedBox(width: 4),
-        
-        // Timestamp
-        Text(
-          timeago.format(tweet.createdAt, allowFromNow: true),
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.brightness == Brightness.dark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondaryLight,
-          ),
-        ),
-        
-        const Spacer(),
         
         // More options
         IconButton(
           icon: const Icon(Icons.more_horiz),
           iconSize: 20,
           onPressed: () => _showTweetOptions(context),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
         ),
       ],
     );
