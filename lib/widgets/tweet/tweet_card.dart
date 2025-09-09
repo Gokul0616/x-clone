@@ -237,6 +237,199 @@ class TweetCard extends StatelessWidget {
     );
   }
 
+  Widget _buildEnhancedUserInfo(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    return Row(
+      children: [
+        // Display name with enhanced styling
+        GestureDetector(
+          onTap: () {
+            if (tweet.user != null) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(userId: tweet.user!.id),
+                ),
+              );
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: isDarkMode 
+                  ? Colors.grey[800]?.withOpacity(0.3)
+                  : Colors.grey[100]?.withOpacity(0.7),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  tweet.user?.displayName ?? 'Unknown User',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    color: isDarkMode ? Colors.white : Colors.black87,
+                  ),
+                ),
+                // Verified badge
+                if (tweet.user?.isVerified == true) ...[
+                  const SizedBox(width: 4),
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryBlue,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      size: 12,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+
+        const SizedBox(width: 8),
+
+        // Username and timestamp
+        Expanded(
+          child: Text(
+            '@${tweet.user?.username ?? 'unknown'} • ${timeago.format(tweet.createdAt, allowFromNow: true)}',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: isDarkMode
+                  ? Colors.grey[400]
+                  : Colors.grey[600],
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+
+        // More options with enhanced styling
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isDarkMode 
+                ? Colors.grey[800]?.withOpacity(0.3)
+                : Colors.grey[100]?.withOpacity(0.7),
+          ),
+          child: IconButton(
+            icon: Icon(
+              Icons.more_horiz,
+              color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+            ),
+            iconSize: 18,
+            onPressed: () => _showTweetOptions(context),
+            padding: const EdgeInsets.all(4),
+            constraints: const BoxConstraints(
+              minWidth: 28,
+              minHeight: 28,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEnhancedTweetText(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Text(
+        tweet.content,
+        style: theme.textTheme.bodyLarge?.copyWith(
+          fontSize: 16,
+          height: 1.4,
+          fontWeight: FontWeight.w400,
+          color: isDarkMode ? Colors.white : Colors.black87,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEnhancedQuotedTweet(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
+    final quotedTweet = tweet.quotedTweet!;
+
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDarkMode 
+            ? Colors.grey[850]?.withOpacity(0.5)
+            : Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDarkMode 
+              ? Colors.grey[700]! 
+              : Colors.grey[300]!,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Quoted tweet user info
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 12,
+                backgroundImage: quotedTweet.user?.profileImageUrl != null
+                    ? NetworkImage(quotedTweet.user!.profileImageUrl!)
+                    : null,
+                child: quotedTweet.user?.profileImageUrl == null
+                    ? Text(
+                        quotedTweet.user?.displayName
+                                .substring(0, 1)
+                                .toUpperCase() ??
+                            'U',
+                        style: const TextStyle(fontSize: 10),
+                      )
+                    : null,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                quotedTweet.user?.displayName ?? 'Unknown',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '@${quotedTweet.user?.username ?? 'unknown'}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          // Quoted tweet content
+          Text(
+            quotedTweet.content,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 14,
+              height: 1.3,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildUserInfo(BuildContext context) {
     final theme = Theme.of(context);
 
