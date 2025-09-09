@@ -8,6 +8,7 @@ import 'providers/marketplace_provider.dart';
 import 'providers/bookmarks_provider.dart';
 import 'providers/story_provider.dart';
 import 'providers/account_switch_provider.dart';
+import 'providers/message_provider.dart';
 import 'screens/auth/auth_wrapper.dart';
 import 'screens/home/main_screen.dart';
 import 'utils/themes.dart';
