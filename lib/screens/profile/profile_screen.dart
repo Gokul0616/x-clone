@@ -649,23 +649,35 @@ class _ProfileScreenState extends State<ProfileScreen>
         final userTweets = tweetProvider.getTweetsByUser(widget.userId);
 
         if (userTweets.isEmpty) {
-          return _buildEmptyState(
-            'No tweets yet',
-            'Tweets and replies will appear here.',
+          return RefreshIndicator(
+            onRefresh: _handleRefresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 300,
+                child: _buildEmptyState(
+                  'No tweets yet',
+                  'Tweets and replies will appear here.',
+                ),
+              ),
+            ),
           );
         }
 
-        return ListView.builder(
-          itemCount: userTweets.length,
-          itemBuilder: (context, index) {
-            final tweet = userTweets[index];
-            return Column(
-              children: [
-                TweetCard(tweet: tweet, showThread: true),
-                if (index < userTweets.length - 1) const Divider(height: 1),
-              ],
-            );
-          },
+        return RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: ListView.builder(
+            itemCount: userTweets.length,
+            itemBuilder: (context, index) {
+              final tweet = userTweets[index];
+              return Column(
+                children: [
+                  TweetCard(tweet: tweet, showThread: true),
+                  if (index < userTweets.length - 1) const Divider(height: 1),
+                ],
+              );
+            },
+          ),
         );
       },
     );
