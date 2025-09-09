@@ -204,66 +204,78 @@ class _CommunitiesScreenState extends State<CommunitiesScreen>
             .toList();
 
         if (myCommunities.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.groups_outlined,
-                  size: 64,
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'No communities yet',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Join or create communities to see them here.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CreateCommunityScreen(),
+          return RefreshIndicator(
+            onRefresh: () => userProvider.loadCommunities(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 300,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.groups_outlined,
+                        size: 64,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.textSecondaryDark
+                            : AppColors.textSecondaryLight,
                       ),
-                    );
-                  },
-                  child: Text(AppStrings.createCommunity),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No communities yet',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Join or create communities to see them here.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const CreateCommunityScreen(),
+                            ),
+                          );
+                        },
+                        child: Text(AppStrings.createCommunity),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
           );
         }
 
-        return ListView.builder(
-          itemCount: myCommunities.length,
-          itemBuilder: (context, index) {
-            final community = myCommunities[index];
-            return Column(
-              children: [
-                CommunityTile(community: community, showJoinButton: false),
-                if (index < myCommunities.length - 1)
-                  Divider(
-                    height: 1,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? AppColors.borderDark
-                        : AppColors.borderLight,
-                  ),
-              ],
-            );
-          },
+        return RefreshIndicator(
+          onRefresh: () => userProvider.loadCommunities(),
+          child: ListView.builder(
+            itemCount: myCommunities.length,
+            itemBuilder: (context, index) {
+              final community = myCommunities[index];
+              return Column(
+                children: [
+                  CommunityTile(community: community, showJoinButton: false),
+                  if (index < myCommunities.length - 1)
+                    Divider(
+                      height: 1,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.borderDark
+                          : AppColors.borderLight,
+                    ),
+                ],
+              );
+            },
+          ),
         );
       },
     );
