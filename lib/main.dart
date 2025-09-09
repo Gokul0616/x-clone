@@ -13,11 +13,11 @@ import 'utils/themes.dart';
 import 'constants/app_strings.dart';
 
 void main() {
-  runApp(const PulseApp());
+  runApp(const TwitterApp());
 }
 
-class PulseApp extends StatelessWidget {
-  const PulseApp({super.key});
+class TwitterApp extends StatelessWidget {
+  const TwitterApp({super.key});
 
   @override
   Widget build(BuildContext context) {
