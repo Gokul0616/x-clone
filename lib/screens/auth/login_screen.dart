@@ -6,9 +6,14 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
 
 class LoginScreen extends StatefulWidget {
-  final VoidCallback onToggleAuth;
+  final VoidCallback? onToggleAuth;
+  final bool isAddingAccount;
 
-  const LoginScreen({super.key, required this.onToggleAuth});
+  const LoginScreen({
+    super.key, 
+    this.onToggleAuth,
+    this.isAddingAccount = false,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
