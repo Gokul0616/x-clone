@@ -48,9 +48,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _passwordController.text,
         _usernameController.text.trim(),
         _displayNameController.text.trim(),
+        isAddingAccount: widget.isAddingAccount,
       );
       
-      if (!success && mounted) {
+      if (success) {
+        if (widget.isAddingAccount && mounted) {
+          // Pop back to main screen when adding account
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Account created and added successfully'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(authProvider.error ?? 'Registration failed'),
