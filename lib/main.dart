@@ -26,6 +26,7 @@ class TwitterApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => AccountSwitchProvider()),
         ChangeNotifierProvider(create: (_) => TweetProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => MarketplaceProvider()),
