@@ -9,6 +9,7 @@ import '../../screens/profile/profile_screen.dart';
 import '../../screens/communities/communities_screen.dart';
 import '../../screens/bookmarks/bookmarks_screen.dart';
 import '../../screens/settings/settings_screen.dart';
+import 'drawer_profiles_row.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
