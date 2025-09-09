@@ -321,8 +321,12 @@ class _MessagesScreenState extends State<MessagesScreen>
   }
 
   void _showNewMessageDialog() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('New message feature coming soon!')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ComposeMessageScreen(),
+        fullscreenDialog: true,
+      ),
     );
   }
 }
