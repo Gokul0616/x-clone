@@ -18,9 +18,11 @@ class ComposeTweetFAB extends StatelessWidget {
         );
       },
       backgroundColor: AppColors.primaryBlue,
+      elevation: 4,
       child: const Icon(
-        Icons.add,
+        Icons.edit,
         color: Colors.white,
+        size: 24,
       ),
     );
   }
