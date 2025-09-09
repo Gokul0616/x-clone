@@ -235,7 +235,8 @@ class AppThemes {
       cardTheme: CardThemeData(
         color: AppColors.cardLight,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        margin: EdgeInsets.zero,
       ),
 
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -243,7 +244,9 @@ class AppThemes {
         selectedItemColor: AppColors.primaryBlue,
         unselectedItemColor: AppColors.textSecondaryLight,
         type: BottomNavigationBarType.fixed,
-        elevation: 0,
+        elevation: 1,
+        selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        unselectedLabelStyle: TextStyle(fontSize: 12),
       ),
 
       drawerTheme: const DrawerThemeData(
