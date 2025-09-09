@@ -1,7 +1,7 @@
 class AppStrings {
   // App
-  static const String appName = 'Pulse';
-  static const String welcome = 'Welcome to Pulse';
+  static const String appName = 'Twitter';
+  static const String welcome = 'Welcome to Twitter';
   
   // Authentication
   static const String login = 'Log in';
