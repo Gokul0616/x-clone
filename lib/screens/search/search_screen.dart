@@ -278,20 +278,32 @@ class _SearchScreenState extends State<SearchScreen>
 
   Widget _buildTweetResults() {
     if (_searchResults.isEmpty) {
-      return _buildNoResultsState(type: 'tweets');
+      return RefreshIndicator(
+        onRefresh: _handleRefresh,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height - 300,
+            child: _buildNoResultsState(type: 'tweets'),
+          ),
+        ),
+      );
     }
 
-    return ListView.builder(
-      itemCount: _searchResults.length,
-      itemBuilder: (context, index) {
-        final tweet = _searchResults[index];
-        return Column(
-          children: [
-            TweetCard(tweet: tweet),
-            if (index < _searchResults.length - 1) const Divider(height: 1),
-          ],
-        );
-      },
+    return RefreshIndicator(
+      onRefresh: _handleRefresh,
+      child: ListView.builder(
+        itemCount: _searchResults.length,
+        itemBuilder: (context, index) {
+          final tweet = _searchResults[index];
+          return Column(
+            children: [
+              TweetCard(tweet: tweet),
+              if (index < _searchResults.length - 1) const Divider(height: 1),
+            ],
+          );
+        },
+      ),
     );
   }
 
