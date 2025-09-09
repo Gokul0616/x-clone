@@ -108,9 +108,10 @@ class _ProfileScreenState extends State<ProfileScreen>
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              expandedHeight: 410,
+              expandedHeight: 350, // Reduced height for cleaner look
               pinned: true,
               stretch: true,
+              backgroundColor: theme.scaffoldBackgroundColor,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => Navigator.pop(context),
