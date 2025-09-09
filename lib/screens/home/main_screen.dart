@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const SearchScreen(),
-    const MarketplaceScreen(), // Added marketplace
+    const SpacesScreen(), // Changed from marketplace to spaces
     const NotificationsScreen(),
     const MessagesScreen(),
   ];
@@ -35,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<String> _appBarTitles = [
     AppStrings.home,
     AppStrings.search,
-    'Marketplace', // Added marketplace title
+    AppStrings.communities, // This will be "Spaces"
     AppStrings.notifications,
     AppStrings.messages,
   ];
