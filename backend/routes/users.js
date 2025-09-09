@@ -10,7 +10,8 @@ router.get('/:userId', optionalAuth, async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const user = await User.findOne({ id: userId }).select('-password');
+    const user = await User.findOne({ _id: userId }).select('-password');
+    console.log(user);
     if (!user) {
       return res.status(404).json({
         status: 'error',
@@ -67,7 +68,7 @@ router.get('/:userId/tweets', optionalAuth, async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const user = await User.findOne({ id: userId });
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return res.status(404).json({
         status: 'error',
@@ -79,24 +80,24 @@ router.get('/:userId/tweets', optionalAuth, async (req, res) => {
       userId: userId,
       isDeleted: { $ne: true }
     })
-    .populate('userId', 'id username displayName profileImageUrl isVerified')
-    .populate({
-      path: 'originalTweetId',
-      populate: {
-        path: 'userId',
-        select: 'id username displayName profileImageUrl isVerified'
-      }
-    })
-    .populate({
-      path: 'quotedTweetId',
-      populate: {
-        path: 'userId',
-        select: 'id username displayName profileImageUrl isVerified'
-      }
-    })
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+      .populate('userId', 'id username displayName profileImageUrl isVerified')
+      .populate({
+        path: 'originalTweetId',
+        populate: {
+          path: 'userId',
+          select: 'id username displayName profileImageUrl isVerified'
+        }
+      })
+      .populate({
+        path: 'quotedTweetId',
+        populate: {
+          path: 'userId',
+          select: 'id username displayName profileImageUrl isVerified'
+        }
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       status: 'success',
@@ -122,15 +123,16 @@ router.post('/:userId/follow', auth, async (req, res) => {
   try {
     const { userId } = req.params;
     const currentUserId = req.user.id;
-
+    console.log(userId, currentUserId, req.user);
     if (userId === currentUserId) {
+      console.log('You cannot follow yourself');
       return res.status(400).json({
         status: 'error',
         message: 'You cannot follow yourself'
       });
     }
 
-    const targetUser = await User.findOne({ id: userId });
+    const targetUser = await User.findOne({ _id: userId });
     if (!targetUser) {
       return res.status(404).json({
         status: 'error',
@@ -138,14 +140,14 @@ router.post('/:userId/follow', auth, async (req, res) => {
       });
     }
 
-    const currentUser = await User.findOne({ id: currentUserId });
+    const currentUser = await User.findOne({ _id: currentUserId });
     const isFollowing = currentUser.following.includes(userId);
 
     if (isFollowing) {
       // Unfollow
       currentUser.following = currentUser.following.filter(id => id !== userId);
       targetUser.followers = targetUser.followers.filter(id => id !== currentUserId);
-      
+
       await currentUser.updateFollowingCount();
       await targetUser.updateFollowersCount();
 
@@ -158,7 +160,7 @@ router.post('/:userId/follow', auth, async (req, res) => {
       // Follow
       currentUser.following.push(userId);
       targetUser.followers.push(currentUserId);
-      
+
       await currentUser.updateFollowingCount();
       await targetUser.updateFollowersCount();
 
@@ -193,7 +195,7 @@ router.get('/:userId/followers', optionalAuth, async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const user = await User.findOne({ id: userId });
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return res.status(404).json({
         status: 'error',
@@ -204,9 +206,9 @@ router.get('/:userId/followers', optionalAuth, async (req, res) => {
     const followers = await User.find({
       id: { $in: user.followers }
     })
-    .select('id username displayName profileImageUrl isVerified followersCount')
-    .skip(skip)
-    .limit(limit);
+      .select('id username displayName profileImageUrl isVerified followersCount')
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       status: 'success',
@@ -235,7 +237,7 @@ router.get('/:userId/following', optionalAuth, async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const user = await User.findOne({ id: userId });
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return res.status(404).json({
         status: 'error',
@@ -246,9 +248,9 @@ router.get('/:userId/following', optionalAuth, async (req, res) => {
     const following = await User.find({
       id: { $in: user.following }
     })
-    .select('id username displayName profileImageUrl isVerified followersCount')
-    .skip(skip)
-    .limit(limit);
+      .select('id username displayName profileImageUrl isVerified followersCount')
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       status: 'success',
@@ -277,7 +279,7 @@ router.get('/:userId/likes', optionalAuth, async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    const user = await User.findOne({ id: userId });
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return res.status(404).json({
         status: 'error',
@@ -289,10 +291,10 @@ router.get('/:userId/likes', optionalAuth, async (req, res) => {
       likedBy: userId,
       isDeleted: { $ne: true }
     })
-    .populate('userId', 'id username displayName profileImageUrl isVerified')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+      .populate('userId', 'id username displayName profileImageUrl isVerified')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       status: 'success',
@@ -326,7 +328,7 @@ router.post('/:userId/block', auth, async (req, res) => {
       });
     }
 
-    const targetUser = await User.findOne({ id: userId });
+    const targetUser = await User.findOne({ _id: userId });
     if (!targetUser) {
       return res.status(404).json({
         status: 'error',
@@ -334,7 +336,7 @@ router.post('/:userId/block', auth, async (req, res) => {
       });
     }
 
-    const currentUser = await User.findOne({ id: currentUserId });
+    const currentUser = await User.findOne({ _id: currentUserId });
     const isBlocked = currentUser.blockedUsers.includes(userId);
 
     if (isBlocked) {
@@ -350,7 +352,7 @@ router.post('/:userId/block', auth, async (req, res) => {
     } else {
       // Block
       currentUser.blockedUsers.push(userId);
-      
+
       // Also unfollow each other if following
       currentUser.following = currentUser.following.filter(id => id !== userId);
       targetUser.followers = targetUser.followers.filter(id => id !== currentUserId);

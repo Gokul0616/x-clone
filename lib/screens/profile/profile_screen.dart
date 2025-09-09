@@ -79,6 +79,10 @@ class _ProfileScreenState extends State<ProfileScreen>
     final userProvider = context.watch<UserProvider>();
     final isOwnProfile = currentUser?.id == widget.userId;
     final isFollowing = userProvider.isFollowingUser(widget.userId, context);
+    print(widget.userId);
+    print("current user");
+    print(currentUser?.id);
+    print(currentUser?.username);
 
     if (_isLoading) {
       return Scaffold(
