@@ -40,6 +40,11 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // Public method to load user from storage (for account switching)
+  Future<void> loadUserFromStorage() async {
+    await _loadUserFromStorage();
+  }
+
   // Save user to local storage
   Future<void> _saveUserToStorage(UserModel user) async {
     try {
