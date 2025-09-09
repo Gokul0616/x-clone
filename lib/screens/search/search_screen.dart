@@ -73,6 +73,12 @@ class _SearchScreenState extends State<SearchScreen>
     });
   }
 
+  Future<void> _handleRefresh() async {
+    if (_currentQuery.isNotEmpty) {
+      await _performSearch(_currentQuery);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
