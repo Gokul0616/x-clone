@@ -19,6 +19,15 @@ class _AccountSwitchBottomSheetState extends State<AccountSwitchBottomSheet> {
   bool _isSwitching = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Refresh accounts when bottom sheet opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AccountSwitchProvider>().refreshAccounts();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
