@@ -33,23 +33,24 @@ class TwitterApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BookmarksProvider()),
         ChangeNotifierProvider(create: (_) => StoryProvider()),
       ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
+      child: Consumer2<ThemeProvider, AuthProvider>(
+        builder: (context, themeProvider, authProvider, child) {
+          // Update tweet provider with current user ID when auth state changes
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (authProvider.currentUser != null) {
+              context.read<TweetProvider>().setCurrentUserId(authProvider.currentUser!.id);
+            }
+          });
+          
           return MaterialApp(
             title: AppStrings.appName,
             debugShowCheckedModeBanner: false,
             theme: AppThemes.lightTheme,
             darkTheme: AppThemes.darkTheme,
             themeMode: themeProvider.themeMode,
-            home: Consumer<AuthProvider>(
-              builder: (context, authProvider, child) {
-                if (authProvider.isLoggedIn) {
-                  return const MainScreen();
-                } else {
-                  return const AuthWrapper();
-                }
-              },
-            ),
+            home: authProvider.isLoggedIn
+                ? const MainScreen()
+                : const AuthWrapper(),
           );
         },
       ),
