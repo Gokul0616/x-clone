@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/tweet_provider.dart';
 import '../../widgets/tweet/tweet_list.dart';
-
 import '../../widgets/common/custom_reload_animation.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_strings.dart';
@@ -91,25 +90,38 @@ class _HomeScreenState extends State<HomeScreen>
           }
 
           if (tweetProvider.tweets.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.electric_bolt_outlined,
-                    size: 64,
-                    color: AppColors.primaryBlue,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Welcome to ${AppStrings.appName}!',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Your timeline will appear here when you follow people or join communities.',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
+            return RefreshIndicator(
+              // Wrap the "no tweets" UI with RefreshIndicator
+              onRefresh: _handleRefresh,
+              child: CustomScrollView(
+                // Use CustomScrollView to enable pull-to-refresh
+                physics:
+                    const AlwaysScrollableScrollPhysics(), // Ensure scrollability
+                slivers: [
+                  SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.electric_bolt_outlined,
+                            size: 64,
+                            color: AppColors.primaryBlue,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Welcome to ${AppStrings.appName}!',
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Your timeline will appear here when you follow people or join communities.',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),

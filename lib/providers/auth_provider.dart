@@ -29,12 +29,12 @@ class AuthProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final userJson = prefs.getString('current_user'); // Use consistent key
       final token = prefs.getString('auth_token');
-      
+
       if (userJson != null && token != null) {
         final userData = json.decode(userJson);
         _currentUser = UserModel.fromJson(userData);
         _isLoggedIn = true;
-        
+
         // Update API service token
         _apiService.setAuthToken(token);
         notifyListeners();
@@ -56,7 +56,7 @@ class AuthProvider with ChangeNotifier {
       final userJson = json.encode(user.toJson());
       await prefs.setString('current_user', userJson);
       await prefs.setString('auth_token', token);
-      
+
       // Update API service token
       _apiService.setAuthToken(token);
     } catch (e) {
@@ -70,7 +70,7 @@ class AuthProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('current_user');
       await prefs.remove('auth_token');
-      
+
       // Clear API service token
       _apiService.clearAuthToken();
     } catch (e) {
@@ -79,24 +79,28 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Login
-  Future<bool> login(String email, String password, {bool isAddingAccount = false}) async {
+  Future<bool> login(
+    String email,
+    String password, {
+    bool isAddingAccount = false,
+  }) async {
     _setLoading(true);
     _clearError();
 
     try {
       final result = await _apiService.login(email, password);
-      
+
       if (result != null && result['user'] != null && result['token'] != null) {
         final user = UserModel.fromJson(result['user']);
         final token = result['token'];
-        
+
         _currentUser = user;
         _isLoggedIn = true;
         await _saveUserToStorage(user, token);
-        
+
         // Save account for switching
         await AccountSwitchService.saveAccount(token, user);
-        
+
         _setLoading(false);
         notifyListeners();
         return true;
@@ -113,24 +117,35 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Register
-  Future<bool> register(String email, String password, String username, String displayName, {bool isAddingAccount = false}) async {
+  Future<bool> register(
+    String email,
+    String password,
+    String username,
+    String displayName, {
+    bool isAddingAccount = false,
+  }) async {
     _setLoading(true);
     _clearError();
 
     try {
-      final result = await _apiService.register(email, password, username, displayName);
-      
+      final result = await _apiService.register(
+        email,
+        password,
+        username,
+        displayName,
+      );
+
       if (result != null && result['user'] != null && result['token'] != null) {
         final user = UserModel.fromJson(result['user']);
         final token = result['token'];
-        
+
         _currentUser = user;
         _isLoggedIn = true;
         await _saveUserToStorage(user, token);
-        
+
         // Save account for switching
         await AccountSwitchService.saveAccount(token, user);
-        
+
         _setLoading(false);
         notifyListeners();
         return true;
@@ -183,7 +198,7 @@ class AuthProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token') ?? '';
       await _saveUserToStorage(_currentUser!, token);
-      
+
       _setLoading(false);
       notifyListeners();
       return true;
@@ -200,7 +215,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final success = await _apiService.followUser(userId);
-      
+
       if (success) {
         // Update local user data
         final following = List<String>.from(_currentUser!.following);
@@ -209,17 +224,17 @@ class AuthProvider with ChangeNotifier {
         } else {
           following.add(userId);
         }
-        
+
         _currentUser = _currentUser!.copyWith(
           following: following,
           followingCount: following.length,
         );
-        
+
         // Get current token and save updated user
         final prefs = await SharedPreferences.getInstance();
         final token = prefs.getString('auth_token') ?? '';
         await _saveUserToStorage(_currentUser!, token);
-        
+
         notifyListeners();
         return true;
       }

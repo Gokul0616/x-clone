@@ -1,8 +1,8 @@
 class AppStrings {
   // App
-  static const String appName = 'Twitter';
-  static const String welcome = 'Welcome to Twitter';
-  
+  static const String appName = 'Pulse';
+  static const String welcome = 'Welcome to Pulse';
+
   // Authentication
   static const String login = 'Log in';
   static const String register = 'Sign up';
@@ -14,7 +14,7 @@ class AppStrings {
   static const String forgotPassword = 'Forgot password?';
   static const String dontHaveAccount = 'Don\'t have an account?';
   static const String alreadyHaveAccount = 'Already have an account?';
-  
+
   // Navigation
   static const String home = 'Home';
   static const String search = 'Search';
@@ -25,7 +25,7 @@ class AppStrings {
   static const String profile = 'Profile';
   static const String settings = 'Settings';
   static const String logout = 'Log out';
-  
+
   // Tweet Actions
   static const String tweet = 'Tweet';
   static const String reply = 'Reply';
@@ -36,7 +36,7 @@ class AppStrings {
   static const String bookmark = 'Bookmark';
   static const String delete = 'Delete';
   static const String edit = 'Edit';
-  
+
   // Compose Tweet
   static const String whatsHappening = 'What\'s happening?';
   static const String tweetYourReply = 'Tweet your reply';
@@ -46,7 +46,7 @@ class AppStrings {
   static const String addPoll = 'Add poll';
   static const String addEmoji = 'Add emoji';
   static const String scheduleForLater = 'Schedule for later';
-  
+
   // Profile
   static const String following = 'Following';
   static const String followers = 'Followers';
@@ -58,7 +58,7 @@ class AppStrings {
   static const String tweetsAndReplies = 'Tweets & replies';
   static const String media = 'Media';
   static const String likes = 'Likes';
-  
+
   // Communities
   static const String createCommunity = 'Create Community';
   static const String joinCommunity = 'Join';
@@ -66,12 +66,12 @@ class AppStrings {
   static const String communityRules = 'Community Rules';
   static const String members = 'Members';
   static const String moderators = 'Moderators';
-  
+
   // Messages
   static const String newMessage = 'New message';
   static const String sendMessage = 'Send message';
   static const String messageRequests = 'Message requests';
-  
+
   // Settings
   static const String accountSettings = 'Account settings';
   static const String privacyAndSafety = 'Privacy and safety';
@@ -82,7 +82,7 @@ class AppStrings {
   static const String darkMode = 'Dark mode';
   static const String lightMode = 'Light mode';
   static const String systemMode = 'Use device setting';
-  
+
   // General
   static const String cancel = 'Cancel';
   static const String save = 'Save';

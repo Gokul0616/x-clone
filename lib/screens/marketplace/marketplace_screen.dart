@@ -62,6 +62,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Marketplace'),
+
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -78,6 +79,7 @@ class _MarketplaceScreenState extends State<MarketplaceScreen>
         ],
         bottom: TabBar(
           controller: _tabController,
+
           tabs: const [
             Tab(text: 'Products'),
             Tab(text: 'Services'),
