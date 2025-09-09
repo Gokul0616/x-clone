@@ -69,10 +69,23 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            // App logo
-            Image.asset('assets/images/logo.png', height: 28, width: 28),
+            // Twitter logo/icon
+            Container(
+              width: 28,
+              height: 28,
+              decoration: const BoxDecoration(
+                color: AppColors.primaryBlue,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.alternate_email,
+                color: Colors.white,
+                size: 18,
+              ),
+            ),
             const SizedBox(width: 8),
-            Text(_appBarTitles[_selectedIndex]),
+            if (_selectedIndex != 0) // Show page title only if not on home
+              Text(_appBarTitles[_selectedIndex]),
           ],
         ),
         leading: IconButton(
