@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
 const communitySchema = new mongoose.Schema({
-  id: {
+  _id: {
     type: String,
-    required: true,
-    unique: true,
-    default: () => `community_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    default: uuidv4,
+    required: true
   },
   name: {
     type: String,
@@ -91,7 +91,7 @@ communitySchema.index({ membersCount: -1 });
 communitySchema.virtual('creator', {
   ref: 'User',
   localField: 'creatorId',
-  foreignField: 'id',
+  foreignField: '_id',
   justOne: true
 });
 

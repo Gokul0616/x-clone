@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
 const messageSchema = new mongoose.Schema({
-  id: {
+  _id: {
     type: String,
-    required: true,
-    unique: true,
-    default: () => `message_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    default: uuidv4,
+    required: true
   },
   senderId: {
     type: String,
@@ -81,7 +81,7 @@ messageSchema.index({ createdAt: -1 });
 messageSchema.virtual('sender', {
   ref: 'User',
   localField: 'senderId',
-  foreignField: 'id',
+  foreignField: '_id',
   justOne: true
 });
 
@@ -89,11 +89,10 @@ module.exports = mongoose.model('Message', messageSchema);
 
 // Conversation Schema
 const conversationSchema = new mongoose.Schema({
-  id: {
+  _id: {
     type: String,
-    required: true,
-    unique: true,
-    default: () => `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    default: uuidv4,
+    required: true
   },
   participants: [{
     type: String,
@@ -147,14 +146,14 @@ conversationSchema.index({ lastActivity: -1 });
 conversationSchema.virtual('participantUsers', {
   ref: 'User',
   localField: 'participants',
-  foreignField: 'id'
+  foreignField: '_id'
 });
 
 // Virtual for last message
 conversationSchema.virtual('lastMessage', {
   ref: 'Message',
   localField: 'lastMessageId',
-  foreignField: 'id',
+  foreignField: '_id',
   justOne: true
 });
 

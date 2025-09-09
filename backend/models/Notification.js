@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
+const { v4: uuidv4 } = require('uuid');
 
 const notificationSchema = new mongoose.Schema({
-  id: {
+  _id: {
     type: String,
-    required: true,
-    unique: true,
-    default: () => `notif_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    default: uuidv4,
+    required: true
   },
   userId: {
     type: String,
@@ -63,7 +63,7 @@ notificationSchema.index({ isRead: 1 });
 notificationSchema.virtual('fromUser', {
   ref: 'User',
   localField: 'fromUserId',
-  foreignField: 'id',
+  foreignField: '_id',
   justOne: true
 });
 
@@ -71,7 +71,7 @@ notificationSchema.virtual('fromUser', {
 notificationSchema.virtual('tweet', {
   ref: 'Tweet',
   localField: 'tweetId',
-  foreignField: 'id',
+  foreignField: '_id',
   justOne: true
 });
 
@@ -79,7 +79,7 @@ notificationSchema.virtual('tweet', {
 notificationSchema.virtual('community', {
   ref: 'Community',
   localField: 'communityId',
-  foreignField: 'id',
+  foreignField: '_id',
   justOne: true
 });
 
