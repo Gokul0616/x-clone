@@ -292,7 +292,7 @@ class _MessagesScreenState extends State<MessagesScreen>
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () => _showNewMessageDialog(),
-                  child: Text(AppStrings.newMessage),
+                  child: const Text('Send Message'),
                 ),
               ],
             ),
