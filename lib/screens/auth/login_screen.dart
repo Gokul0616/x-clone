@@ -39,9 +39,21 @@ class _LoginScreenState extends State<LoginScreen> {
       final success = await authProvider.login(
         _emailController.text.trim(),
         _passwordController.text,
+        isAddingAccount: widget.isAddingAccount,
       );
       
-      if (!success && mounted) {
+      if (success) {
+        if (widget.isAddingAccount && mounted) {
+          // Pop back to main screen when adding account
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Account added successfully'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(authProvider.error ?? 'Login failed'),
