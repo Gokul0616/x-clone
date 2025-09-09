@@ -32,102 +32,113 @@ class TweetCard extends StatelessWidget {
     final isDarkMode = theme.brightness == Brightness.dark;
     final currentUser = context.watch<AuthProvider>().currentUser;
 
-    return InkWell(
-      onTap: isDetail ? null : () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TweetDetailScreen(tweet: tweet),
+    return Container(
+      decoration: BoxDecoration(
+        color: isDarkMode ? AppColors.cardDark : AppColors.cardLight,
+        border: Border(
+          bottom: BorderSide(
+            color: isDarkMode ? AppColors.borderDark : AppColors.borderLight,
+            width: 0.5,
           ),
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(AppConstants.paddingMedium),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Retweet indicator
-            if (tweet.isRetweet) _buildRetweetIndicator(context),
-            
-            // Main tweet content
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Profile avatar
-                GestureDetector(
-                  onTap: () {
-                    if (tweet.user != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ProfileScreen(userId: tweet.user!.id),
-                        ),
-                      );
-                    }
-                  },
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundImage: tweet.user?.profileImageUrl != null
-                        ? NetworkImage(tweet.user!.profileImageUrl!)
-                        : null,
-                    child: tweet.user?.profileImageUrl == null
-                        ? Text(
-                            tweet.user?.displayName.substring(0, 1).toUpperCase() ?? 'U',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        : null,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                
-                // Tweet content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // User info and timestamp
-                      _buildUserInfo(context),
-                      const SizedBox(height: 4),
-                      
-                      // Tweet text
-                      if (tweet.content.isNotEmpty)
-                        _buildTweetText(context),
-                      
-                      // Media attachments
-                      if (tweet.imageUrls.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: TweetMedia(imageUrls: tweet.imageUrls),
-                        ),
-                      
-                      // Quoted tweet
-                      if (tweet.quotedTweet != null)
-                        _buildQuotedTweet(context),
-                      
-                      // Reply to tweet indicator
-                      if (tweet.replyToTweet != null && !isDetail)
-                        _buildReplyIndicator(context),
-                      
-                      const SizedBox(height: 12),
-                      
-                      // Tweet actions
-                      if (showActionButtons)
-                        TweetActions(
-                          tweet: tweet,
-                          onReply: () => _handleReply(context),
-                          onRetweet: () => _handleRetweet(context),
-                          onLike: () => _handleLike(context),
-                          onShare: () => _handleShare(context),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
+        ),
+      ),
+      child: InkWell(
+        onTap: isDetail ? null : () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TweetDetailScreen(tweet: tweet),
             ),
-          ],
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Retweet indicator
+              if (tweet.isRetweet) _buildRetweetIndicator(context),
+              
+              // Main tweet content
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile avatar
+                  GestureDetector(
+                    onTap: () {
+                      if (tweet.user != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(userId: tweet.user!.id),
+                          ),
+                        );
+                      }
+                    },
+                    child: CircleAvatar(
+                      radius: 24,
+                      backgroundImage: tweet.user?.profileImageUrl != null
+                          ? NetworkImage(tweet.user!.profileImageUrl!)
+                          : null,
+                      child: tweet.user?.profileImageUrl == null
+                          ? Text(
+                              tweet.user?.displayName.substring(0, 1).toUpperCase() ?? 'U',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  
+                  // Tweet content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // User info and timestamp
+                        _buildUserInfo(context),
+                        const SizedBox(height: 4),
+                        
+                        // Tweet text
+                        if (tweet.content.isNotEmpty)
+                          _buildTweetText(context),
+                        
+                        // Media attachments
+                        if (tweet.imageUrls.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12),
+                            child: TweetMedia(imageUrls: tweet.imageUrls),
+                          ),
+                        
+                        // Quoted tweet
+                        if (tweet.quotedTweet != null)
+                          _buildQuotedTweet(context),
+                        
+                        // Reply to tweet indicator
+                        if (tweet.replyToTweet != null && !isDetail)
+                          _buildReplyIndicator(context),
+                        
+                        const SizedBox(height: 12),
+                        
+                        // Tweet actions
+                        if (showActionButtons)
+                          TweetActions(
+                            tweet: tweet,
+                            onReply: () => _handleReply(context),
+                            onRetweet: () => _handleRetweet(context),
+                            onLike: () => _handleLike(context),
+                            onShare: () => _handleShare(context),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
