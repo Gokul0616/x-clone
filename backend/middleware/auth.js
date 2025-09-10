@@ -12,8 +12,7 @@ const auth = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findOne({ id: decoded._id }).select('-password');
-
+    const user = await User.findOne({ _id: decoded.id }).select('-password');
     if (!user) {
       return res.status(401).json({
         status: 'error',
@@ -51,7 +50,7 @@ const optionalAuth = async (req, res, next) => {
 
     if (token) {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findOne({ id: decoded._id }).select('-password');
+      const user = await User.findOne({ _id: decoded.id }).select('-password');
 
       if (user) {
         req.user = user;
