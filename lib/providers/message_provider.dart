@@ -138,6 +138,9 @@ class MessageProvider with ChangeNotifier {
     List<String> attachments = const [],
     String? replyToMessageId,
   }) async {
+    _setSendingMessage(true);
+    _clearError();
+
     try {
       final response = await _messageService.sendMessage(
         receiverId: receiverId,
@@ -154,11 +157,14 @@ class MessageProvider with ChangeNotifier {
           _currentMessages.add(newMessage);
           notifyListeners();
         }
+        _setSendingMessage(false);
         return true;
       }
+      _setSendingMessage(false);
       return false;
     } catch (e) {
       _setError('Failed to send message: ${e.toString()}');
+      _setSendingMessage(false);
       return false;
     }
   }
