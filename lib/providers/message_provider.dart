@@ -206,11 +206,85 @@ class MessageProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // Initialize real-time messaging
+  void initializeRealTimeMessaging() {
+    _socketService.onNewMessage = (message) {
+      // Add message to current messages if we're viewing that conversation
+      if (_currentConversationId == message.conversationId) {
+        _currentMessages.add(message);
+        notifyListeners();
+      }
+      
+      // Update conversation list with new message
+      _updateConversationWithNewMessage(message);
+    };
+  }
+
+  // Join conversation for real-time updates
+  void joinConversation(String conversationId) {
+    _currentConversationId = conversationId;
+    _socketService.joinConversation(conversationId);
+  }
+
+  // Leave conversation
+  void leaveConversation(String conversationId) {
+    if (_currentConversationId == conversationId) {
+      _currentConversationId = null;
+    }
+    _socketService.leaveConversation(conversationId);
+  }
+
+  // Send typing indicator
+  void startTyping() {
+    if (_currentConversationId != null) {
+      _socketService.startTyping(_currentConversationId!);
+    }
+  }
+
+  void stopTyping() {
+    if (_currentConversationId != null) {
+      _socketService.stopTyping(_currentConversationId!);
+    }
+  }
+
+  // Mark messages as read
+  void markMessagesAsRead(String conversationId) {
+    _socketService.markMessagesAsRead(conversationId);
+  }
+
+  // Update conversation with new message
+  void _updateConversationWithNewMessage(MessageModel message) {
+    final conversationIndex = _conversations.indexWhere(
+      (conv) => conv.id == message.conversationId,
+    );
+    
+    if (conversationIndex != -1) {
+      final conversation = _conversations[conversationIndex];
+      // Update conversation with new message
+      // This would need proper implementation based on your ConversationModel
+      notifyListeners();
+    }
+  }
+
+  // Add new message to current conversation
+  void addMessage(MessageModel message) {
+    if (_currentConversationId == message.conversationId) {
+      _currentMessages.add(message);
+      notifyListeners();
+    }
+  }
+
   // Refresh all data
   Future<void> refreshAll() async {
     await Future.wait([
       loadConversations(refresh: true),
       loadMessageRequests(refresh: true),
     ]);
+  }
+
+  @override
+  void dispose() {
+    _socketService.dispose();
+    super.dispose();
   }
 }
