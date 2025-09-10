@@ -345,14 +345,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.send),
-            style: IconButton.styleFrom(
-              backgroundColor: _messageController.text.trim().isNotEmpty
-                  ? AppColors.primaryBlue
-                  : null,
-              foregroundColor: _messageController.text.trim().isNotEmpty
-                  ? Colors.white
-                  : null,
-            ),
+                style: IconButton.styleFrom(
+                  backgroundColor: _messageController.text.trim().isNotEmpty
+                      ? AppColors.primaryBlue
+                      : null,
+                  foregroundColor: _messageController.text.trim().isNotEmpty
+                      ? Colors.white
+                      : null,
+                ),
+              );
+            },
           ),
         ],
       ),
