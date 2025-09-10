@@ -162,16 +162,17 @@ class TweetCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.only(left: 32, bottom: 4),
+      padding: const EdgeInsets.only(left: 36, bottom: 6),
       child: Row(
         children: [
           Icon(Icons.repeat, size: 16, color: AppColors.retweetColor),
-          const SizedBox(width: 4),
+          const SizedBox(width: 6),
           Text(
             '${tweet.retweetedByUser?.displayName ?? 'Someone'} retweeted',
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppColors.retweetColor,
               fontWeight: FontWeight.w500,
+              fontSize: 13,
             ),
           ),
         ],
