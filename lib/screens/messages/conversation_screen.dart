@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../providers/user_provider.dart';
+import '../../providers/message_provider.dart';
+import '../../providers/auth_provider.dart';
 import '../../models/message_model.dart' as messages;
 import '../../constants/app_strings.dart';
 import '../../constants/app_colors.dart';
 import '../../constants/app_constants.dart';
+import 'dart:async';
 
 class ConversationScreen extends StatefulWidget {
   final messages.ConversationModel conversation;
