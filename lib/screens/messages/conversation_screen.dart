@@ -22,21 +22,42 @@ class ConversationScreen extends StatefulWidget {
 class _ConversationScreenState extends State<ConversationScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  List<messages.MessageModel> _messages = [];
-  bool _isLoading = true;
-  bool _isSending = false;
+  Timer? _typingTimer;
+  bool _isTyping = false;
 
   @override
   void initState() {
     super.initState();
-    _loadMessages();
+    _initializeConversation();
   }
 
   @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    _typingTimer?.cancel();
+    
+    // Leave conversation when screen is disposed
+    final messageProvider = context.read<MessageProvider>();
+    messageProvider.leaveConversation(widget.conversation.id);
+    
     super.dispose();
+  }
+
+  void _initializeConversation() {
+    final messageProvider = context.read<MessageProvider>();
+    
+    // Initialize real-time messaging if not already done
+    messageProvider.initializeRealTimeMessaging();
+    
+    // Join conversation for real-time updates
+    messageProvider.joinConversation(widget.conversation.id);
+    
+    // Load messages
+    messageProvider.loadMessages(widget.conversation.id, refresh: true);
+    
+    // Mark as read
+    messageProvider.markConversationAsRead(widget.conversation.id);
   }
 
   Future<void> _loadMessages() async {
