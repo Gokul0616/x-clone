@@ -326,9 +326,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 ),
               ),
               maxLines: null,
-              onChanged: (text) {
-                setState(() {});
-              },
+              onChanged: _onTyping,
             ),
           ),
           const SizedBox(width: 8),
