@@ -60,23 +60,39 @@ class _ConversationScreenState extends State<ConversationScreen> {
     messageProvider.markConversationAsRead(widget.conversation.id);
   }
 
-  Future<void> _loadMessages() async {
-    final userProvider = context.read<UserProvider>();
-    final messages = await userProvider.getMessagesForConversation(
-      widget.conversation.id,
-    );
-
-    setState(() {
-      _messages = messages;
-      _isLoading = false;
-    });
-
-    // Scroll to bottom
+  void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }
     });
+  }
+
+  void _onTyping(String text) {
+    final messageProvider = context.read<MessageProvider>();
+    
+    if (text.isNotEmpty && !_isTyping) {
+      _isTyping = true;
+      messageProvider.startTyping();
+    } else if (text.isEmpty && _isTyping) {
+      _isTyping = false;
+      messageProvider.stopTyping();
+    }
+    
+    // Reset typing timer
+    _typingTimer?.cancel();
+    _typingTimer = Timer(const Duration(seconds: 2), () {
+      if (_isTyping) {
+        _isTyping = false;
+        messageProvider.stopTyping();
+      }
+    });
+    
+    setState(() {});
   }
 
   Future<void> _sendMessage() async {
