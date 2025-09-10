@@ -27,6 +27,7 @@ class MessageProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   bool get isLoadingRequests => _isLoadingRequests;
   bool get isLoadingMessages => _isLoadingMessages;
+  bool get isSendingMessage => _isSendingMessage;
   String? get error => _error;
 
   int get totalRequestsCount => _messageRequests.length;
