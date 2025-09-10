@@ -7,6 +7,7 @@ import '../services/socket_service.dart';
 
 class MessageProvider with ChangeNotifier {
   final MessageService _messageService = MessageService();
+  final SocketService _socketService = SocketService();
 
   List<ConversationModel> _conversations = [];
   List<MessageRequestModel> _messageRequests = [];
@@ -16,6 +17,7 @@ class MessageProvider with ChangeNotifier {
   bool _isLoadingRequests = false;
   bool _isLoadingMessages = false;
   String? _error;
+  String? _currentConversationId;
 
   // Getters
   List<ConversationModel> get conversations => _conversations;
