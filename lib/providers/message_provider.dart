@@ -190,6 +190,11 @@ class MessageProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void _setSendingMessage(bool sending) {
+    _isSendingMessage = sending;
+    notifyListeners();
+  }
+
   void _setError(String error) {
     _error = error;
     notifyListeners();
