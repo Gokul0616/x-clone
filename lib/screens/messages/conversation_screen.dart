@@ -146,7 +146,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const currentUserId = 'user_1'; // This should come from AuthProvider
+    final authProvider = context.watch<AuthProvider>();
+    final currentUserId = authProvider.currentUser?.id;
 
     // Get the other participant
     final otherParticipant = widget.conversation.participantUsers
