@@ -332,17 +332,19 @@ class _ConversationScreenState extends State<ConversationScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          IconButton(
-            onPressed: _messageController.text.trim().isNotEmpty && !_isSending
-                ? _sendMessage
-                : null,
-            icon: _isSending
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.send),
+          Consumer<MessageProvider>(
+            builder: (context, messageProvider, child) {
+              return IconButton(
+                onPressed: _messageController.text.trim().isNotEmpty && !messageProvider.isSendingMessage
+                    ? _sendMessage
+                    : null,
+                icon: messageProvider.isSendingMessage
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.send),
             style: IconButton.styleFrom(
               backgroundColor: _messageController.text.trim().isNotEmpty
                   ? AppColors.primaryBlue
