@@ -29,6 +29,24 @@ class SocketService {
     _connect();
   }
 
+  // Initialize with auto-authentication from shared preferences
+  Future<void> initializeWithStoredAuth() async {
+    try {
+      final apiService = ApiService();
+      final headers = await apiService.getHeaders();
+      final authHeader = headers['Authorization'];
+      
+      if (authHeader != null && authHeader.startsWith('Bearer ')) {
+        final token = authHeader.substring(7);
+        if (token != null && _currentUserId != null) {
+          initialize(_currentUserId!, token);
+        }
+      }
+    } catch (e) {
+      print('Failed to initialize socket with stored auth: $e');
+    }
+  }
+
   void _connect() {
     if (_socket?.connected == true) return;
 
