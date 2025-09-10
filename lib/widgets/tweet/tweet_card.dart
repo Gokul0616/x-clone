@@ -250,12 +250,13 @@ class TweetCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 4),
+      padding: const EdgeInsets.only(top: 4, bottom: 8),
       child: Text(
         tweet.content,
         style: theme.textTheme.bodyLarge?.copyWith(
           fontSize: 15, 
-          height: 1.4
+          height: 1.3,
+          fontWeight: FontWeight.w400,
         ),
       ),
     );
