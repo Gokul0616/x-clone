@@ -209,42 +209,53 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Messages list
-          Expanded(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _messages.isEmpty
-                ? _buildEmptyState()
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(AppConstants.paddingMedium),
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final message = _messages[index];
-                      final isFromCurrentUser =
-                          message.senderId == currentUserId;
-                      final showTimestamp =
-                          index == 0 ||
-                          _messages[index - 1].createdAt
-                                  .difference(message.createdAt)
-                                  .inMinutes
-                                  .abs() >
-                              5;
+      body: Consumer<MessageProvider>(
+        builder: (context, messageProvider, child) {
+          // Auto-scroll when new messages arrive
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (messageProvider.currentMessages.isNotEmpty) {
+              _scrollToBottom();
+            }
+          });
 
-                      return MessageBubble(
-                        message: message,
-                        isFromCurrentUser: isFromCurrentUser,
-                        showTimestamp: showTimestamp,
-                      );
-                    },
-                  ),
-          ),
+          return Column(
+            children: [
+              // Messages list
+              Expanded(
+                child: messageProvider.isLoadingMessages
+                    ? const Center(child: CircularProgressIndicator())
+                    : messageProvider.currentMessages.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(AppConstants.paddingMedium),
+                        itemCount: messageProvider.currentMessages.length,
+                        itemBuilder: (context, index) {
+                          final message = messageProvider.currentMessages[index];
+                          final isFromCurrentUser =
+                              message.senderId == currentUserId;
+                          final showTimestamp =
+                              index == 0 ||
+                              messageProvider.currentMessages[index - 1].createdAt
+                                      .difference(message.createdAt)
+                                      .inMinutes
+                                      .abs() >
+                                  5;
 
-          // Message input
-          _buildMessageInput(),
-        ],
+                          return MessageBubble(
+                            message: message,
+                            isFromCurrentUser: isFromCurrentUser,
+                            showTimestamp: showTimestamp,
+                          );
+                        },
+                      ),
+              ),
+
+              // Message input
+              _buildMessageInput(),
+            ],
+          );
+        },
       ),
     );
   }
