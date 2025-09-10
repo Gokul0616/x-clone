@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../models/message_model.dart';
 import '../models/message_request_model.dart';
 import '../services/message_service.dart';
+import '../services/socket_service.dart';
 
 class MessageProvider with ChangeNotifier {
   final MessageService _messageService = MessageService();
