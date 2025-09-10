@@ -97,13 +97,13 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
-    if (text.isEmpty || _isSending) return;
+    if (text.isEmpty) return;
 
-    setState(() {
-      _isSending = true;
-    });
+    final authProvider = context.read<AuthProvider>();
+    final messageProvider = context.read<MessageProvider>();
+    final currentUserId = authProvider.currentUser?.id;
 
-    const currentUserId = 'user_1'; // This should come from AuthProvider
+    if (currentUserId == null) return;
 
     // Get the other participant
     final otherParticipant = widget.conversation.participantUsers
@@ -111,25 +111,36 @@ class _ConversationScreenState extends State<ConversationScreen> {
         .firstOrNull;
 
     if (otherParticipant != null) {
-      final userProvider = context.read<UserProvider>();
-      final success = await userProvider.sendMessage(otherParticipant.id, text);
+      // Clear the input immediately for better UX
+      _messageController.clear();
+      
+      // Stop typing indicator
+      if (_isTyping) {
+        _isTyping = false;
+        messageProvider.stopTyping();
+      }
+
+      final success = await messageProvider.sendMessage(
+        receiverId: otherParticipant.id,
+        content: text,
+      );
 
       if (success) {
-        _messageController.clear();
-        await _loadMessages(); // Reload messages
+        _scrollToBottom();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(userProvider.error ?? 'Failed to send message'),
+            content: Text(messageProvider.error ?? 'Failed to send message'),
             backgroundColor: AppColors.errorColor,
           ),
         );
+        
+        // Restore text if sending failed
+        _messageController.text = text;
       }
     }
 
-    setState(() {
-      _isSending = false;
-    });
+    setState(() {});
   }
 
   @override
