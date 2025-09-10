@@ -3,7 +3,7 @@ class AppConstants {
   static const bool useMockApi = false; // Set to false for production API
   static const String baseUrl = useMockApi
       ? 'mock_api'
-      : 'http://192.168.1.19:3000';
+      : 'http://localhost:3000';
   static const String apiVersion = '/api/v1';
 
   // App Information
