@@ -16,6 +16,7 @@ class MessageProvider with ChangeNotifier {
   bool _isLoading = false;
   bool _isLoadingRequests = false;
   bool _isLoadingMessages = false;
+  bool _isSendingMessage = false;
   String? _error;
   String? _currentConversationId;
 
