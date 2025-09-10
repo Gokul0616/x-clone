@@ -51,15 +51,25 @@ class _ComposeMessageScreenState extends State<ComposeMessageScreen> {
       _isSearching = true;
     });
 
-    // TODO: Implement user search
-    // For now, we'll use mock data
-    await Future.delayed(const Duration(milliseconds: 500));
-    
-    if (mounted) {
-      setState(() {
-        _searchResults = []; // This should be populated from search API
-        _isSearching = false;
-      });
+    try {
+      // Use the user provider to search for users
+      final userProvider = context.read<UserProvider>();
+      final results = await userProvider.searchUsers(query.trim());
+      
+      if (mounted) {
+        setState(() {
+          _searchResults = results;
+          _isSearching = false;
+        });
+      }
+    } catch (e) {
+      print('Error searching users: $e');
+      if (mounted) {
+        setState(() {
+          _searchResults = [];
+          _isSearching = false;
+        });
+      }
     }
   }
 
