@@ -275,8 +275,9 @@ class TweetCard extends StatelessWidget {
           color: isDarkMode 
               ? Colors.grey[700]! 
               : Colors.grey[300]!,
+          width: 1,
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,17 +286,18 @@ class TweetCard extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                radius: 10,
+                radius: 12,
                 backgroundImage: quotedTweet.user?.profileImageUrl != null
                     ? NetworkImage(quotedTweet.user!.profileImageUrl!)
                     : null,
+                backgroundColor: isDarkMode ? Colors.grey[700] : Colors.grey[300],
                 child: quotedTweet.user?.profileImageUrl == null
                     ? Text(
                         quotedTweet.user?.displayName
                                 .substring(0, 1)
                                 .toUpperCase() ??
                             'U',
-                        style: const TextStyle(fontSize: 10),
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                       )
                     : null,
               ),
@@ -303,25 +305,38 @@ class TweetCard extends StatelessWidget {
               Text(
                 quotedTweet.user?.displayName ?? 'Unknown',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                   fontSize: 14,
                 ),
               ),
               const SizedBox(width: 4),
-              Text(
-                '@${quotedTweet.user?.username ?? 'unknown'}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-                  fontSize: 14,
+              // Verified badge for quoted tweet
+              if (quotedTweet.user?.isVerified == true) ...[
+                Icon(Icons.verified, size: 14, color: AppColors.primaryBlue),
+                const SizedBox(width: 4),
+              ],
+              Expanded(
+                child: Text(
+                  '@${quotedTweet.user?.username ?? 'unknown'}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
           // Quoted tweet content
           Text(
             quotedTweet.content,
-            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 14),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 14,
+              height: 1.3,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ],
       ),
