@@ -1,4 +1,5 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:twitter_clone/services/api_service.dart';
 import '../constants/app_constants.dart';
 import '../models/message_model.dart';
 import '../models/notification_model.dart';
@@ -35,7 +36,7 @@ class SocketService {
       final apiService = ApiService();
       final headers = await apiService.getHeaders();
       final authHeader = headers['Authorization'];
-      
+
       if (authHeader != null && authHeader.startsWith('Bearer ')) {
         final token = authHeader.substring(7);
         if (token != null && _currentUserId != null) {
@@ -56,9 +57,7 @@ class SocketService {
         IO.OptionBuilder()
             .setTransports(['websocket'])
             .enableAutoConnect()
-            .setAuth({
-              'token': _authToken,
-            })
+            .setAuth({'token': _authToken})
             .build(),
       );
 
@@ -145,18 +144,14 @@ class SocketService {
   // Join a conversation room
   void joinConversation(String conversationId) {
     if (_isConnected) {
-      _socket!.emit('join_conversation', {
-        'conversationId': conversationId,
-      });
+      _socket!.emit('join_conversation', {'conversationId': conversationId});
     }
   }
 
   // Leave a conversation room
   void leaveConversation(String conversationId) {
     if (_isConnected) {
-      _socket!.emit('leave_conversation', {
-        'conversationId': conversationId,
-      });
+      _socket!.emit('leave_conversation', {'conversationId': conversationId});
     }
   }
 
@@ -182,26 +177,20 @@ class SocketService {
   // Send typing indicator
   void startTyping(String conversationId) {
     if (_isConnected) {
-      _socket!.emit('typing_start', {
-        'conversationId': conversationId,
-      });
+      _socket!.emit('typing_start', {'conversationId': conversationId});
     }
   }
 
   void stopTyping(String conversationId) {
     if (_isConnected) {
-      _socket!.emit('typing_stop', {
-        'conversationId': conversationId,
-      });
+      _socket!.emit('typing_stop', {'conversationId': conversationId});
     }
   }
 
   // Mark messages as read
   void markMessagesAsRead(String conversationId) {
     if (_isConnected) {
-      _socket!.emit('mark_messages_read', {
-        'conversationId': conversationId,
-      });
+      _socket!.emit('mark_messages_read', {'conversationId': conversationId});
     }
   }
 

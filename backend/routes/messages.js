@@ -19,21 +19,21 @@ router.get('/conversations', auth, async (req, res) => {
       participants: userId,
       isRequestAccepted: true // Only show accepted conversations
     })
-    .populate({
-      path: 'participants',
-      match: { id: { $ne: userId } },
-      select: 'id username displayName profileImageUrl isVerified isOnline lastActive'
-    })
-    .populate({
-      path: 'lastMessageId',
-      populate: {
-        path: 'senderId',
-        select: 'id username displayName'
-      }
-    })
-    .sort({ lastActivity: -1 })
-    .skip(skip)
-    .limit(limit);
+      .populate({
+        path: 'participants',
+        match: { id: { $ne: userId } },
+        select: 'id username displayName profileImageUrl isVerified isOnline lastActive'
+      })
+      .populate({
+        path: 'lastMessageId',
+        populate: {
+          path: 'senderId',
+          select: 'id username displayName'
+        }
+      })
+      .sort({ lastActivity: -1 })
+      .skip(skip)
+      .limit(limit);
 
     // Add unread count for current user
     const conversationsWithUnread = conversations.map(conv => {
@@ -73,11 +73,11 @@ router.get('/connections', auth, async (req, res) => {
       receiverId: userId,
       status: 'pending'
     })
-    .populate('senderId', 'id username displayName profileImageUrl isVerified')
-    .populate('firstMessageId', 'content createdAt messageType')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+      .populate('senderId', 'id username displayName profileImageUrl isVerified')
+      .populate('firstMessageId', 'content createdAt messageType')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({
       status: 'success',
@@ -205,11 +205,11 @@ router.get('/conversations/:conversationId', auth, async (req, res) => {
       conversationId: conversationId,
       isDeleted: { $ne: true }
     })
-    .populate('senderId', 'id username displayName profileImageUrl')
-    .populate('replyToMessageId', 'id content senderId')
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+      .populate('senderId', 'id username displayName profileImageUrl')
+      .populate('replyToMessageId', 'id content senderId')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     // Mark messages as read
     await Message.updateMany(
@@ -250,8 +250,8 @@ router.get('/conversations/:conversationId', auth, async (req, res) => {
 router.post('/', auth, async (req, res) => {
   try {
     const { receiverId, content, messageType = 'text', attachments = [], replyToMessageId } = req.body;
-    const senderId = req.user.id;
-
+    const senderId = req.user.id || req.user._id;;
+    console.log(req.body, "req.body");
     if (!receiverId || !content || content.trim().length === 0) {
       return res.status(400).json({
         status: 'error',
@@ -260,7 +260,7 @@ router.post('/', auth, async (req, res) => {
     }
 
     // Check if receiver exists
-    const receiver = await User.findOne({ id: receiverId });
+    const receiver = await User.findOne({ _id: receiverId });
     if (!receiver) {
       return res.status(404).json({
         status: 'error',
@@ -299,16 +299,17 @@ router.post('/', auth, async (req, res) => {
         ]
       });
       isNewConversation = true;
-    } else if (!conversation.isRequestAccepted && !areMutuallyFollowing) {
-      // Conversation exists but not accepted and still not mutually following
-      return res.status(403).json({
-        status: 'error',
-        message: 'Connection request is still pending'
-      });
+      // } else if (!conversation.isRequestAccepted && !areMutuallyFollowing) {
+      //   // Conversation exists but not accepted and still not mutually following
+      //   console.log("here");
+      //   return res.status(403).json({
+      //     status: 'error',
+      //     message: 'Connection request is still pending'
+      //   });
     } else if (!conversation.isRequestAccepted && areMutuallyFollowing) {
       // Now they're mutually following, auto-accept the conversation
       conversation.isRequestAccepted = true;
-      
+
       // Update unread count for receiver
       const receiverUnreadIndex = conversation.unreadCounts.findIndex(uc => uc.userId === receiverId);
       if (receiverUnreadIndex > -1) {
@@ -391,7 +392,7 @@ router.post('/', auth, async (req, res) => {
 
     res.status(201).json({
       status: 'success',
-      message: isNewConversation && !areMutuallyFollowing 
+      message: isNewConversation && !areMutuallyFollowing
         ? 'Connection request sent successfully'
         : 'Message sent successfully',
       data: message,
@@ -430,7 +431,7 @@ router.post('/conversations/group', auth, async (req, res) => {
     // Validate all participants exist
     const allParticipants = [creatorId, ...participants];
     const users = await User.find({ id: { $in: allParticipants } });
-    
+
     if (users.length !== allParticipants.length) {
       return res.status(400).json({
         status: 'error',

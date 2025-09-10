@@ -305,7 +305,6 @@ router.post('/', auth, async (req, res) => {
     // Handle reply
     if (replyToTweetId) {
       const parentTweet = await Tweet.findOne({ _id: replyToTweetId });
-      console.log(parentTweet, "parentTweet");
       if (!parentTweet) {
         return res.status(404).json({
           status: 'error',
@@ -315,10 +314,9 @@ router.post('/', auth, async (req, res) => {
       tweetData.replyToTweetId = replyToTweetId;
       tweetData.replyToUserId = parentTweet.userId;
     }
-    console.log(quotedTweetId, "quotedTweetId");
     // Handle quote tweet
     if (quotedTweetId) {
-      const quotedTweet = await Tweet.findOne({ id: quotedTweetId });
+      const quotedTweet = await Tweet.findOne({ _id: quotedTweetId });
       if (!quotedTweet) {
         return res.status(404).json({
           status: 'error',
@@ -343,31 +341,32 @@ router.post('/', auth, async (req, res) => {
       await Notification.createNotification({
         userId: tweetData.replyToUserId,
         type: 'reply',
-        fromUserId: req.user.id,
-        tweetId: tweet.id
+        fromUserId: req.user._id || req.user.id,
+        tweetId: tweet.id || tweet._id
       });
     }
 
     // Update quoted tweet count
     if (quotedTweetId) {
       await Tweet.findOneAndUpdate(
-        { id: quotedTweetId },
+        { _id: quotedTweetId },
         { $inc: { quoteTweetsCount: 1 } }
       );
+      console.log(quotedTweetId, "parentTweet");
 
       // Create notification for quote tweet
-      const quotedTweet = await Tweet.findOne({ id: quotedTweetId });
+      const quotedTweet = await Tweet.findOne({ _id: quotedTweetId });
       await Notification.createNotification({
         userId: quotedTweet.userId,
         type: 'quote',
-        fromUserId: req.user.id,
-        tweetId: tweet.id
+        fromUserId: req.user.id || req.user._id,
+        tweetId: tweet.id || tweet._id
       });
     }
 
     // Update user tweet count
     await User.findOneAndUpdate(
-      { id: req.user.id },
+      { _id: req.user._id || req.user.id },
       { $inc: { tweetsCount: 1 } }
     );
 
