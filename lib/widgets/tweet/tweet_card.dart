@@ -54,7 +54,7 @@ class TweetCard extends StatelessWidget {
                 );
               },
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -79,7 +79,7 @@ class TweetCard extends StatelessWidget {
                       }
                     },
                     child: CircleAvatar(
-                      radius: 20,
+                      radius: 24,
                       backgroundImage: tweet.user?.profileImageUrl != null
                           ? NetworkImage(tweet.user!.profileImageUrl!)
                           : null,
@@ -93,7 +93,7 @@ class TweetCard extends StatelessWidget {
                                       .toUpperCase() ??
                                   'U',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: isDarkMode 
                                     ? Colors.white 
@@ -112,7 +112,7 @@ class TweetCard extends StatelessWidget {
                       children: [
                         // User info and timestamp
                         _buildUserInfo(context),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 2),
 
                         // Tweet text
                         if (tweet.content.isNotEmpty) _buildTweetText(context),
@@ -122,7 +122,7 @@ class TweetCard extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 12),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(16),
                               child: TweetMedia(imageUrls: tweet.imageUrls),
                             ),
                           ),
@@ -135,7 +135,7 @@ class TweetCard extends StatelessWidget {
                         if (tweet.replyToTweet != null && !isDetail)
                           _buildReplyIndicator(context),
 
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 8),
 
                         // Tweet actions
                         if (showActionButtons)
