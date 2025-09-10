@@ -201,7 +201,7 @@ class TweetCard extends StatelessWidget {
           child: Text(
             tweet.user?.displayName ?? 'Unknown User',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w800,
               fontSize: 15,
             ),
           ),
@@ -210,10 +210,10 @@ class TweetCard extends StatelessWidget {
         // Verified badge
         if (tweet.user?.isVerified == true) ...[
           const SizedBox(width: 4),
-          Icon(Icons.verified, size: 16, color: AppColors.primaryBlue),
+          Icon(Icons.verified, size: 18, color: AppColors.primaryBlue),
         ],
 
-        const SizedBox(width: 4),
+        const SizedBox(width: 6),
 
         // Username and timestamp
         Expanded(
@@ -221,26 +221,25 @@ class TweetCard extends StatelessWidget {
             '@${tweet.user?.username ?? 'unknown'} · ${timeago.format(tweet.createdAt, allowFromNow: true)}',
             style: theme.textTheme.bodyMedium?.copyWith(
               color: isDarkMode
-                  ? Colors.grey[400]
+                  ? Colors.grey[500]
                   : Colors.grey[600],
               fontSize: 15,
+              fontWeight: FontWeight.w400,
             ),
             overflow: TextOverflow.ellipsis,
           ),
         ),
 
         // More options
-        IconButton(
-          icon: Icon(
-            Icons.more_horiz,
-            color: isDarkMode ? Colors.grey[400] : Colors.grey[600],
-          ),
-          iconSize: 20,
-          onPressed: () => _showTweetOptions(context),
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(
-            minWidth: 32,
-            minHeight: 32,
+        GestureDetector(
+          onTap: () => _showTweetOptions(context),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            child: Icon(
+              Icons.more_horiz,
+              color: isDarkMode ? Colors.grey[500] : Colors.grey[600],
+              size: 20,
+            ),
           ),
         ),
       ],
